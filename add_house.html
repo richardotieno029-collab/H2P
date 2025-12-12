@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add House | H2P</title>
+    <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<div class="form-wrapper">
+    <h2>Add a New House</h2>
+
+    <form action="dashboard.html" method="GET">
+
+        <label>House Name</label>
+        <input type="text" required>
+
+        <label>Area</label>
+        <select required>
+            <option>Kangaru</option>
+            <option>Gakwegori</option>
+            <option>Spring Valley</option>
+            <option>Kayole</option>
+            <option>Kamiu</option>
+            <option>Bagik</option>
+            <option>Njukiri</option>
+            <option>Leaders</option>
+        </select>
+
+        <label>House Type</label>
+        <select required>
+            <option>Single</option>
+            <option>Bedsitter</option>
+            <option>One Bedroom</option>
+            <option>Two Bedroom</option>
+        </select>
+
+        <label>Price (KES)</label>
+        <input type="number" required>
+
+        <label>Upload Image</label>
+        <input type="file" accept="image/*" required>
+
+        <button type="submit">Save House</button>
+
+    </form>
+
+</div>
+
+</body>
+</html>
