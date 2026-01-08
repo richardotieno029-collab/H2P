@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Favorites</title>
+    <link rel="stylesheet" href="assets/styles.css"> <!-- Your main CSS -->
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header>
+        <h1>Campus Housing Finder</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="index.html#areas">Areas</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+            <a href="favorites.html" class="active">❤ Favorites</a>
+        </nav>
+    </header>
+
+    <!-- PAGE TITLE -->
+    <section class="hero small-hero">
+        <h2>Your Favorite Rooms ❤</h2>
+        <p>These are the houses you saved earlier.</p>
+    </section>
+
+    <!-- FAVORITES CONTAINER -->
+    <section class="rooms" id="favorites-container">
+        <!-- Filled by JS -->
+    </section>
+
+    <!-- SCRIPT -->
+    <script>
+        // Load favorites from localStorage
+        const favoritesContainer = document.getElementById("favorites-container");
+        const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+        function displayFavorites() {
+            favoritesContainer.innerHTML = "";
+
+            if (favorites.length === 0) {
+                favoritesContainer.innerHTML = `
+                    <p style="text-align:center; font-size:1.2rem; padding:20px;">
+                        You haven't added any favorites yet ☺
+                    </p>`;
+                return;
+            }
+
+            favorites.forEach(room => {
+                const card = document.createElement("div");
+                card.classList.add("room-card");
+
+                card.innerHTML = `
+                    <img src="${room.image}" alt="${room.title}">
+                    <h3>${room.title}</h3>
+                    <p><strong>Area:</strong> ${room.area}</p>
+                    <p><strong>Price:</strong> ${room.price}</p>
+                    <button class="remove-btn" onclick="removeFavorite('${room.id}')">Remove ❌</button>
+                `;
+
+                favoritesContainer.appendChild(card);
+            });
+        }
+
+        // Remove favorite room
+        function removeFavorite(id) {
+            const updated = favorites.filter(room => room.id !== id);
+            localStorage.setItem("favorites", JSON.stringify(updated));
+            location.reload();
+        }
+
+        displayFavorites();
+    </script>
+
+</body>
+</html>

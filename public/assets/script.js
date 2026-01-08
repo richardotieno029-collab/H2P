@@ -2,24 +2,24 @@
 const rooms = [
     {
         id: 1,
-        name: "Sunrise Bedsitter",
-        area: "Mawenzi",
+        name: "Hilltop Bedsitter",
+        area: "Spring Valley",
         price: 4500,
         type: "bedsitter",
         image: "room1.jpg"
     },
     {
         id: 2,
-        name: "Quiet Single Room",
-        area: "Old Gate",
-        price: 3000,
+        name: "Mugo's Single Room",
+        area: "Gakwegori",
+        price: 4000,
         type: "single",
         image: "room2.jpg"
     },
     {
         id: 3,
-        name: "1 Bedroom Apartment",
-        area: "Annex",
+        name: "Jerusalem 1 Bedroom Apartment",
+        area: "Kangaru",
         price: 7000,
         type: "onebed",
         image: "room3.jpg"
