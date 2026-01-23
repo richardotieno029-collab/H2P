@@ -2,10 +2,10 @@
 session_start();
 include "../db_connect.php";
 
-/* Protect page */
-if (!isset($_SESSION['landlord_id'])) {
-    header("Location: ../../public/landlord/landlord_login.html");
-    exit();
+if ($_SESSION['user_role'] !== 'landlord') {
+    header("Location: ../index/index.php");
+    exit;
+
 }
 
 /* Validate POST */
@@ -61,7 +61,7 @@ $stmt->bind_param(
 );
 
 if ($stmt->execute()) {
-    header("Location: landlord_dashboard.php?room_added=success");
+    header("Location: rooms.php?refresh=1&house_id=" . $house_id);
     exit();
 } else {
     echo "Error: " . $stmt->error;

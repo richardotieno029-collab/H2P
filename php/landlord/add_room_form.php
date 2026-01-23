@@ -2,10 +2,10 @@
 session_start();
 include "../db_connect.php";
 
-/* Protect page */
-if (!isset($_SESSION['landlord_id'])) {
-    header("Location: ../../public/landlord/landlord_login.html");
-    exit();
+if ($_SESSION['user_role'] !== 'landlord') {
+    header("Location: ../index/index.php");
+    exit;
+
 }
 
 /* Validate house_id */
@@ -21,7 +21,7 @@ $house_id = (int)$_GET['house_id'];
     <meta charset="UTF-8">
     <title>Add Room</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../public/assets/styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
 

@@ -1,4 +1,9 @@
 <?php
+session_start();
+
+/* Logged-in student (null if guest) */
+$student_id = $_SESSION['user_id'] ?? null;
+
 // db connection
 require_once "../db_connect.php";
 
@@ -35,15 +40,36 @@ $rooms = $roomStmt->get_result();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Rooms in <?php echo htmlspecialchars($house['house_name']); ?></title>
-<link rel="stylesheet" href="../../public/assets/styles.css">
+    <title>Rooms in <?php echo htmlspecialchars($house['location']); ?></title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+    .fav-btn {
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    color: #aaa; /* grey */
+    transition: transform 0.2s, color 0.2s;
+}
+
+.fav-btn:hover {
+    transform: scale(1.2);
+}
+
+.fav-active {
+    color: #e63946; /* red */
+}
+</style>
 </head>
 <body>
+    <a href="javascript:history.back()" class="back-btn" title="Go back">
+    ←
+</a>
+    <?php include "../dashboard_header.php"; ?>
 
 <h2>
-    Rooms in <?= htmlspecialchars($house['house_name'] ?? 'this house') ?>
+Rooms in <?php echo htmlspecialchars($house['location']); ?>
 </h2>
-<p><?php echo htmlspecialchars($house['location']); ?></p>
 
 <hr>
 
@@ -51,12 +77,12 @@ $rooms = $roomStmt->get_result();
     <p>No rooms available in this house yet.</p>
 <?php else: ?>
 
-<div class="rooms-container">
+<div class="houses-container">
 
 <?php while ($room = $rooms->fetch_assoc()): 
     $occupied = ($room['status'] === 'occupied');
 ?>
-    <div class="room-card <?php echo $occupied ? 'occupied' : ''; ?>">
+    <div class="house-card <?php echo $occupied ? 'occupied' : ''; ?>">
 
         <img 
             src="../../<?php echo htmlspecialchars($room['image_path']); ?>" 
@@ -76,12 +102,43 @@ $rooms = $roomStmt->get_result();
         <?php if ($occupied): ?>
             <button class="btn disabled" disabled>
                 Not Available
-            </button>
+            </button></br>
+            
         <?php else: ?>
             <a href="tel:+254XXXXXXXXX" class="btn">
               Vacant Contact Landlord
-            </a>
-        <?php endif; ?>
+            </a></br>
+            <?php endif; ?>
+<?php
+$student_id = $_SESSION['user_id'];
+$favCheck = $conn->prepare("
+    SELECT fav_id FROM favourites
+    WHERE student_id = ? AND room_id = ?
+");
+$favCheck->bind_param("si", $student_id, $room['id']);
+$favCheck->execute();
+$favResult = $favCheck->get_result();
+
+$isFavourite = $favResult->num_rows > 0;
+?>
+<?php
+if ($isFavourite): ?>
+    <form action="../favourites/remove_favourite.php" method="POST">
+        <input type="hidden" name="room_id" value="<?= $room['id'] ?>">
+        <button class="fav-btn fav-active">❤️</button>
+    </form>
+<?php else: ?>
+    <form action="../favourites/add_favourites.php" method="POST">
+        <input type="hidden" name="room_id" value="<?= $room['id'] ?>">
+        <button class="fav-btn">🤍</button>
+    </form>
+
+            <?php if (isset($_SESSION['user_id'])): ?>
+
+<?php endif; ?>
+
+            <?php endif; ?>
+
 
     </div>
 <?php endwhile; ?>

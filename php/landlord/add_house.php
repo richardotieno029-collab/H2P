@@ -2,12 +2,13 @@
 session_start();
 require_once "../db_connect.php";
 
-if (!isset($_SESSION['landlord_id'])) {
-    header("Location: landlord_login.html");
-    exit();
+if ($_SESSION['user_role'] !== 'landlord') {
+    header("Location: ../index/index.php");
+    exit;
+
 }
 
-$landlord_id = $_SESSION['landlord_id'];
+$landlord_id = $_SESSION['user_id'];
 
 $house_name = $_POST['house_name'];
 $area = $_POST['area'];

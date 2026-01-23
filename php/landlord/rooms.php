@@ -3,8 +3,8 @@ session_start();
 include "../db_connect.php";
 
 /* Protect */
-if (!isset($_SESSION['landlord_id'])) {
-    header("Location: ../../public/landlord/landlord_login.html");
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login_form.php");
     exit();
 }
 
@@ -27,9 +27,10 @@ $result = $stmt->get_result();
 <head>
     <title>Manage Rooms</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../../public/assets/styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
+    <?php include "../dashboard_header.php"; ?>
 <div class="dash-wrapper">
 
     <aside class="sidebar">

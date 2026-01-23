@@ -4,28 +4,22 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Check if user is logged in
-function isLoggedIn() {
-    return isset($_SESSION['user_id']);
+/*
+|--------------------------------------------------------------------------
+| SAFE SESSION GETTERS (OPTIONAL BUT CLEAN)
+|--------------------------------------------------------------------------
+*/
+function current_user_id()
+{
+    return $_SESSION['user_id'] ?? null;
 }
 
-// Check user role
-function userRole() {
+function current_user_role()
+{
     return $_SESSION['role'] ?? null;
 }
 
-// Force login
-function requireLogin() {
-    if (!isLoggedIn()) {
-        header("Location: /frontend/login.html");
-        exit();
-    }
+function current_user_name()
+{
+    return $_SESSION['user_name'] ?? 'Account';
 }
-require_once "db_connect.php";
-
-$sql = "SELECT * FROM houses WHERE house_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $landlord_id);
-$stmt->execute();
-$result = $stmt->get_result();
-?>

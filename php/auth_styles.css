@@ -1,0 +1,139 @@
+/* =========================
+   AUTH PAGES (LOGIN & SIGNUP)
+   ========================= */
+
+.auth-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f4f6f8, #e9ecf1);
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 420px;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.auth-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #222;
+}
+
+.auth-container label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #444;
+}
+
+.auth-container input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.auth-container input:focus {
+    border-color: #4f46e5;
+}
+
+.auth-container button {
+    width: 100%;
+    padding: 12px;
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.auth-container button:hover {
+    background: #4338ca;
+}
+
+/* Alerts */
+.alert {
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.alert-error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.alert-success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.warning {
+    color: #c0392b;
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.alert {
+    background: #f1f1f1;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-left: 4px solid #333;
+}
+
+.danger-btn {
+    background: #c0392b;
+    color: #fff;
+}
+
+.danger-btn:hover {
+    background: #a93226;
+}
+
+.danger {
+    border: 2px solid #c0392b;
+}
+/* Logo Styles */
+.logo-container {
+    text-align: center;
+    margin-top: 60px;
+    margin-bottom: 40px;
+}
+
+.logo-img {
+    width: 110px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.logo-text {
+    font-size: 36px;
+    font-weight: bold;
+    color: #2e7d32; /* green */
+    margin: 0;
+}
+
+.logo-tagline {
+    font-size: 14px;
+    color: #555;
+    margin-top: 5px;
+}

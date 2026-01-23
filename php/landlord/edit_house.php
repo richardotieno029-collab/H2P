@@ -2,9 +2,10 @@
 session_start();
 require_once "../db_connect.php";
 
-if (!isset($_SESSION['landlord_id'])) {
-    header("Location: ../../public/landlord/landlord_login.html");
+if ($_SESSION['user_role'] !== 'landlord') {
+    header("Location: ../index/index.php");
     exit;
+
 }
 
 if (!isset($_GET['id'])) {
@@ -13,7 +14,7 @@ if (!isset($_GET['id'])) {
 }
 
 $house_id = intval($_GET['id']);
-$landlord_id = $_SESSION['landlord_id'];
+$landlord_id = $_SESSION['user_id'];
 
 $sql = "SELECT * FROM houses WHERE house_id = ? AND landlord_id = ?";
 $stmt = $conn->prepare($sql);
@@ -32,7 +33,7 @@ $house = $result->fetch_assoc();
 <html>
 <head>
     <title>Edit House</title>
-    <link rel="stylesheet" href="../../public/assets/styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
 

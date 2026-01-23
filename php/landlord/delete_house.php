@@ -2,7 +2,7 @@
 session_start();
 require_once "../db_connect.php";
 
-if (!isset($_SESSION['landlord_id'])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: ../../public/landlord/landlord_login.html");
     exit;
 }
@@ -13,7 +13,7 @@ if (!isset($_GET['id'])) {
 }
 
 $house_id = intval($_GET['id']);
-$landlord_id = $_SESSION['landlord_id'];
+$landlord_id = $_SESSION['user_id'];
 
 
 // 1️⃣ Get image path (to delete file)

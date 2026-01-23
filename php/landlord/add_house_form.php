@@ -1,8 +1,9 @@
 <?php
 session_start();
-if (!isset($_SESSION['landlord_id'])) {
-    header("Location: landlord_login.html");
-    exit();
+if ($_SESSION['user_role'] !== 'landlord') {
+    header("Location: ../index/index.php");
+    exit;
+
 }
 ?>
 
@@ -11,11 +12,16 @@ if (!isset($_SESSION['landlord_id'])) {
 <head>
     <meta charset="UTF-8">
     <title>Add House | H2P</title>
-    <link rel="stylesheet" href="../../public/assets/styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
 
 <div class="form-wrapper">
+    <div class="logo-container">
+    <img src="../../images/logo.jpeg" alt="H2P Logo" class="logo-img">
+    <h1 class="logo-text">H2P</h1>
+    <p class="logo-tagline">Student Housing Portal</p>
+</div>
     <h2>Add a New House</h2>
 
 <form action="add_house.php" method="POST" enctype="multipart/form-data">

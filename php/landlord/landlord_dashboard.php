@@ -1,21 +1,40 @@
 <?php
 require_once "../session.php";
+require_once "../db_connect.php";
 
-if (!isset($_SESSION['landlord_id'])) {
-    header("Location: ../../public/landlord/landlord_login.html");
+if ($_SESSION['user_role'] !== 'landlord') {
+    header("Location: ../index/index.php");
     exit;
+
 }
-$landlord_id = $_SESSION['landlord_id'];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Landlord Dashboard | H2P</title>
-    <link rel="stylesheet" href="../../public/assets/styles.css">
+ 
+   <link rel="stylesheet" href="../styles.css">
+
+   <script>
+const btn = document.getElementById("accountBtn");
+const dropdown = document.getElementById("accountDropdown");
+
+btn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    dropdown.classList.toggle("show");
+});
+
+// close dropdown when clicking elsewhere
+document.addEventListener("click", function () {
+    dropdown.classList.remove("show");
+});
+</script>
 </head>
 <body>
 
+<?php include "../dashboard_header.php"; ?>
 <div class="dash-wrapper">
 
     <aside class="sidebar">
@@ -24,26 +43,26 @@ $landlord_id = $_SESSION['landlord_id'];
         <a href="../index/index.php" class="active">🏠 Home</a>
         <a href="add_house_form.php">➕ Add House</a>
         <a href="#">⚙ Settings</a>
-        <a href="landlord_login.html" class="logout">🚪 Logout</a>
     </aside>
 
     <main class="dash-content">
         <h2>My Houses</h2>
 
         <?php
-$landlord_id = $_SESSION['landlord_id'];
+$landlord_id = $_SESSION['user_id'];
 
 $query = "SELECT * FROM houses WHERE landlord_id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $landlord_id);
 $stmt->execute();
 $result = $stmt->get_result();
+$house_id = (int)$_SESSION['house_id'];
 ?>
 <?php if ($result->num_rows > 0): ?>
     <div class="houses-container">
         <?php while ($house = $result->fetch_assoc()): ?>
             <div class="house-card">
-                <a href="rooms.php"><img src="<?php echo $house['image_path']; ?>" alt="House Image"></a>
+                <img src="<?php echo $house['image_path']; ?>" alt="House Image">
 
                 <h3><?php echo htmlspecialchars($house['house_name']); ?></h3>
 
