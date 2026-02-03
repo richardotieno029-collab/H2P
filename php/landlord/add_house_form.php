@@ -20,7 +20,7 @@ if ($_SESSION['user_role'] !== 'landlord') {
     <div class="logo-container">
     <img src="../../images/logo.jpeg" alt="H2P Logo" class="logo-img">
     <h1 class="logo-text">H2P</h1>
-    <p class="logo-tagline">Student Housing Portal</p>
+    <p class="logo-tagline">FIND. RENT. SETTLE.</p>
 </div>
     <h2>Add a New House</h2>
 

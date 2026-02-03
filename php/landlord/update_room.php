@@ -1,55 +1,66 @@
 <?php
-require_once '../db_connect.php';
-require_once '../session.php';
+session_start();
+require_once "../db_connect.php";
 
-$room_id   = intval($_POST['room_id']);
-$house_id  = intval($_POST['house_id']);
-$type      = $_POST['room_type'];
-$price     = $_POST['price'];
-$status    = $_POST['status'];
-$desc      = $_POST['description'];
-
-$image_sql = "";
-$params = [$type, $price, $status, $desc, $room_id, $_SESSION['user_id']];
-$types  = "sissii";
-
-// 1️⃣ Get old image path
-$sql = "SELECT image_path FROM rooms WHERE id = ? AND house_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("ii", $house_id, $id);
-$stmt->execute();
-$result = $stmt->get_result();
-$row = $result->fetch_assoc();
-
-$image_path = $row['image_path'];
-
-
-// 2️⃣ If new image uploaded
-if (!empty($_FILES['room_image']['name'])) {
-
-    $uploadDir = "../../uploads/";
-    $newImage = time() . "_" . basename($_FILES['room_image']['name']);
-    $targetPath = $uploadDir . $newImage;
-
-    if (move_uploaded_file($_FILES['room_image']['tmp_name'], $targetPath)) {
-        // delete old image
-        if (file_exists("" . $image_path)) {
-            unlink("" . $image_path);
-        }
-        $image_path = "../../uploads/" . $newImage;
-    }
+if ($_SESSION['user_role'] !== 'landlord') {
+    header("Location: ../index/index.php");
+    exit;
 }
 
-$sql = "
-    UPDATE rooms r
-    JOIN houses h ON r.house_id = h.house_id
-    SET r.room_type = ?, r.price = ?, r.status = ?, r.description = ? $image_sql
-    WHERE r.id = ? AND h.landlord_id = ?
-";
+$landlord_id = $_SESSION['user_id'];
 
-$stmt = $conn->prepare($sql);
-$stmt->bind_param($types, ...$params);
+$room_id   = (int) $_POST['id'];
+$house_id  = (int) $_POST['house_id'];
+$room_number      = $_POST['room_number'];
+$status    = $_POST['status'];
+
+/* IMAGE UPLOAD */
+$upload_dir = "../uploads/";
+
+if (!is_dir($upload_dir)) {
+    mkdir($upload_dir, 0777, true);
+}
+
+$image_name = time() . "_" . basename($_FILES["image"]["name"]);
+$target_file = $upload_dir . $image_name;
+
+/* Basic image validation */
+$image_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+$allowed = ["jpg", "jpeg", "png", "gif"];
+
+if (!in_array($image_type, $allowed)) {
+    die("Only JPG, JPEG, PNG, GIF allowed.");
+}
+
+if (!move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
+    die("Image upload failed.");
+}
+
+/* Store RELATIVE path */
+$image_path = "../uploads/" . $image_name;
+
+// 3️⃣ Update DB
+$update = "UPDATE rooms SET 
+    room_type = ?, 
+    price = ?, 
+    status = ?, 
+    description = ?, 
+    image_path = ?
+    WHERE house_id = ? AND id = ?";
+
+$stmt = $conn->prepare($update);
+$stmt->bind_param(
+    "sdsssii",
+    $type,
+    $price,
+    $status,
+    $desc,
+    $image_path,
+    $house_id,
+    $room_id
+);
+
 $stmt->execute();
 
-header("Location: rooms.php?house_id=" . $house_id);
+header("Location: rooms.php?refresh=1&house_id=" . $house_id);
 exit;

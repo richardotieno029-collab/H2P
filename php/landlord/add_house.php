@@ -17,7 +17,7 @@ $price = $_POST['price'];
 $description = $_POST['description'];
 
 // IMAGE UPLOAD
-$uploadDir = "uploads/"; // adjust path if needed
+$uploadDir = "../uploads/"; // adjust path if needed
 
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0777, true);
@@ -28,7 +28,7 @@ $targetPath = $uploadDir . $imageName;
 
 if (move_uploaded_file($_FILES['house_image']['tmp_name'], $targetPath)) {
     // SUCCESS
-    $image_path = "../../uploads/" . $imageName;
+    $image_path = "../uploads/" . $imageName;
 } else {
     die("Image upload failed");
 }

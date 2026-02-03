@@ -10,15 +10,20 @@ if (!isset($_SESSION['user_id'])) {
 $student_id = $_SESSION['user_id'];
 
 $query = "
-SELECT rooms.*, houses.house_name
+SELECT 
+    rooms.*,
+    houses.house_name,
+    houses.area,
+    landlords.full_name AS landlord_name
 FROM favourites
 JOIN rooms ON favourites.room_id = rooms.id
 JOIN houses ON rooms.house_id = houses.house_id
+JOIN landlords ON houses.landlord_id = landlords.landlord_id
 WHERE favourites.student_id = ?
 ";
 
 $stmt = $conn->prepare($query);
-$stmt->bind_param("s", $student_id);
+$stmt->bind_param("s", $_SESSION['user_id']);
 $stmt->execute();
 $result = $stmt->get_result();
 ?>
@@ -39,16 +44,49 @@ $result = $stmt->get_result();
 <?php if ($result->num_rows > 0): ?>
     <?php while ($row = $result->fetch_assoc()): ?>
         <div class="house-card">
-            <img src="../../<?= $row['image_path'] ?>" alt="Room">
-            <h3><?= htmlspecialchars($row['house_name']) ?></h3>
-            <p>Price: Ksh <?= $row['price'] ?></p>
-            <p>Status: <?= $row['status'] ?></p>
+            <img 
+            src="<?php echo htmlspecialchars($row['image_path']); ?>" 
+            alt="Room Image"
+        >
 
-            <a class="btn danger"
-               href="remove_favourite.php?room_id=<?= $row['id'] ?>">
-               Remove ❤️
-            </a>
-        </div>
+
+  <h3><?= htmlspecialchars($row['house_name']) ?></h3>
+   <h3>Room Number: <?php echo htmlspecialchars($row['room_number']); ?></h3>
+  <p><strong>Area:</strong> <?= $row['area'] ?></p>
+  <p><strong>Landlord:</strong> <?= $row['landlord_name'] ?></p>
+  <p><strong>Status:</strong> <?= ucfirst($row['status']) ?></p>
+
+  <!-- Favourite toggle -->
+  <button 
+    class="fav-btn active"
+    data-room-id="<?= $row['id'] ?>">
+    ♥
+  </button>
+
+      <script>
+document.querySelectorAll('.fav-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+        const roomId = this.dataset.roomId;
+
+        fetch('../favourites/favourite.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'room_id=' + roomId
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'added') {
+                this.classList.add('active');
+            } else {
+                this.classList.remove('active');
+            }
+        });
+    });
+});
+</script>
+
+
+</div>
     <?php endwhile; ?>
 <?php else: ?>
     <div class="dashboard-actions">

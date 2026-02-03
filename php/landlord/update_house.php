@@ -32,7 +32,7 @@ $image_path = $row['image_path'];
 // 2️⃣ If new image uploaded
 if (!empty($_FILES['house_image']['name'])) {
 
-    $uploadDir = "../../uploads/";
+    $uploadDir = "../uploads/";
     $newImage = time() . "_" . basename($_FILES['house_image']['name']);
     $targetPath = $uploadDir . $newImage;
 
@@ -41,7 +41,7 @@ if (!empty($_FILES['house_image']['name'])) {
         if (file_exists("" . $image_path)) {
             unlink("" . $image_path);
         }
-        $image_path = "../../uploads/" . $newImage;
+        $image_path = "../uploads/" . $newImage;
     }
 }
 

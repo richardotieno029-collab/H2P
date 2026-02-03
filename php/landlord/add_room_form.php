@@ -26,6 +26,11 @@ $house_id = (int)$_GET['house_id'];
 <body>
 
 <div class="form-wrapper">
+    <div class="logo-container">
+    <img src="../../images/logo.jpeg" alt="H2P Logo" class="logo-img">
+    <h1 class="logo-text">H2P</h1>
+    <p class="logo-tagline">FIND. RENT. SETTLE.</p>
+</div>
 <h2>Add Room</h2>
 
 <form action="add_room.php" method="POST" enctype="multipart/form-data">
@@ -33,18 +38,8 @@ $house_id = (int)$_GET['house_id'];
     <!-- Link room to house -->
     <input type="hidden" name="house_id" value="<?php echo $house_id; ?>">
 
-    <label>Room Type</label><br>
-    <select name="room_type" required>
-        <option value="">-- Select Room Type --</option>
-        <option value="Single">Single</option>
-        <option value="Bedsitter">Bedsitter</option>
-        <option value="One Bedroom">One Bedroom</option>
-        <option value="Two Bedroom">Two Bedroom</option>
-    </select>
-    <br><br>
-
-    <label>Price (KES)</label><br>
-    <input type="number" name="price" required>
+    <label>Room Number</label><br>
+    <input type="text" name="room_number" required>
     <br><br>
 
     <label>Status</label><br>
@@ -54,9 +49,6 @@ $house_id = (int)$_GET['house_id'];
     </select>
     <br><br>
 
-    <label>Description</label><br>
-    <textarea name="description" rows="4"></textarea>
-    <br><br>
 
     <label>Room Image</label><br>
     <input type="file" name="image" accept="image/*" required>
@@ -67,8 +59,6 @@ $house_id = (int)$_GET['house_id'];
 </form>
 </div>
 
-<br>
-<a href="dashboard.php">⬅ Back to Dashboard</a>
 
 </body>
 </html>

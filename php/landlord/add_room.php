@@ -14,13 +14,10 @@ if ($_SERVER["REQUEST_METHOD"] != "POST") {
 }
 
 $house_id    = (int)$_POST['house_id'];
-$room_type   = $_POST['room_type'];
-$price       = $_POST['price'];
+$room_number   = $_POST['room_number'];
 $status      = $_POST['status'];
-$description = $_POST['description'];
-
 /* IMAGE UPLOAD */
-$upload_dir = "../../uploads/";
+$upload_dir = "../uploads/";
 
 if (!is_dir($upload_dir)) {
     mkdir($upload_dir, 0777, true);
@@ -42,21 +39,19 @@ if (!move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
 }
 
 /* Store RELATIVE path */
-$image_path = "uploads/" . $image_name;
+$image_path = "../uploads/" . $image_name;
 
 /* Insert room */
 $sql = "INSERT INTO rooms 
-        (house_id, room_type, price, status, description, image_path)
-        VALUES (?, ?, ?, ?, ?, ?)";
+        (house_id, room_number, status, image_path)
+        VALUES (?, ?, ?, ?)";
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param(
-    "isisss",
+    "isss",
     $house_id,
-    $room_type,
-    $price,
+    $room_number,
     $status,
-    $description,
     $image_path
 );
 

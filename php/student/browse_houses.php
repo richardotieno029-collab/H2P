@@ -1,52 +1,66 @@
 <?php
+session_start();
 require_once "../db_connect.php";
 
-$query = "SELECT houses.*, full_name AS landlord_name 
-          FROM houses 
-          JOIN landlords ON houses.landlord_id = landlords.landlord_id
-          ORDER BY houses.house_id DESC";
+/* --------------------------
+   FILTER LOGIC
+---------------------------*/
+$sql = "
+SELECT 
+    h.house_id,
+    h.house_name,
+    h.area,
+    h.room_type,
+    h.price,
+    h.description,
+    h.image_path,
+    l.full_name AS landlord_name,
+    COUNT(r.id) AS total_rooms,
+    SUM(r.status = 'vacant') AS available_rooms
+FROM houses h
+JOIN landlords l ON h.landlord_id = l.landlord_id
+LEFT JOIN rooms r ON h.house_id = r.house_id
+GROUP BY h.house_id
+";
 
-$result = $conn->query($query);
-?>
 
-<?php
-session_start();
-include "../db_connect.php";
-
-/* Read filters */
-$area = $_GET['area'] ?? '';
-$room_type = $_GET['room_type'] ?? '';
-$price = $_GET['price'] ?? '';
-
-/* Base query */
-$sql = "SELECT * FROM houses WHERE 1=1";
 $params = [];
-$types = "";
+$types  = "";
 
-/* Area filter */
-if (!empty($area)) {
-    $sql .= " AND area = ?";
-    $params[] = $area;
+// Area filter
+if (!empty($_GET['area'])) {
+    $sql .= " AND h.area = ?";
+    $params[] = $_GET['area'];
     $types .= "s";
 }
 
-/* Room type filter */
-if (!empty($room_type)) {
-    $sql .= " AND room_type = ?";
-    $params[] = $room_type;
+// Room type filter
+if (!empty($_GET['room_type'])) {
+    $sql .= " AND h.room_type = ?";
+    $params[] = $_GET['room_type'];
     $types .= "s";
 }
 
-/* Price filter */
-if (!empty($price)) {
-    list($min, $max) = explode('-', $price);
-    $sql .= " AND price BETWEEN ? AND ?";
-    $params[] = (int)$min;
-    $params[] = (int)$max;
-    $types .= "ii";
+// Price filters
+if (!empty($_GET['min_price'])) {
+    $sql .= " AND h.price >= ?";
+    $params[] = $_GET['min_price'];
+    $types .= "i";
 }
 
-/* Prepare & execute */
+if (!empty($_GET['max_price'])) {
+    $sql .= " AND h.price <= ?";
+    $params[] = $_GET['max_price'];
+    $types .= "i";
+}
+
+// Only available houses
+if (!empty($_GET['vacant'])) {
+    $sql .= " HAVING available_rooms > 0";
+}
+
+$sql .= " ORDER BY h.created_at DESC";
+
 $stmt = $conn->prepare($sql);
 
 if (!empty($params)) {
@@ -61,77 +75,105 @@ $result = $stmt->get_result();
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Housing Finder</title>
+    <title>Browse Houses</title>
     <link rel="stylesheet" href="../styles.css">
 </head>
-
 <body>
-    <a href="javascript:history.back()" class="back-btn" title="Go back">
+
+<?php include "../dashboard_header.php"; ?>
+<a href="javascript:history.back()" class="back-btn" title="Go back">
     ←
 </a>
-<?php include "../dashboard_header.php"; ?>
+<h2>Browse Houses</h2>
 
-    <!-- HERO SECTION -->
-    <section class="hero">
-        <h2>Find the best rooms around your university</h2>
-        <p>Select any filters below to see your houses of choice.</p>
-    </section>
+<!-- --------------------------
+     FILTERS
+--------------------------- -->
+<form method="GET" class="filters">
+    <input type="text" name="area" placeholder="Area"
+           value="<?php echo $_GET['area'] ?? ''; ?>">
 
-    <!-- SEARCH + FILTERS -->
-    <section class="search-area">
-       
-        <form method="GET" class="filter-form">
-        <select name="price">
-            <option value="">All Prices</option>
-            <option value="0-3000">0 - 3000</option>
-            <option value="3000-5000">3000 - 5000</option>
-            <option value="5000-8000">5000 - 8000</option>
-        </select>
+    <select name="room_type">
+        <option value="">All Room Types</option>
+        <option value="Single">Single</option>
+        <option value="Bedsitter">Bedsitter</option>
+        <option value="One Bedroom">1 Bedroom</option>
+    </select>
 
-        <select name="room_type">
-            <option value="">All Types</option>
-            <option value="single">Single</option>
-            <option value="bedsitter">Bedsitter</option>
-            <option value="onebed">1 Bedroom</option>
-<option value="twobed">2 Bedroom</option>
-        </select>
+    <input type="number" name="min_price" placeholder="Min Price">
+    <input type="number" name="max_price" placeholder="Max Price">
 
-        <select name="area">
-            <option value="">All Areas</option>
-            <option value="Kangaru">Kangaru</option>
-            <option value="Gakwegori">Gakwegori</option>
-            <option value="Spring Valley">Spring Valley</option>
-            <option value="Kayole">Kayole</option>
-            <option value="Kamiu">Kamiu</option>
-            <option value="Bagik">Bagik</option>
-            <option value="Njukiri">Njukiri</option>
-            <option value="Leaders">Leaders</option>
-        </select></br></br>
-        <p><button type="submit" class="btn">Apply Filters</button></p>
-    </form>
-    </section>
-<h2>Available Houses</h2>
+    <label>
+        <input type="checkbox" name="vacant" value="1"
+            <?php if (!empty($_GET['vacant'])) echo "checked"; ?>>
+        Only Available
+    </label>
 
+    <button type="submit" class="btn">Apply Filters</button>
+</form>
+
+<!-- --------------------------
+     HOUSES LIST
+--------------------------- -->
 <div class="houses-container">
-<?php while ($house = $result->fetch_assoc()): ?>
-    <div class="house-card">
-        <img src="<?php echo $house['image_path']; ?>" alt="House">
+
+<?php if ($result->num_rows > 0): ?>
+    <?php while ($house = $result->fetch_assoc()): ?>
+        <div class="house-card">
+
+        <?php
+$urgency = '';
+$label = '';
+
+if ($house['available_rooms'] > 0 && $house['available_rooms'] <= 2) {
+    $urgency = 'urgent';
+    $label = 'Urgent';
+} elseif ($house['available_rooms'] > 2 && $house['available_rooms'] <= 5) {
+    $urgency = 'limited';
+    $label = 'Limited';
+}
+?>
+
+<?php if ($urgency): ?>
+    <span class="u-badge <?= $urgency ?>">
+        <?= ucfirst($urgency) ?>
+    </span>
+<?php endif; ?>
+
+            <img src="<?php echo $house['image_path']; ?>" alt="House Image">
+
+            <h3><?php echo htmlspecialchars($house['house_name']); ?></h3>
+
         
-        <h3><?php echo htmlspecialchars($house['house_name']); ?></h3>
+            <p><strong>Area:</strong> <?php echo htmlspecialchars($house['area']); ?></p>
+            <p><strong>Room Type:</strong> <?php echo htmlspecialchars($house['room_type']); ?></p>
+            <p><strong>Price:</strong> From KES <?php echo number_format($house['price']); ?></p>
+            <p><strong>Landlord:</strong> <?php echo htmlspecialchars($house['landlord_name']); ?></p>
 
-        <p><strong>Area:</strong> <?php echo $house['area']; ?></p>
-        <p><strong>Type:</strong> <?php echo $house['room_type']; ?></p>
-        <p><strong>Price:</strong> KES <?php echo $house['price']; ?></p>
-
-        <p><strong>Landlord:</strong> <?php echo htmlspecialchars($house['landlord_name']); ?></p>
-
-        <a href="view_room.php?house_id=<?php echo $house['house_id']; ?>" class="btn">
-            View Rooms
-        </a>
-    </div>
-<?php endwhile; ?>
+            <p><?php echo nl2br(htmlspecialchars($house['description'])); ?></p>
+            <div class="availability">
+    <?php if ($house['available_rooms'] > 0): ?>
+        <span class="badge available">
+            🟢 <?php echo $house['available_rooms']; ?> room(s) available
+        </span>
+    <?php else: ?>
+        <span class="badge full">
+            🔴 Fully occupied
+        </span>
+    <?php endif; ?>
 </div>
-    
+
+            <a href="view_room.php?house_id=<?php echo $house['house_id']; ?>" class="btn">
+                View Rooms
+            </a>
+
+        </div>
+    <?php endwhile; ?>
+<?php else: ?>
+    <p>No houses match your filters.</p>
+<?php endif; ?>
+
+</div>
+
 </body>
 </html>

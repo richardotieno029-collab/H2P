@@ -51,35 +51,32 @@ $result = $stmt->get_result();
 <table border="1" cellpadding="10">
     <tr>
         <th>Image</th>
-        <th>Type</th>
-        <th>Price</th>
+        <th>Room Number</th>
         <th>Status</th>
         <th>Actions</th>
     </tr>
 
- <?php while ($row = $result->fetch_assoc()): ?>
+ <?php while ($rooms = $result->fetch_assoc()): ?>
 <tr>
     <td>
-        <img src="../../<?= $row['image_path']; ?>" class="room-img">
+        <img src="<?= $rooms['image_path']; ?>" class="room-img">
     </td>
 
     <td class="type">
-        <?= htmlspecialchars($row['room_type']); ?>
+        <?= htmlspecialchars($rooms['room_number']); ?>
     </td>
 
-    <td class="price">
-        KES <?= number_format($row['price']); ?>
-    </td>
 
     <td>
-        <span class="status <?= strtolower($row['status']); ?>">
-            <?= htmlspecialchars($row['status']); ?>
+        <span class="status <?= strtolower($rooms['status']); ?>">
+            <?= htmlspecialchars($rooms['status']); ?>
         </span>
     </td>
 
     <td class="actions">
-        <a href="edit_room.php?id=<?= $row['id']; ?>" class="edit">Edit</a> |
-        <a href="delete_room.php?id=<?= $row['id']; ?>" 
+
+        <a href="edit_room_form.php?id=<?= $rooms['id']; ?>">✏ Edit</a>
+        <a href="delete_room.php?id=<?= $rooms['id']; ?>" 
            class="delete"
            onclick="return confirm('Delete this room?')">
            Delete

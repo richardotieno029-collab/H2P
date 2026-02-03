@@ -7,6 +7,12 @@ if ($_SESSION['user_role'] !== 'landlord') {
     exit;
 
 }
+$sql = "SELECT COUNT(*) AS total FROM notifications 
+        WHERE user_id = ? AND is_read = 0";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $_SESSION['user_id']);
+$stmt->execute();
+$count = $stmt->get_result()->fetch_assoc()['total'];
 
 ?>
 <!DOCTYPE html>
@@ -33,6 +39,17 @@ document.addEventListener("click", function () {
 </script>
 </head>
 <body>
+    <header>
+<?php
+        $sql = "SELECT COUNT(*) AS total FROM notifications 
+        WHERE user_id = ? AND is_read = 0";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $_SESSION['user_id']);
+$stmt->execute();
+$count = $stmt->get_result()->fetch_assoc()['total'];
+?>
+</header>
+
 
 <?php include "../dashboard_header.php"; ?>
 <div class="dash-wrapper">
@@ -40,7 +57,12 @@ document.addEventListener("click", function () {
     <aside class="sidebar">
         <h3 class="logo">H2P Admin</h3>
 
-        <a href="../index/index.php" class="active">🏠 Home</a>
+       <a href="manage_booking.php" class="btn-notify">
+    📋 Manage Bookings
+    <?php if ($count > 0): ?>
+        <span class="notify-dot"></span>
+    <?php endif; ?>
+</a>
         <a href="add_house_form.php">➕ Add House</a>
         <a href="#">⚙ Settings</a>
     </aside>
@@ -56,7 +78,6 @@ $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $landlord_id);
 $stmt->execute();
 $result = $stmt->get_result();
-$house_id = (int)$_SESSION['house_id'];
 ?>
 <?php if ($result->num_rows > 0): ?>
     <div class="houses-container">
