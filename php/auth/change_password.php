@@ -2,6 +2,7 @@
 require_once '../session.php';
 require_once '../db_connect.php';
 
+
 $user_id = $_SESSION['user_id'];
 $user_role = $_SESSION['user_role'];
 
@@ -11,12 +12,23 @@ $id_col = ($user_role === 'landlord') ? 'landlord_id' : 'student_id';
 $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (!isset($_POST['token']) || 
+        !isset($_SESSION['token']) || 
+        !hash_equals($_SESSION['token'], $_POST['token'])) {
+
+        die("Invalid request.");
+    }
     $old = $_POST['old_password'];
     $new = $_POST['new_password'];
     $confirm = $_POST['confirm_password'];
 
     if ($new !== $confirm) {
         $message = "❌ New passwords do not match.";
+         $_SESSION['toast'] = [
+            'type' => 'info',
+            'message' => 'Password mismatch.'
+        ];
     } else {
         $stmt = $conn->prepare("SELECT password FROM $table WHERE $id_col = ?");
         $stmt->bind_param("s", $user_id);
@@ -25,13 +37,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!$result || !password_verify($old, $result['password'])) {
             $message = "❌ Old password is incorrect.";
+             $_SESSION['toast'] = [
+            'type' => 'error',
+            'message' => 'Incorrect password.'
+        ];
         } else {
             $hashed = password_hash($new, PASSWORD_DEFAULT);
             $update = $conn->prepare("UPDATE $table SET password = ? WHERE $id_col = ?");
             $update->bind_param("ss", $hashed, $user_id);
             $update->execute();
-
-            $message = "✅ Password changed successfully.";
+$_SESSION['token'] = bin2hex(random_bytes(32));
+             $_SESSION['toast'] = [
+            'type' => 'info',
+            'message' => 'Password updated.'
+        ];
             require_once '../auth/redirect.php';
             redirectToDashboard();
         }
@@ -47,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body class="auth-page">
+    <?php include "../toast.php"; ?>
     <div class="auth-container">
 
 <h2>⚠️ Change Password</h2>
@@ -57,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php endif; ?>
 
 <form method="POST">
+    <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
     <input type="password" name="old_password" placeholder="Old Password" required>
     <input type="password" name="new_password" placeholder="New Password" required>
     <input type="password" name="confirm_password" placeholder="Confirm New Password" required>

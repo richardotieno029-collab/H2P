@@ -1,53 +1,50 @@
 <?php
 session_start();
 require_once "../db_connect.php";
+include "../toast.php";
 
-/* 1. Ensure form was submitted */
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: login_form.php");
     exit;
 }
 
-/* 2. Get & sanitize inputs */
-$student_id = trim($_POST['student_id'] ?? '');
-$password = trim($_POST['password'] ?? '');
-
-/* 3. Basic validation */
-if (empty($student_id) || empty($password)) {
-    $_SESSION['error'] = "Student ID and password are required";
-    header("Location: login_form.php");
-    exit;
+if (!hash_equals($_SESSION['token'], $_POST['token'])) {
+    die("Invalid request.");
 }
+$student_id = trim($_POST['student_id']);
+$password   = $_POST['password'];
 
-/* 4. Fetch student by student_id */
-$sql = "SELECT student_id, full_name, password FROM students WHERE student_id = ?";
-$stmt = $conn->prepare($sql);
+$stmt = $conn->prepare(
+    "SELECT student_id, full_name, password, profile_image 
+     FROM students WHERE student_id = ?"
+);
 $stmt->bind_param("s", $student_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
-/* 5. Check user exists */
-if ($result->num_rows !== 1) {
-    $_SESSION['error'] = "Invalid student ID or password";
-    header("Location: login_form.php");
-    exit;
+if ($row = $result->fetch_assoc()) {
+    if (password_verify($password, $row['password'])) {
+
+        /* ✅ Login success */
+        $_SESSION['user_id'] = $row['student_id'];
+        $_SESSION['user_name'] = $row['full_name'];
+        $_SESSION['profile_image'] = $row['profile_image'];
+            $_SESSION['user_role'] = 'student';
+            
+        $_SESSION['toast'] = [
+            'type' => 'success',
+            'message' => 'Login successful.'
+        ];
+
+        header("Location: dashboard.php");
+        exit;
+    }
 }
 
-$row = $result->fetch_assoc();
-
-/* 6. Verify password */
-if (!password_verify($password, $row['password'])) {
-    $_SESSION['error'] = "Invalid student ID or password";
-    header("Location: login_form.php");
-    exit;
-}
-
-/* 7. Login successful → create session */
-$_SESSION['user_id'] = $row['student_id'];
-$_SESSION['user_name'] = $row['full_name'];
-$_SESSION['user_role'] = 'student';
-$_SESSION['success'] = "Login successful";
-
-/* 8. Redirect to dashboard */
-header("Location: dashboard.php");
+/* ❌ Failed login */
+$_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'Invalid Student ID or Password.'
+];
+header("Location: login_form.php");
 exit;

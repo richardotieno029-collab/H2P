@@ -1,9 +1,13 @@
 <?php
-session_start();
+require_once "../session.php";
 include "../db_connect.php";
 
-if ($_SESSION['user_role'] !== 'landlord') {
-    header("Location: ../index/index.php");
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'For that you need to be logged in.'
+];
+    header("Location: login_form.php");
     exit;
 
 }
@@ -24,8 +28,11 @@ $house_id = (int)$_GET['house_id'];
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-
+<?php include "../toast.php"; ?>
 <div class="form-wrapper">
+    <a href="rooms.php?house_id=<?php echo $house_id; ?>" class="back-btn" title="Go back">
+    ←
+</a>
     <div class="logo-container">
     <img src="../../images/logo.jpeg" alt="H2P Logo" class="logo-img">
     <h1 class="logo-text">H2P</h1>
@@ -36,6 +43,7 @@ $house_id = (int)$_GET['house_id'];
 <form action="add_room.php" method="POST" enctype="multipart/form-data">
 
     <!-- Link room to house -->
+     <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
     <input type="hidden" name="house_id" value="<?php echo $house_id; ?>">
 
     <label>Room Number</label><br>
@@ -50,9 +58,12 @@ $house_id = (int)$_GET['house_id'];
     <br><br>
 
 
-    <label>Room Image</label><br>
-    <input type="file" name="image" accept="image/*" required>
+    <label>Room Cover Image</label><br>
+    <input type="file" name="room_image" accept="image/*" required>
     <br><br>
+
+    <label>Upload other Images</label>
+        <input type="file" name="gallery_images[]" multiple required>
 
     <button type="submit">Add Room</button>
 

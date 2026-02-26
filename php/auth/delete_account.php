@@ -1,6 +1,7 @@
 <?php
 require_once '../session.php';
 require_once '../db_connect.php';
+include "../toast.php";
 
 $user_id = $_SESSION['user_id'];
 $role = $_SESSION['user_role'];
@@ -11,6 +12,13 @@ $id_col = ($role === 'landlord') ? 'landlord_id' : 'student_id';
 $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (!isset($_POST['token']) || 
+        !isset($_SESSION['token']) || 
+        !hash_equals($_SESSION['token'], $_POST['token'])) {
+
+        die("Invalid request.");
+    }
     $password = $_POST['password'];
 
     $stmt = $conn->prepare("SELECT password FROM $table WHERE $id_col = ?");
@@ -19,7 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user = $stmt->get_result()->fetch_assoc();
 
     if (!$user || !password_verify($password, $user['password'])) {
-        $message = "❌ Password incorrect.";
+         $_SESSION['toast'] = [
+            'type' => 'error',
+            'message' => 'Password is incorrect.'
+        ];
     } else {
         $del = $conn->prepare("DELETE FROM $table WHERE $id_col = ?");
         $del->bind_param("s", $user_id);
@@ -27,7 +38,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         session_unset();
         session_destroy();
-
+$_SESSION['token'] = bin2hex(random_bytes(32));
+ $_SESSION['toast'] = [
+            'type' => 'info',
+            'message' => 'Account deleted successfully.'
+        ];
         header("Location: ../index/index.php");
         exit;
     }
@@ -40,7 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Delete Account</title>
     <link rel="stylesheet" href="../auth_styles.css">
 </head>
-<body class="auth-page">    
+<body class="auth-page">  
+    <?php include "../toast.php"; ?>
     <div class="auth-container danger">
 
 <h2>☠️ Delete Account</h2>
@@ -55,6 +71,7 @@ All your data will be lost.
 <?php endif; ?>
 
 <form method="POST">
+    <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
     <input type="password" name="password" placeholder="Confirm your password" required>
     <button class="danger-btn" type="submit">Delete My Account</button>
 </form>

@@ -1,110 +1,137 @@
+<?php
+require_once "../db_connect.php";
+
+$query = "SELECT houses.*, landlords.full_name AS landlord_name 
+          FROM houses 
+          JOIN landlords ON houses.landlord_id = landlords.landlord_id
+          ORDER BY houses.house_id DESC";
+
+$result = $conn->query($query);
+?>
+
+<?php
+session_start();
+include "../db_connect.php";
+
+/* Read filters */
+$area = $_GET['area'] ?? '';
+$room_type = $_GET['room_type'] ?? '';
+$price = $_GET['price'] ?? '';
+
+/* Base query */
+$sql = "SELECT * FROM houses WHERE 1=1";
+$params = [];
+$types = "";
+
+/* Area filter */
+if (!empty($area)) {
+    $sql .= " AND area = ?";
+    $params[] = $area;
+    $types .= "s";
+}
+
+/* Room type filter */
+if (!empty($room_type)) {
+    $sql .= " AND room_type = ?";
+    $params[] = $room_type;
+    $types .= "s";
+}
+
+/* Price filter */
+if (!empty($price)) {
+    list($min, $max) = explode('-', $price);
+    $sql .= " AND price BETWEEN ? AND ?";
+    $params[] = (int)$min;
+    $params[] = (int)$max;
+    $types .= "ii";
+}
+
+/* Prepare & execute */
+$stmt = $conn->prepare($sql);
+
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
+
+$stmt->execute();
+$result = $stmt->get_result();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kangaru Houses</title>
-    <link rel="stylesheet" href="../assets/styles.css">
+    <title>Campus Housing Finder</title>
+    <link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="gakwegori-theme">
+<body>
+    <a href="javascript:history.back()" class="back-btn" title="Go back">
+    ←
+</a>
+<?php include "../dashboard_header.php"; ?>
 
-    <!-- HEADER (SAME AS HOMEPAGE) -->
-    <header>
-        <h1>Gakwegori Houses</h1>
-            <nav>
-<ul>
-<li><a href="../index.html">🏠 Home</a></li>
-  <li><div class="dropdown">
-    <input type="checkbox" id="areas-toggle">
-    <label for="areas-toggle" class="dropbtn">📍 Areas ▾</label>
-
-    <div class="dropdown-content">
-        <a href="bagik.html">Bagik</a>
-        <a href="njukiri.html">Njukiri</a>
-        <a href="kangaru.html">Kangaru</a>
-        <a href="kamiu.html">Kamiu</a>
-        <a href="springvalley.html">Spring Valley</a>
-        <a href="kayole.html">Kayole</a>
-        <a href="leaders.html">Leaders</a>
-    </div></li>
-    <li><a href="../about.html">👤 About</a></li>
-    <li><a href="../contact.html">☎ Contact</a></li>
-    <li><a href="../favorites.html">❤ Favourites</a></li>
-    </ul>
-        </nav>
-    </header>
-
-    <!-- PAGE INTRO -->
-    <section class="hero small-hero">
-        <h2>Gakwegori Area</h2>
-        <p>Available rooms near G-town shopping centre.</p>
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <h2>Find the best rooms around your university</h2>
+        <p>Select any filters below to see your houses of choice.</p>
     </section>
 
-    <section class="rooms-page">
+    <!-- SEARCH + FILTERS -->
+    <section class="search-area">
+       
+        <form method="GET" class="filter-form">
+        <select name="price">
+            <option value="">All Prices</option>
+            <option value="0-3000">0 - 3000</option>
+            <option value="3000-5000">3000 - 5000</option>
+            <option value="5000-8000">5000 - 8000</option>
+        </select>
 
-        <!-- ⭐ SINGLE ROOMS -->
-        <h2 class="category-title">Single Rooms</h2>
-        <div class="rooms">
-            <div class="room-card">
-                <img src="images/gakwegori/single/mugo.jpg" alt="Single Room">
-                <div class="room-info">
-                    <button class="favorite-btn" onclick="toggleFavorite(101)">❤</button>
-                    <h3>Cozy Single Room</h3>
-                    <p><strong>Price:</strong> KES 3000</p>
-                    <p><strong>Landlord:</strong> 0712345678</p>
-                    <p>Clean single room near Kangaru stage.</p>
-                </div>
-            </div>
-        </div>
+        <select name="room_type">
+            <option value="">All Types</option>
+            <option value="single">Single</option>
+            <option value="bedsitter">Bedsitter</option>
+            <option value="onebed">1 Bedroom</option>
+<option value="twobed">2 Bedroom</option>
+        </select>
 
-        <!-- ⭐ BEDSITTERS -->
-        <h2 class="category-title">Bedsitters</h2>
-        <div class="rooms">
-            <div class="room-card">
-                <img src="../images/kangaru_bedsitter1.jpg" alt="Bedsitter">
-                <div class="room-info">
-                    <button class="favorite-btn" onclick="toggleFavorite(102)">❤</button>
-                    <h3>Spacious Bedsitter</h3>
-                    <p><strong>Price:</strong> KES 4500</p>
-                    <p><strong>Landlord:</strong> 0798765432</p>
-                    <p>Large bedsitter with tiled floor, near shops.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- ⭐ ONE BEDROOM -->
-        <h2 class="category-title">One Bedroom</h2>
-        <div class="rooms">
-            <div class="room-card">
-                <img src="../images/kangaru_onebed1.jpg" alt="One Bedroom">
-                <div class="room-info">
-                    <button class="favorite-btn" onclick="toggleFavorite(103)">❤</button>
-                    <h3>Modern One-Bedroom</h3>
-                    <p><strong>Price:</strong> KES 6500</p>
-                    <p><strong>Landlord:</strong> 0755112233</p>
-                    <p>Spacious one-bedroom close to main road.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- ⭐ TWO BEDROOM -->
-        <h2 class="category-title">Two Bedroom</h2>
-        <div class="rooms">
-            <div class="room-card">
-                <img src="../images/kangaru_twobed1.jpg" alt="Two Bedroom">
-                <div class="room-info">
-                    <button class="favorite-btn" onclick="toggleFavorite(104)">❤</button>
-                    <h3>Executive Two Bedroom</h3>
-                    <p><strong>Price:</strong> KES 9000</p>
-                    <p><strong>Landlord:</strong> 0788001122</p>
-                    <p>Perfect for comrades combining rent 😂.</p>
-                </div>
-            </div>
-        </div>
-
+        <select name="area">
+            <option value="">All Areas</option>
+            <option value="Kangaru">Kangaru</option>
+            <option value="Gakwegori">Gakwegori</option>
+            <option value="Spring Valley">Spring Valley</option>
+            <option value="Kayole">Kayole</option>
+            <option value="Kamiu">Kamiu</option>
+            <option value="Bagik">Bagik</option>
+            <option value="Njukiri">Njukiri</option>
+            <option value="Leaders">Leaders</option>
+        </select></br></br>
+        <p><button type="submit" class="btn">Apply Filters</button></p>
+    </form>
     </section>
+<h2>Available Houses</h2>
 
-    <script src="../script.js"></script>
+<div class="houses-container">
+<?php while ($house = $result->fetch_assoc()): ?>
+    <div class="house-card">
+        <img src="<?php echo $house['image_path']; ?>" alt="House">
+        
+        <h3><?php echo htmlspecialchars($house['house_name']); ?></h3>
+        <p><strong>Landlord:</strong> <?php echo $house['landlord_name']; ?></p>
+        <p><strong>Area:</strong> <?php echo $house['area']; ?></p>
+        <p><strong>Type:</strong> <?php echo $house['room_type']; ?></p>
+        <p><strong>Price:</strong> KES <?php echo $house['price']; ?></p>
+
+        
+
+        <a href="view_room.php?house_id=<?php echo $house['house_id']; ?>" class="btn">
+            View Rooms
+        </a>
+    </div>
+<?php endwhile; ?>
+</div>
+    
 </body>
 </html>

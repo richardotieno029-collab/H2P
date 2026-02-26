@@ -1,984 +1,137 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
-body {
-    background: #f7f7f7;
-}
-
-/* HEADER */
-header {
-    background: #222;
-    color: white;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-nav ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  background-color: #900;
-  margin: 0;
-}
-
-nav ul li {
-  margin: 5px 10px;
-}
-
-nav ul li a {
-  color: white;
-  text-decoration: none;
-  padding: 8px 15px;
-  border-radius: 5px;
-}
-
-nav ul li a:hover, .active {
-  background-color: #ff3333;
-}
-
-/* HERO SECTION */
-.hero {
-    text-align: center;
-    padding: 60px 20px;
-    background: url('hero.jpg') center/cover no-repeat;
-    color: white;
-    background-color: #333;
-}
-
-/* SEARCH SECTION */
-.search-area {
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    gap: 10px;
-}
-
-.search-area input,
-.search-area select {
-    padding: 10px;
-    width: 200px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-/* ROOMS */
-.rooms {
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-}
-
-.room-card {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.room-card img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-}
-
-.room-info {
-    padding: 15px;
-}
-
-.room-info h3 {
-    font-size: 18px;
-    margin-bottom: 5px;
-}
-
-.room-info p {
-    color: #555;
-    margin-bottom: 8px;
-}
-
-.favorite-btn {
-    background: none;
-    border: none;
-    font-size: 22px;
-    cursor: pointer;
-    float: right;
-    color: #999;
-}
-
-.favorite-btn.active {
-    color: red;
-}
-.small-hero {
-    padding: 40px;
-    background: #cc0000; /* red theme */
-    color: white;
-    text-align: center;
-}
-
-.category-title {
-    margin: 30px 0 10px 20px;
-    font-size: 24px;
-    color: #333;
-}
-
-.rooms-page {
-    padding-bottom: 40px;
-}
-.areas-section {
-    padding: 40px 20px;
-    text-align: center;
-}
-
-.areas-section h2 {
-    margin-bottom: 20px;
-}
-
-.areas-list {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.area-card {
-    padding: 15px 25px;
-    background: #e7e4ff;
-    border-radius: 12px;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    transition: 0.2s;
-}
-
-.area-card:hover {
-    background: #c6c1ff;
-    transform: scale(1.05);
-}
-/* ------------------------------
-   RESET + GLOBAL STYLES
------------------------------- */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
-}
-
-body {
-    background: #f8f8fc;
-    color: #333;
-}
-
-/* ------------------------------
-      HEADER + NAVIGATION
------------------------------- */
-header {
-    background: #4a4a8c;
-    color: white;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-header h1 {
-    font-size: 24px;
-}
-
-nav a {
-    color: white;
-    text-decoration: none;
-    margin-left: 15px;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-nav a:hover {
-    color: #ffe9d6;
-    text-decoration: underline;
-}
-
-/* ------------------------------
-          HERO SECTIONS
------------------------------- */
-.hero, 
-.hero-area {
-    text-align: center;
-    padding: 50px 20px;
-    border-radius: 12px;
-    margin: 20px auto;
-    width: 95%;
-}
-
-/* ------------------------------
-         SEARCH SECTION
------------------------------- */
-.search-area {
-    display: flex;
-    gap: 10px;
-    padding: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.search-area input,
-.search-area select {
-    padding: 10px;
-    width: 200px;
-    border-radius: 8px;
-    border: 1px solid #aaa;
-}
-
-/* ------------------------------
-         ROOMS + CARDS
------------------------------- */
-.rooms, .room-list {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 20px;
-    gap: 20px;
-    justify-content: center;
-}
-
-.room-card {
-    width: 270px;
-    background: white;
-    padding: 15px;
-    border-radius: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    transition: 0.2s;
-}
-
-.room-card:hover {
-    transform: scale(1.03);
-}
-
-.room-card img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 12px;
-    margin-bottom: 10px;
-}
-
-.room-card h4 {
-    margin-bottom: 5px;
-    font-size: 20px;
-}
-
-.category h3 {
-    font-size: 26px;
-    margin: 10px 0 5px 25px;
-}
-
-
-/* ------------------------------
-        RESPONSIVE DESIGN
------------------------------- */
-
-@media (max-width: 768px) {
-    nav {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    header h1 {
-        font-size: 20px;
-    }
-
-    .room-card {
-        width: 90%;
-    }
-
-    .hero, .hero-area {
-        width: 100%;
-        margin: 10px 0;
-    }
-    .houses-container {
-        justify-content: center;
-    }
-
-    .house-card {
-        width: 95%;
-    }
-
-    .house-card img {
-        height: 200px;
-    }
-}
-
-/* ---- Landlord Dashboard Styles ---- */
-
-.ll-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: #f0f2f5;
-}
-
-/* Dashboard layout */
-.dash-wrapper {
-    display: flex;
-    height: 100vh;
-}
-
-.sidebar {
-    width: 250px;
-    background: #1e3a8a;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    color: white;
-}
-
-.sidebar a {
-    text-decoration: none;
-    color: white;
-    padding: 12px;
-    margin: 5px 0;
-    border-radius: 6px;
-}
-
-.sidebar a:hover,
-.sidebar a.active {
-    background: #3b82f6;
-}
-
-.sidebar .logout {
-    margin-top: auto;
-    background: #ef4444;
-}
-
-.dash-content {
-    flex: 1;
-    padding: 30px;
-    background: #f8fafc;
-}
-
-.house-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-}
-
-.house-card {
-    background: white;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-
-.house-card img {
-    width: 100%;
-    border-radius: 8px;
-}
-
-.edit-btn {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 8px 12px;
-    background: #2563eb;
-    color: white;
-    border-radius: 5px;
-    text-decoration: none;
-}
-
-/* Add house form */
-.form-wrapper {
-    width: 450px;
-    margin: 50px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.form-wrapper input,
-.form-wrapper select {
-    width: 100%;
-    margin-bottom: 15px;
-    padding: 10px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-}
-
-.form-wrapper button {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    background: #1e40af;
-    color: white;
-    border-radius: 6px;
-    cursor: pointer;
-}
-/* About Page Styling */
-.about-header {
-  text-align: center;
-  padding: 3rem 1rem;
-  background: #f5f5f5;
-}
-
-.about-header h1 {
-  font-size: 2.5rem;
-  margin-bottom: 10px;
-}
-
-.about-header p {
-  font-size: 1.1rem;
-  color: #555;
-}
-
-.about-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-  padding: 2rem;
-  max-width: 1100px;
-  margin: auto;
-}
-
-.about-box {
-  background: #ffffff;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-}
-
-.about-box h2 {
-  margin-bottom: 10px;
-  color: #333;
-}
-
-.about-box ul {
-  margin-left: 15px;
-  color: #555;
-}
-
-.about-box p {
-  color: #555;
-  line-height: 1.6;
-}
-/* ---------- General Style ---------- */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f0f2f5;
-  color: #333;
-}
-
-/* ---------- Header ---------- */
-header {
-  background: #222;
-  padding: 20px;
-  text-align: center;
-  color: white;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 2rem;
-}
-
-nav ul {
-  list-style: none;
-  padding: 0;
-  margin-top: 10px;
-}
-
-nav ul li {
-  display: inline-block;
-  margin: 0 15px;
-}
-
-nav a {
-  color: #ccc;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-nav a:hover,
-nav a.active {
-  color: white;
-}
-
-/* ---------- Main Container ---------- */
-.container {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 10px;
-}
-
-/* ---------- Card Style (Matches Your Previous Pages) ---------- */
-.card {
-  background: white;
-  padding: 25px;
-  margin-bottom: 25px;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.card h2 {
-  margin-top: 0;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 8px;
-}
-
-/* ---------- Social List ---------- */
-.social-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.social-list li {
-  margin: 10px 0;
-}
-
-.social-list a {
-  color: #222;
-  text-decoration: none;
-}
-
-.social-list a:hover {
-  text-decoration: underline;
-}
-
-/* ---------- Footer ---------- */
-footer {
-  background: #222;
-  color: white;
-  text-align: center;
-  padding: 15px;
-  margin-top: 40px;
-}
-
-.house-card {
-    display: inline-block;
-    width: 280px;
-    background: #fff;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.house-card img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-
-.house-card h3 {
-    margin: 10px 0 5px;
-}
-
-.actions {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 10px;
-}
-
-.actions a {
-    text-decoration: none;
-    color: #b00000;
-    font-weight: bold;
-}
-/* ==========================
-   ROOMS PAGE STYLING
-========================== */
-
-body {
-    font-family: Arial, sans-serif;
-    background: #f5f7fa;
-    color: #333;
-}
-
-/* Page Title */
-h2 {
-    margin: 20px 0;
-    font-size: 22px;
-}
-
-/* Table Container */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #ffffff;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-    border-radius: 6px;
-    overflow: hidden;
-}
-
-/* Table Header */
-th {
-    background: #f0f2f5;
-    padding: 12px;
-    font-weight: bold;
-    text-align: left;
-    font-size: 14px;
-}
-
-/* Table Cells */
-td {
-    padding: 12px;
-    border-bottom: 1px solid #e0e0e0;
-    vertical-align: middle;
-    font-size: 14px;
-}
-
-/* Hover Effect */
-tr:hover {
-    background: #fafafa;
-}
-
-/* Room Image */
-.room-img {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-}
-
-/* Price */
-.price {
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-/* Status Badge */
-.status {
-    padding: 6px 12px;
-    border-radius: 14px;
-    font-size: 13px;
-    font-weight: bold;
-    display: inline-block;
-    text-transform: capitalize;
-}
-
-/* Vacant */
-.status.vacant {
-    background: #d4edda;
-    color: #155724;
-}
-
-/* Occupied */
-.status.occupied {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-/* Actions Column */
-.actions {
-    white-space: nowrap;
-}
-
-/* Action Buttons */
-.actions a {
-    padding: 6px 12px;
-    border-radius: 4px;
-    font-size: 13px;
-    text-decoration: none;
-    margin-right: 6px;
-    display: inline-block;
-    transition: 0.2s ease;
-}
-
-/* Edit Button */
-.actions .edit {
-    background: #007bff;
-    color: #ffffff;
-}
-
-.actions .edit:hover {
-    background: #0056b3;
-}
-
-/* Delete Button */
-.actions .delete {
-    background: #dc3545;
-    color: #ffffff;
-}
-
-.actions .delete:hover {
-    background: #a71d2a;
-}
-
-/* Empty State */
-.no-rooms {
-    padding: 20px;
-    text-align: center;
-    font-size: 15px;
-    color: #777;
-}
-/* =========================
-   STUDENT DASHBOARD
-========================= */
-
-.dashboard-container {
-    max-width: 1200px;
-    margin: 40px auto;
-    padding: 20px;
-}
-
-.dashboard-title {
-    font-size: 1.8rem;
-    margin-bottom: 25px;
-    color: #222;
-}
-
-/* ACTION CARDS */
-.dashboard-actions {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-    margin-bottom: 40px;
-}
-
-.dash-card {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 25px 20px;
-    text-decoration: none;
-    color: #222;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-    transition: all 0.3s ease;
-}
-
-.dash-card h3 {
-    margin-bottom: 10px;
-    font-size: 1.2rem;
-}
-
-.dash-card p {
-    font-size: 0.95rem;
-    color: #666;
-}
-
-.dash-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-    background: #f9f9f9;
-}
-
-/* RECENT SECTION */
-.recent-section h3 {
-    margin-bottom: 15px;
-    font-size: 1.3rem;
-}
-
-/* HOUSE GRID */
-.house-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 20px;
-}
-
-.house-card {
-    background: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.08);
-    transition: transform 0.3s ease;
-}
-
-.house-card:hover {
-    transform: translateY(-4px);
-}
-
-.house-card img {
-    width: 100%;
-    height: 170px;
-    object-fit: cover;
-}
-
-.house-card h4 {
-    padding: 15px;
-    font-size: 1.1rem;
-}
-
-/* BUTTON */
-.btn {
-    display: block;
-    margin: 0 15px 15px;
-    padding: 10px;
-    text-align: center;
-    background: #007bff;
-    color: #fff;
-    border-radius: 8px;
-    text-decoration: none;
-    font-size: 0.95rem;
-    transition: background 0.3s ease;
-}
-
-.btn:hover {
-    background: #0056b3;
-}
-
-/* MOBILE ADJUSTMENTS */
-@media (max-width: 600px) {
-    .dashboard-title {
-        font-size: 1.5rem;
-    }
-
-    .dash-card {
-        padding: 20px;
-    }
-}
-/* ===== DASHBOARD HEADER ===== */
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #111;
-    padding: 12px 20px;
-    color: #fff;
-}
-
-.dashboard-header a {
-    color: #fff;
-    text-decoration: none;
-    margin-right: 15px;
-    font-weight: 500;
-}
-
-.dashboard-header a:hover {
-    color: #f39c12;
-}
-
-.logo {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-/* Navigation */
-.header-nav a {
-    margin-right: 20px;
-}
-
-
-.back-btn {
-    display: inline-flex;
-    align-items: left;
-    gap: 6px;
-    font-size: 20px;
-    color: #333;
-    text-decoration: none;
-    margin-bottom: 15px;
-    cursor: pointer;
-}
-
-.back-btn:hover {
-    color: #007bff;
-    text-decoration: none;
-}
-.fav-btn {
-    background: none;
-    border: none;
-    font-size: 22px;
-    cursor: pointer;
-    color: #aaa; /* grey */
-    transition: transform 0.2s, color 0.2s;
-}
-
-.fav-btn:hover {
-    transform: scale(1.2);
-}
-
-.fav-active {
-    color: #e63946; /* red */
-}
-
-/* ===== DASHBOARD HEADER ===== */
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 20px;
-    background: #1f2933;
-    color: #fff;
-}
-
-.dashboard-header .logo a {
-    color: #fff;
-    font-size: 20px;
-    font-weight: bold;
-    text-decoration: none;
-}
-
-/* ===== ACCOUNT DROPDOWN ===== */
-.account-wrapper {
-    position: relative;
-}
-
-.account-btn {
-    background: transparent;
-    border: none;
-    color: #fff;
-    font-size: 15px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.account-btn:focus {
-    outline: none;
-}
-
-/* dropdown */
-.account-dropdown {
-    position: absolute;
-    right: 0;
-    top: 130%;
-    background: #fff;
-    color: #333;
-    min-width: 190px;
-    border-radius: 6px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    display: none;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: all 0.2s ease;
-    z-index: 1000;
-}
-
-.account-dropdown.show {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.account-dropdown a {
-    display: block;
-    padding: 12px 15px;
-    text-decoration: none;
-    color: #333;
-    font-size: 14px;
-}
-
-.account-dropdown a:hover {
-    background: #f3f4f6;
-}
-
-.account-dropdown hr {
-    margin: 5px 0;
-    border: none;
-    border-top: 1px solid #eee;
-}
-
-.account-dropdown .danger {
-    color: #c0392b;
-}
+<?php
+require_once "../db_connect.php";
+
+$query = "SELECT houses.*, landlords.full_name AS landlord_name 
+          FROM houses 
+          JOIN landlords ON houses.landlord_id = landlords.landlord_id
+          ORDER BY houses.house_id DESC";
+
+$result = $conn->query($query);
+?>
+
+<?php
+session_start();
+include "../db_connect.php";
+
+/* Read filters */
+$area = $_GET['area'] ?? '';
+$room_type = $_GET['room_type'] ?? '';
+$price = $_GET['price'] ?? '';
+
+/* Base query */
+$sql = "SELECT * FROM houses WHERE 1=1";
+$params = [];
+$types = "";
+
+/* Area filter */
+if (!empty($area)) {
+    $sql .= " AND area = ?";
+    $params[] = $area;
+    $types .= "s";
+}
+
+/* Room type filter */
+if (!empty($room_type)) {
+    $sql .= " AND room_type = ?";
+    $params[] = $room_type;
+    $types .= "s";
+}
+
+/* Price filter */
+if (!empty($price)) {
+    list($min, $max) = explode('-', $price);
+    $sql .= " AND price BETWEEN ? AND ?";
+    $params[] = (int)$min;
+    $params[] = (int)$max;
+    $types .= "ii";
+}
+
+/* Prepare & execute */
+$stmt = $conn->prepare($sql);
+
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
+
+$stmt->execute();
+$result = $stmt->get_result();
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Housing Finder</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body>
+    <a href="javascript:history.back()" class="back-btn" title="Go back">
+    ←
+</a>
+<?php include "../dashboard_header.php"; ?>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <h2>Find the best rooms around your university</h2>
+        <p>Select any filters below to see your houses of choice.</p>
+    </section>
+
+    <!-- SEARCH + FILTERS -->
+    <section class="search-area">
+       
+        <form method="GET" class="filter-form">
+        <select name="price">
+            <option value="">All Prices</option>
+            <option value="0-3000">0 - 3000</option>
+            <option value="3000-5000">3000 - 5000</option>
+            <option value="5000-8000">5000 - 8000</option>
+        </select>
+
+        <select name="room_type">
+            <option value="">All Types</option>
+            <option value="single">Single</option>
+            <option value="bedsitter">Bedsitter</option>
+            <option value="onebed">1 Bedroom</option>
+<option value="twobed">2 Bedroom</option>
+        </select>
+
+        <select name="area">
+            <option value="">All Areas</option>
+            <option value="Kangaru">Kangaru</option>
+            <option value="Gakwegori">Gakwegori</option>
+            <option value="Spring Valley">Spring Valley</option>
+            <option value="Kayole">Kayole</option>
+            <option value="Kamiu">Kamiu</option>
+            <option value="Bagik">Bagik</option>
+            <option value="Njukiri">Njukiri</option>
+            <option value="Leaders">Leaders</option>
+        </select></br></br>
+        <p><button type="submit" class="btn">Apply Filters</button></p>
+    </form>
+    </section>
+<h2>Available Houses</h2>
+
+<div class="houses-container">
+<?php while ($house = $result->fetch_assoc()): ?>
+    <div class="house-card">
+        <img src="<?php echo $house['image_path']; ?>" alt="House">
+        
+        <h3><?php echo htmlspecialchars($house['house_name']); ?></h3>
+        <p><strong>Landlord:</strong> <?php echo $house['landlord_name']; ?></p>
+        <p><strong>Area:</strong> <?php echo $house['area']; ?></p>
+        <p><strong>Type:</strong> <?php echo $house['room_type']; ?></p>
+        <p><strong>Price:</strong> KES <?php echo $house['price']; ?></p>
+
+        
+
+        <a href="view_room.php?house_id=<?php echo $house['house_id']; ?>" class="btn">
+            View Rooms
+        </a>
+    </div>
+<?php endwhile; ?>
+</div>
+    
+</body>
+</html>

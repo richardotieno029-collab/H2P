@@ -1,31 +1,43 @@
 <?php
-session_start();
+require_once "../session.php";
 require_once "../db_connect.php";
+
+// Mark notifications as read
+$clear = "UPDATE notifications SET is_read = 1 
+          WHERE user_id = ?";
+$stmt = $conn->prepare($clear);
+$stmt->bind_param("i", $_SESSION['user_id']);
+$stmt->execute();
 
 /* --------------------------
    FILTER LOGIC
 ---------------------------*/
 $sql = "
 SELECT 
-    h.house_id,
-    h.house_name,
-    h.area,
-    h.room_type,
-    h.price,
-    h.description,
-    h.image_path,
+   h.*,
     l.full_name AS landlord_name,
     COUNT(r.id) AS total_rooms,
-    SUM(r.status = 'vacant') AS available_rooms
+    SUM(r.status = 'vacant') AS available_rooms,
+    CASE 
+        WHEN EXISTS (
+            SELECT 1
+            FROM bookings b
+            JOIN rooms r2 ON b.room_id = r2.id
+            WHERE r2.house_id = h.house_id
+              AND b.student_id = ?
+              AND b.status = 'pending'
+        ) THEN 1 ELSE 0
+    END AS has_pending
 FROM houses h
 JOIN landlords l ON h.landlord_id = l.landlord_id
 LEFT JOIN rooms r ON h.house_id = r.house_id
-GROUP BY h.house_id
+WHERE 1=1
 ";
+$types = "";
 
+$params[] = $_SESSION['user_id'];
+$types .= "i";
 
-$params = [];
-$types  = "";
 
 // Area filter
 if (!empty($_GET['area'])) {
@@ -55,17 +67,21 @@ if (!empty($_GET['max_price'])) {
 }
 
 // Only available houses
+$sql .= " GROUP BY h.house_id";
+
 if (!empty($_GET['vacant'])) {
     $sql .= " HAVING available_rooms > 0";
 }
 
-$sql .= " ORDER BY h.created_at DESC";
+$sql .= " ORDER BY has_pending DESC, h.created_at DESC";
+
 
 $stmt = $conn->prepare($sql);
 
 if (!empty($params)) {
     $stmt->bind_param($types, ...$params);
 }
+
 
 $stmt->execute();
 $result = $stmt->get_result();
@@ -74,14 +90,15 @@ $result = $stmt->get_result();
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta charset="UTF-8">
     <title>Browse Houses</title>
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-
-<?php include "../dashboard_header.php"; ?>
-<a href="javascript:history.back()" class="back-btn" title="Go back">
+<?php include "../toast.php"; ?>
+<a href="dashboard.php" class="back-btn" title="Go back">
     ←
 </a>
 <h2>Browse Houses</h2>
@@ -110,8 +127,9 @@ $result = $stmt->get_result();
     </label>
 
     <button type="submit" class="btn">Apply Filters</button>
-</form>
 
+<a href="browse_houses.php" class="clear-filters">Clear Filters</a>
+</form>
 <!-- --------------------------
      HOUSES LIST
 --------------------------- -->
@@ -119,7 +137,7 @@ $result = $stmt->get_result();
 
 <?php if ($result->num_rows > 0): ?>
     <?php while ($house = $result->fetch_assoc()): ?>
-        <div class="house-card">
+        <div class="house-card <?= $house['has_pending'] ? 'pending-house' : '' ?>">
 
         <?php
 $urgency = '';
@@ -140,7 +158,31 @@ if ($house['available_rooms'] > 0 && $house['available_rooms'] <= 2) {
     </span>
 <?php endif; ?>
 
-            <img src="<?php echo $house['image_path']; ?>" alt="House Image">
+            <a href="house_details.php?id=<?= $house['house_id']; ?>">
+    <div class="card">
+    <div class="image-wrapper">
+        <img src="<?= $house['image_path']; ?>" alt="House Image">
+
+        <div class="icon-overlay">
+            <?php if($house['electricity_available'] == 1): ?>
+                <i class="fas fa-bolt"></i>
+            <?php endif; ?>
+
+            <?php if($house['water_available'] == 1): ?>
+                <i class="fas fa-tint"></i>
+            <?php endif; ?>
+
+            <?php if($house['wifi_available'] == 1): ?>
+                <i class="fas fa-wifi"></i>
+            <?php endif; ?>
+
+            <?php if($house['hot_shower'] == 1): ?>
+                <i class="fas fa-shower"></i>
+            <?php endif; ?>
+        </div>
+    </div>
+    </div>
+</a>
 
             <h3><?php echo htmlspecialchars($house['house_name']); ?></h3>
 

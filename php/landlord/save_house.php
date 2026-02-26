@@ -1,9 +1,13 @@
 <?php
 require_once 'auth_landlord.php';
 require_once '../db.php';
+include "../toast.php";
 
 $landlord_id = $_SESSION['user_id'];
 
+if (!hash_equals($_SESSION['tocken'], $_POST['token'])) {
+    die("Invalid request.");
+}
 $room_name = $_POST['room_name'];
 $area_id = $_POST['area_id'];
 $room_type = $_POST['room_type'];
@@ -35,6 +39,9 @@ $stmt->bind_param(
 );
 
 $stmt->execute();
-
+$_SESSION['toast'] = [
+    'type' => 'info',
+    'message' => 'House added successfully.'
+];
 header("Location: dashboard.php");
 exit();

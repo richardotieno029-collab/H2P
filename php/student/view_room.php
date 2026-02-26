@@ -38,6 +38,27 @@ $roomStmt = $conn->prepare(
      WHERE house_id = ?
      ORDER BY room_number ASC"
 );
+//Contact landlord limit
+$conn->query("
+    UPDATE bookings
+    SET status = 'expired'
+    WHERE status = 'approved'
+      AND approved_expires_at < NOW()
+");
+/* expiration of booking */
+$conn->query("
+    UPDATE bookings b
+JOIN rooms r ON b.room_id = r.id
+JOIN (
+    SELECT MIN(id) AS id
+    FROM bookings
+    WHERE status = 'pending' AND expires_at < NOW()
+    GROUP BY room_id
+) x ON b.id = x.id
+SET 
+    b.status = 'expired',
+    r.status = 'vacant';
+");
 $roomStmt->bind_param("i", $house_id);
 $roomStmt->execute();
 $rooms = $roomStmt->get_result();
@@ -51,8 +72,8 @@ $rooms = $roomStmt->get_result();
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-    <?php include "../dashboard_header.php"; ?>
-    <a href="javascript:history.back()" class="back-btn" title="Go back">
+    <?php include "../toast.php"; ?>
+    <a href="browse_houses.php" class="back-btn" title="Go back">
     ←
 </a>
 
@@ -64,48 +85,95 @@ $rooms = $roomStmt->get_result();
     <div class="houses-container">
 
         <?php while ($room = $rooms->fetch_assoc()): 
-            $bookingStmt = $conn->prepare("
-    SELECT status 
-    FROM bookings 
-    WHERE room_id = ? AND student_id = ?
+
+$bookingStmt = $conn->prepare("
+    SELECT 
+        status,id,
+        TIMESTAMPDIFF(SECOND, NOW(), expires_at) AS seconds_left
+    FROM bookings
+    WHERE room_id = ? AND student_id = ? AND STATUS IN ('pending', 'approved')
+    ORDER BY created_at DESC
     LIMIT 1
 ");
-$bookingStmt->bind_param("ii", $room['id'], $student_id);
+$bookingStmt->bind_param("is", $room['id'], $student_id);
 $bookingStmt->execute();
-$bookingResult = $bookingStmt->get_result();
-$myBooking = $bookingResult->fetch_assoc();?>
+$myBooking = $bookingStmt->get_result()->fetch_assoc();?>
             <div class="house-card">
+                 <!-- 🔖 TOP LEFT BADGE -->
+    <?php if ($myBooking && $myBooking['status'] === 'pending'): ?>
+        <span class="Bbadge badge-pending countdown"
+              data-seconds="<?= max(0, (int)$myBooking['seconds_left']) ?>">
+            ⏳ Awaiting approval
+        </span>
+
+    <?php elseif ($myBooking && $myBooking['status'] === 'approved'): ?>
+        <span class="Bbadge badge-approved">
+            ✅ Approved
+        </span>
+
+    <?php elseif ($room['status'] === 'occupied'): ?>
+        <span class="Bbadge badge-occupied">
+            ❌ Occupied
+        </span>
+
+    <?php elseif ($room['status'] === 'pending'): ?>
+        <span class="Bbadge badge-selected">
+            🟡 Selected
+        </span>
+
+    <?php else: ?>
+        <span class="Bbadge badge-available">
+            🟢 Available
+        </span>
+    <?php endif; ?>
+
+    <a href="room_details.php?id=<?= $room['id']; ?>">
+    <div class="card">
+    <div class="image-wrapper">
                 <img 
             src="<?php echo htmlspecialchars($room['image_path']); ?>" 
             alt="Room Image"
         >
-
-                <h3>Room <?= htmlspecialchars($room['room_number']) ?></h3>
-<?php if ($myBooking && $myBooking['status'] === 'approved'): ?>
-    <span class="Bbadge badge-available">✔ Reservation Successful</span>
-    <a href="contact_landlord.php?room_id=<?= $room['id'] ?>" class="btn btn-success">
-        Contact Landlord
+    </div>
+    </div>
     </a>
 
-    <?php elseif ($myBooking && $myBooking['status'] === 'pending'): ?>
-    <span class="Bbadge badge-pending">⏳ Awaiting Approval</span>
-    
+                <h3>Room <?= htmlspecialchars($room['room_number']) ?></h3>
+<div class="house-card">
 
-    <?php elseif ($room['status'] === 'occupied'): ?>
-    <span class="Bbadge badge-occupied">❌ Occupied</span>
-    
+    <!-- 🔘 ACTIONS AT BOTTOM -->
+    <div class="room-actions">
 
-    <?php else: ?>
-    <span class="Bbadge badge-available">🟢 Available</span>
-    <p><form method="POST" action="book_room.php">
+        <?php if ($myBooking && $myBooking['status'] === 'approved'): ?>
+            <a href="contact_landlord.php?room_id=<?= $room['id'] ?>"
+               class="Bbadge badge-approved">
+                Contact landlord
+            </a>
+
+            <?php elseif ($myBooking && $myBooking['status'] === 'pending'): ?>
+    <form method="POST" action="cancel_booking.php">
+        <input type="hidden" name="booking_id" value="<?= $myBooking['id'] ?>">
         <input type="hidden" name="room_id" value="<?= $room['id'] ?>">
-        <input type="hidden" name="house_id" value="<?= $house_id ?>">
-        <button class="book-btn">Book Room</button>
-    </form></p>
-<?php endif; ?>
-               
+        <button class="Bbadge badge-occupied">
+            ❌ Cancel
+        </button>
+    </form>
 
-    </br>  <button 
+        <?php elseif (!$myBooking && $room['status'] === 'vacant'): ?>
+            <form method="POST" action="book_room.php">
+                <input type="hidden" name="room_id" value="<?= $room['id'] ?>">
+        <input type="hidden" name="house_id" value="<?= $house_id ?>">
+                <button class="Bbadge badge-available">
+                    Book room
+                </button>
+            </form>
+
+        <?php endif; ?>
+
+    </div>
+</div>
+
+<button 
   class="fav-btn <?= $isFavourited ? 'active' : '' ?>"
   data-room-id="<?= $room['id'] ?>">
   ♥
@@ -129,6 +197,30 @@ document.querySelectorAll('.fav-btn').forEach(btn => {
             }
         });
     });
+});
+// Countdown timer for pending bookings
+document.querySelectorAll('.countdown').forEach(badge => {
+    let seconds = parseInt(badge.dataset.seconds);
+    const timer = setInterval(() => {
+        if (seconds <= 0) {
+            badge.innerText = "⌛ Expired";
+            badge.classList.add("badge-expired");
+            clearInterval(timer);
+            return;
+        }
+
+        let h = Math.floor(seconds / 3600);
+        let m = Math.floor((seconds % 3600) / 60);
+        let s = seconds % 60;
+
+        badge.innerText = `⏳ ${h}h ${m}m ${s}s left`;
+
+        if (seconds < 3600) {
+            badge.classList.add("badge-urgent");
+        }
+
+        seconds--;
+    }, 1000);
 });
 </script>
 

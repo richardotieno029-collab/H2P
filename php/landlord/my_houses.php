@@ -1,14 +1,19 @@
 <?php
-session_start();
+require_once "../session.php";
 include '../config/db.php';
 
 // If landlord not logged in → redirect to login
-if (!isset($_SESSION['landlord_id'])) {
-    header("Location: landlord_login.php");
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'For that you need to be logged in.'
+];
+    header("Location: login_form.php");
     exit;
+
 }
 
-$landlord_id = $_SESSION['landlord_id'];
+$landlord_id = $_SESSION['user_id'];
 
 $stmt = $conn->prepare("SELECT * FROM rooms WHERE landlord_id = ?");
 $stmt->execute([$landlord_id]);
@@ -21,10 +26,10 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Houses</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-
+<?php include "../toast.php"; ?>
 <header>
     <h1>My Houses</h1>
     <nav>

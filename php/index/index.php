@@ -125,7 +125,12 @@ if (isset($_SESSION['user_id'], $_SESSION['user_role'])) {
 
 </head>
 <body>
+    <?php include "../toast.php"; ?>
 <div class="role-container">
+    <div class="top-left-links">
+    <a href="about.php">About</a>
+    <a href="contact.php">Contact</a>
+</div>
     <!-- Logo section -->
 <div class="logo-container">
     <img src="../../images/logo.jpeg" alt="H2P Logo" class="logo-img">
@@ -159,7 +164,7 @@ if (isset($_SESSION['user_id'], $_SESSION['user_role'])) {
         <div class="role-card">
             <h3>👀 Guest</h3>
             <p>View houses and rooms without creating an account.</p>
-            <a href="#" class="guest-btn">
+            <a href="../guest/browse_houses.php" class="guest-btn">
                 Continue as Guest
             </a>
         </div>

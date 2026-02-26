@@ -1,0 +1,73 @@
+<?php
+session_start();
+$_SESSION['tocken'] = bin2hex(random_bytes(32)); // CSRF token generation
+require_once "../db_connect.php";
+
+if ($_SESSION['user_role'] !== 'student') {
+        $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'Access denied.'
+    ];
+    header("Location: ../index/index.php");
+    exit;
+}
+
+$student_id = $_SESSION['user_id'];
+
+$stmt = $conn->prepare("
+    SELECT full_name, email, phone, profile_image
+    FROM students
+    WHERE student_id = ?
+");
+$stmt->bind_param("s", $student_id);
+$stmt->execute();
+$student = $stmt->get_result()->fetch_assoc();
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Profile</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <?php include "../toast.php"; ?>
+
+<div class="auth-page">
+      <div class="auth-container">
+         <a href="dashboard.php" class="back-btn" title="Go back">
+    ←
+</a>
+    <h2>Edit Profile</h2>
+
+   
+
+    <form method="POST" action="edit_profile.php" enctype="multipart/form-data">
+
+        <label>Name</label>
+        <input type="text" name="full_name" 
+               value="<?= htmlspecialchars($student['full_name']) ?>" required>
+        <label>Email</label>
+        <input type="email" name="email" 
+               value="<?= htmlspecialchars($student['email']) ?>" required>
+
+        <label>Phone</label>
+        <input type="text" name="phone" 
+               value="<?= htmlspecialchars($student['phone']) ?>" required>
+
+                <img 
+        src="<?= $student['profile_image'] ?: '../assets/avatar.png' ?>" 
+        class="profile-pic"
+    >
+        <label>Profile Picture (optional)</label>
+        <input type="file" name="profile_image" accept="image/*">
+
+        <button type="submit" class="btn btn-success">
+            Save Changes
+        </button>
+    </form>
+    </div>
+</div>
+
+
+</body>
+</html>

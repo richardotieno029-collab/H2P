@@ -3,10 +3,13 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+if (empty($_SESSION['token'])) {
+    $_SESSION['token'] = bin2hex(random_bytes(32));
+}
 
 /*
 |--------------------------------------------------------------------------
-| SAFE SESSION GETTERS (OPTIONAL BUT CLEAN)
+| SAFE SESSION GETTERS
 |--------------------------------------------------------------------------
 */
 function current_user_id()
@@ -16,7 +19,7 @@ function current_user_id()
 
 function current_user_role()
 {
-    return $_SESSION['role'] ?? null;
+    return $_SESSION['user_role'] ?? null;
 }
 
 function current_user_name()

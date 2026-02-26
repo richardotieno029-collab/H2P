@@ -1,10 +1,16 @@
 <?php
-session_start();
-if ($_SESSION['user_role'] !== 'landlord') {
-    header("Location: ../index/index.php");
+require_once "../session.php";
+
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'For that you need to be logged in.'
+];
+    header("Location: login_form.php");
     exit;
 
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -15,8 +21,11 @@ if ($_SESSION['user_role'] !== 'landlord') {
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-
+<?php include "../toast.php"; ?>
 <div class="form-wrapper">
+    <a href="javascript:history.back()" class="back-btn" title="Go back">
+    ←
+</a>
     <div class="logo-container">
     <img src="../../images/logo.jpeg" alt="H2P Logo" class="logo-img">
     <h1 class="logo-text">H2P</h1>
@@ -26,7 +35,7 @@ if ($_SESSION['user_role'] !== 'landlord') {
 
 <form action="add_house.php" method="POST" enctype="multipart/form-data">
 
-
+<input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
         <label>House Name</label>
         <input type="text" name="house_name" required>
 
@@ -53,14 +62,92 @@ if ($_SESSION['user_role'] !== 'landlord') {
         <label>Price (KES)</label>
         <input type="number" name="price" required>
 
-        <label>Upload Image</label>
+        <label>Upload cover Image</label>
         <input type="file" name="house_image" required>
 
-<label>Description</label>
+        <label>Upload other Images</label>
+        <input type="file" name="gallery_images[]" multiple required>
+
+
+        <button type="button" class="toggle-btn" onclick="toggleDetails()">
+    Utilities
+</button>
+
+<div id="moreDetails" class="hidden-section">
+
+    <label class="custom-checkbox">
+  <input type="checkbox" name="electricity_available" value="1">
+    <span class="checkmark"></span>
+  Electricity Available
+</label>
+
+<label class="custom-checkbox">
+  <input type="checkbox" name="electricity_covered" value="1">
+  <span class="checkmark"></span>
+  Electricity Covered in Rent
+</label>
+
+<label class="custom-checkbox">
+  <input type="checkbox" name="token_meter" value="1">
+  <span class="checkmark"></span>
+  Token Meter Available
+</label>
+
+<label class="custom-checkbox">
+  <input type="checkbox" name="water_available" value="1">
+  <span class="checkmark"></span>
+  Water Available
+</label>
+
+<label class="custom-checkbox">
+  <input type="checkbox" name="water_covered" value="1">
+  <span class="checkmark"></span>
+  Water Covered in Rent
+</label>
+<label class="custom-checkbox">
+  <input type="checkbox" name="internet_available" value="1">
+  <span class="checkmark"></span>
+  Internet Available
+</label>
+
+<label class="custom-checkbox">
+  <input type="checkbox" name="wifi_extra_payment" value="1">
+  <span class="checkmark"></span>
+  Internet Requires Extra Payment
+</label>
+<label class="custom-checkbox">
+  <input type="checkbox" name="hot_shower" value="1">
+  <span class="checkmark"></span>
+  Hot Shower Available
+</label>
+
+<label class="custom-checkbox">
+  <input type="checkbox" name="shared_toilet" value="1">
+  <span class="checkmark"></span>
+  Shared Toilet Available
+</label>
+<label class="custom-checkbox">
+  <input type="checkbox" name="shared_water_point" value="1">
+  <span class="checkmark"></span>
+  Shared Water Point Available
+</label>
+<label>Other Descriptions</label>
         <input type="text" name="description" required>
+         <button type="submit">Save House</button>
 
-        <button type="submit">Save House</button>
 
+</div>
+<script>
+    function toggleDetails() {
+    const section = document.getElementById("moreDetails");
+
+    if (section.style.display === "none") {
+        section.style.display = "block";
+    } else {
+        section.style.display = "none";
+    }
+}
+</script>
     </form>
 
 </div>

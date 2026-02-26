@@ -2,11 +2,16 @@
 require_once "../session.php";
 require_once "../db_connect.php";
 
-if ($_SESSION['user_role'] !== 'landlord') {
-    header("Location: ../index/index.php");
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'For that you need to be logged in.'
+];
+    header("Location: login_form.php");
     exit;
 
 }
+
 $sql = "SELECT COUNT(*) AS total FROM notifications 
         WHERE user_id = ? AND is_read = 0";
 $stmt = $conn->prepare($sql);
@@ -39,6 +44,7 @@ document.addEventListener("click", function () {
 </script>
 </head>
 <body>
+    <?php include "../toast.php"; ?>
     <header>
 <?php
         $sql = "SELECT COUNT(*) AS total FROM notifications 
@@ -51,11 +57,11 @@ $count = $stmt->get_result()->fetch_assoc()['total'];
 </header>
 
 
-<?php include "../dashboard_header.php"; ?>
+<?php include "dashboard_header.php"; ?>
 <div class="dash-wrapper">
 
     <aside class="sidebar">
-        <h3 class="logo">H2P Admin</h3>
+        <h3 class="logo">H2P Landlord</h3>
 
        <a href="manage_booking.php" class="btn-notify">
     📋 Manage Bookings
@@ -83,7 +89,13 @@ $result = $stmt->get_result();
     <div class="houses-container">
         <?php while ($house = $result->fetch_assoc()): ?>
             <div class="house-card">
+                 <a href="house_details.php?id=<?= $house['house_id']; ?>">
+    <div class="card">
+    <div class="image-wrapper">
                 <img src="<?php echo $house['image_path']; ?>" alt="House Image">
+        </div>
+        </div>
+        </a>
 
                 <h3><?php echo htmlspecialchars($house['house_name']); ?></h3>
 

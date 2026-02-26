@@ -1,13 +1,23 @@
 <?php
-session_start();
+require_once "../session.php";
 require_once "../db_connect.php";
+include "../toast.php";
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../../public/landlord/landlord_login.html");
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'For that you need to be logged in.'
+];
+    header("Location: login_form.php");
     exit;
+
 }
 
 if (!isset($_GET['id'])) {
+     $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'Identity Error!.'
+];
     header("Location: landlord_dashboard.php");
     exit;
 }
@@ -25,6 +35,10 @@ $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
     // house not found or not owned by landlord
+     $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'You are not authorized to access this page.'
+];
     header("Location: landlord_dashboard.php");
     exit;
 }
@@ -47,5 +61,9 @@ if (file_exists($image_path)) {
 
 
 // 4️⃣ Redirect back
+ $_SESSION['toast'] = [
+    'type' => 'succes',
+    'message' => 'House deleted successfully.'
+];
 header("Location: landlord_dashboard.php");
 exit;

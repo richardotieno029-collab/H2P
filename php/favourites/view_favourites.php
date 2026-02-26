@@ -3,7 +3,11 @@ require '../session.php';
 require '../db_connect.php';
 
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../student/login.php");
+     $_SESSION['toast'] = [
+            'type' => 'error',
+            'message' => 'You are not authorised to access this page.'
+        ];
+    header("Location: ../index/index.php");
     exit;
 }
 
@@ -34,6 +38,7 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
+    <?php include "../toast.php"; ?>
     <a href="javascript:history.back()" class="back-btn" title="Go back">
     ←
 </a>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+include "../toast.php";
 // Unset all session variables
 $_SESSION = [];
 

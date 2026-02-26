@@ -3,9 +3,23 @@ require_once "../session.php";
 require_once "../db_connect.php";
 
 if ($_SESSION['user_role'] !== 'student') {
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'You are not authorized to access this page.'
+];
     header("Location: ../index/index.php");
     exit;
 }
+// Fetch unread notifications count
+$notifStmt = $conn->prepare("
+    SELECT COUNT(*) AS total 
+    FROM notifications 
+    WHERE user_id = ? AND is_read = 0
+");
+$notifStmt->bind_param("s", $_SESSION['user_id']);
+$notifStmt->execute();
+$notif = $notifStmt->get_result()->fetch_assoc();
+
 // fetch recently added houses (optional preview)
 $recentQuery = "
     SELECT h.house_id, h.house_name, h.area, h.image_path
@@ -25,12 +39,13 @@ $recentResult = mysqli_query($conn, $recentQuery);
 
 </head>
 
-<?php include "../dashboard_header.php"; ?>
+<?php include "dashboard_header.php"; ?>
+<?php include "../toast.php"; ?>
 <body>
 <div class="dashboard-container">
 
     <h2 class="dashboard-title">
-        Welcome back, <?= htmlspecialchars($_SESSION['user_name']); ?> 👋
+        Welcome back, <?= htmlspecialchars($_SESSION['user_name']); ?>
     </h2>
 
     <!-- ACTION CARDS -->
@@ -39,6 +54,9 @@ $recentResult = mysqli_query($conn, $recentQuery);
         <a href="browse_houses.php" class="dash-card">
             <h3>🔍 Browse Houses</h3>
             <p>Explore all available houses and rooms</p>
+            <?php if ($notif['total'] > 0): ?>
+        <span class="notify-dot"></span>
+    <?php endif; ?>
         </a>
 
         <a href="../favourites/view_favourites.php" class="dash-card">
@@ -47,13 +65,13 @@ $recentResult = mysqli_query($conn, $recentQuery);
         </a>
 
         <a href="#" class="dash-card">
-            <h3>🆕 Recently Added</h3>
-            <p>See what’s new</p>
+            <h3>🆕 Room mate Quest</h3>
+            <p>Coming Soon</p>
         </a>
 
-        <a href="browse.php#filters" class="dash-card">
-            <h3>🎯 Filter Houses</h3>
-            <p>By area, price & vacancy</p>
+        <a href="#" class="dash-card">
+            <h3>Furnished Rooms</h3>
+            <p>coming soon...</p>
         </a>
 
     </div>

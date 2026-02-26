@@ -734,23 +734,35 @@ tr:hover {
     font-size: 1.3rem;
 }
 
-/* HOUSE GRID */
-.house-grid {
+/* HOUSE CONTAINERS */
+.houses-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
+    align-items: stretch;
 }
 
 .house-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
     background: #fff;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 6px 15px rgba(0,0,0,0.08);
     transition: transform 0.3s ease;
 }
+.house-card .card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    text-decoration: none;
+}
 
-.house-card:hover {
-    transform: translateY(-4px);
+.house-card .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
 .house-card img {
@@ -1004,16 +1016,23 @@ tr:hover {
 
 /* Alerts */
 .alert {
-    padding: 10px;
-    border-radius: 6px;
+    padding: 12px 15px;
+    border-radius: 8px;
     margin-bottom: 15px;
     font-size: 14px;
+}
+
+.alert-warning {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
 }
 
 .alert-error {
     background: #fee2e2;
     color: #991b1b;
 }
+
 
 .alert-success {
     background: #dcfce7;
@@ -1141,6 +1160,18 @@ tr:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(39,174,96,0.3);
 }
+.clear-filters {
+    background: #4f9ee4;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.clear-filters:hover {
+    background: #5a6268;
+}
 .availability {
     margin: 10px 0;
 }
@@ -1165,7 +1196,7 @@ tr:hover {
 .u-badge {
     position: absolute;
     top: 10px;
-    left: 10px;
+    right: 10px;
     padding: 6px 10px;
     font-size: 12px;
     font-weight: bold;
@@ -1193,6 +1224,21 @@ tr:hover {
 .u-badge.urgent {
     background: #e53935;
     color: #fff;
+}
+.badge-urgent {
+    background: red;
+    animation: pulse 1s infinite;
+}
+
+.badge-expired {
+    background: gray;
+    color: #fff;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
 }
 
 /* Desktop hover magic */
@@ -1249,6 +1295,7 @@ tr:hover {
 .book-btn {
     background: #2ecc71;
     color: white;
+    cursor: pointer;
 }
 .pending-btn {
     background-color: #ffe8b3;
@@ -1273,35 +1320,30 @@ tr:hover {
     75% { transform: translateX(-2px); }
 }
 .Bbadge {
-    display: inline-block;
-    padding: 4px 10px;
-    font-size: 12px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    border-radius: 6px;
     font-weight: 600;
-    border-radius: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-    line-height: 1;
+    z-index: 2;
+    color: #fff;
 }
-.Bbadge.badge-available {
-    background-color: #e6f7ec;
-    color: #1e7f43;
-    border: 1px solid #9adbb5;
-}
-.Bbadge.badge-pending {
-    background-color: #fff6e0;
-    color: #a36a00;
-    border: 1px solid #ffd27a;
-    animation: pulse 1.5s infinite;
-}
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.6; }
-    100% { opacity: 1; }
-}
-.Bbadge.badge-occupied {
-    background-color: #fdecea;
-    color: #b42318;
-    border: 1px solid #f5b5b0;
+
+/* states */
+.badge-pending { background: #f0ad4e; }
+.badge-approved { background: #5cb85c; }
+.badge-occupied { background: #d9534f; }
+.badge-selected { background: #6c757d; }
+.badge-available { background: #28a745; }
+.badge-expired { background: #999; }
+.badge-urgent { background: #c9302c; }
+.room-actions {
+    margin-top: auto;
+    padding-top: 10px;
+    display: flex;
+    gap: 10px;
 }
 .btn-notify {
     position: relative;
@@ -1316,3 +1358,285 @@ tr:hover {
     background: red;
     border-radius: 50%;
 }
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+    z-index: 9999;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    animation: slideIn 0.4s ease;
+}
+
+.toast-success { background: #28a745; }
+.toast-error   { background: #dc3545; }
+.toast-warning { background: #ffc107; color:#000; }
+.toast-info    { background: #17a2b8; }
+
+.toast.hide {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: all 0.4s ease;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(50px); opacity:0; }
+    to   { transform: translateX(0); opacity:1; }
+}
+.profile-card {
+    max-width: 420px;
+    margin: 30px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.profile-pic {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #2ecc71;
+    margin-bottom: 15px;
+}
+.guest-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: #27a36f;
+}
+
+.muted {
+    font-size: 0.9em;
+    color: #777;
+    margin-top: 10px;
+}
+.header-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-pic {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #eee;
+}
+.profile-pic1 {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #eee;
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 14px;
+}
+.top-left-links {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 18px;
+    z-index: 1000;
+}
+
+.top-left-links a {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.top-left-links a:hover {
+    background: #f0f0f0;
+    color: #000;
+}
+.page-container {
+    max-width: 900px;
+    margin: 80px auto;
+    padding: 20px;
+}
+.page-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #222;
+}
+.page-subtitle {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+.card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    margin-bottom: 20px;
+}
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.text {
+    font-size: 15px;
+    color: #444;
+    line-height: 1.7;
+}
+.contact-link {
+    color: #2b7cff;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.contact-link:hover {
+    text-decoration: underline;
+}
+.pending-house {
+    border: 2px solid #f5c542;
+    box-shadow: 0 0 12px rgba(245, 197, 66, 0.5);
+    position: relative;
+}
+
+.pending-house::before {
+    content: "⏳ Pending Booking";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #f5c542;
+    color: #000;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+/* checkbox styling */
+.hidden-section {
+    display: none;
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+.toggle-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.custom-checkbox input {
+    display: none;
+}
+
+.checkmark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #007bff;
+    border-radius: 4px;
+    margin-right: 10px;
+    position: relative;
+}
+
+.custom-checkbox input:checked + .checkmark {
+    background: #007bff;
+}
+
+.custom-checkbox input:checked + .checkmark::after {
+    content: "✔";
+    color: white;
+    position: absolute;
+    font-size: 12px;
+    left: 3px;
+    top: -1px;
+}
+/*house card with badge*/
+.image-wrapper {
+    position: relative;
+}
+
+.image-wrapper img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.icon-overlay {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    display: flex;
+    gap: 10px;
+    background: rgba(0,0,0,0.5);
+    padding: 6px 10px;
+    border-radius: 20px;
+}
+
+.icon-overlay i {
+    color: #fff;
+    font-size: 14px;
+}
+/* house details page */
+.slider {
+    position: relative;
+    max-width: 800px;
+    margin: 20px auto;
+    overflow: hidden;
+}
+
+.slides {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slide {
+    min-width: 100%;
+}
+
+.slide img {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    border-radius: 50%;
+}
+
+.prev { left: 10px; }
+.next { right: 10px; }

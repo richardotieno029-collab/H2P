@@ -1,6 +1,17 @@
 <?php
 require_once '../db_connect.php';
 require_once '../session.php';
+include "../toast.php";
+
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'For that you need to be logged in.'
+];
+    header("Location: login_form.php");
+    exit;
+
+}
 
 if (!isset($_GET['id'])) {
     die("Room not specified");
@@ -33,8 +44,12 @@ if (!$room) {
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
+    <?php include "../toast.php"; ?>
 
 <div class="form-wrapper">
+    <a href="javascript:history.back()" class="back-btn" title="Go back">
+    ←
+</a>
     <div class="logo-container">
     <img src="../../images/logo.jpeg" alt="H2P Logo" class="logo-img">
     <h1 class="logo-text">H2P</h1>
@@ -43,6 +58,7 @@ if (!$room) {
 <h2>Edit Room</h2>
 
 <form action="edit_room.php" method="POST" enctype="multipart/form-data" class="form">
+    <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
     <input type="hidden" name="id" value="<?= $room['id'] ?>">
     <input type="hidden" name="house_id" value="<?= $room['house_id'] ?>">
 
@@ -57,9 +73,13 @@ if (!$room) {
     </select>
 
     <p>Current Image:</p>
-    <img src="<?php echo $rooms['image_path']; ?>" width="150">
+    <img src="<?php echo $room['image_path']; ?>" width="150">
     <label>Change Image (optional)</label>
     <input type="file" name="image">
+
+    <label>Add other Images</label>
+        <input type="file" name="gallery_images[]" multiple >
+
 
     <button type="submit" class="btn">Update Room</button>
 </form>

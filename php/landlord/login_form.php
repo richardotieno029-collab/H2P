@@ -1,14 +1,25 @@
 <?php
 session_start();
+$_SESSION['token'] = bin2hex(random_bytes(32)); // CSRF token generation
 require_once "../db_connect.php"; // adjust if your db file has a different name
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (!isset($_POST['token']) || 
+        !isset($_SESSION['token']) || 
+        !hash_equals($_SESSION['token'], $_POST['token'])) {
+
+        die("Invalid request.");
+    }
     $email    = trim($_POST['email']);
     $password = trim($_POST['password']);
 
     if (empty($email) || empty($password)) {
-        $_SESSION['error'] = "Please enter both email and password";
-        header("Location: login.php");
+         $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'Please enter both email and password.'
+];
+        header("Location: login_form.php");
         exit;
     }
 
@@ -26,15 +37,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION['user_id']   = $landlord['id'];
             $_SESSION['user_name'] = $landlord['full_name'];
 
-            $_SESSION['success'] = "Welcome back, " . $landlord['user_name'] . " 👋";
+            $_SESSION['toast'] = [
+    'type' => 'success',
+    'message' => 'Login successful. You are logged in as ' . htmlspecialchars($landlord['full_name']) . '.'
+];
+  $_SESSION['token'] = bin2hex(random_bytes(32));
             header("Location: landlord_dashboard.php");
             exit;
 
         } else {
-            $_SESSION['error'] = "Wrong email or password";
+            $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'Wrong email or password.'
+];
         }
     } else {
-        $_SESSION['error'] = "Wrong email or password";
+        $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'Wrong email or password.'
+];
     }
 
     header("Location: login_form.php");
@@ -51,10 +72,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     
 </head>
 <body>
+<?php include "../toast.php"; ?>
 
 <div class="auth-page">
       <div class="auth-container"> 
-
+<a href="javascript:history.back()" class="back-btn" title="Go back">
+    ←
+</a>
         <div class="logo-container">
     <img src="../../images/logo.jpeg" alt="H2P Logo" class="logo-img">
     <h1 class="logo-text">WELCOME TO H2P</h1>
@@ -63,19 +87,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <h2>Landlord Login</h2>
 
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="alert error">
-            <?= $_SESSION['error']; ?>
-        </div>
-    <?php unset($_SESSION['error']); endif; ?>
-
-    <?php if (isset($_SESSION['success'])): ?>
-        <div class="alert success">
-            <?= $_SESSION['success']; ?>
-        </div>
-    <?php unset($_SESSION['success']); endif; ?>
-
     <form method="POST" action="login.php">
+
+    <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
 
         <label>Email</label>
         <input type="email" name="email" required>

@@ -1,9 +1,14 @@
 <?php
-session_start();
+require_once "../session.php";
 require_once "../db_connect.php";
+include "../toast.php";
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'student') {
-    header("Location: ../auth/login.php");
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'You must be logged in to book a room.'
+];
+    header("Location: ../login_form.php");
     exit;
 }
 
@@ -22,17 +27,40 @@ $check->execute();
 $status = $check->get_result()->fetch_assoc()['status'];
 
 if ($status !== 'vacant') {
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'Room is not available.'
+];
     header("Location: view_room.php?house_id=$house_id");
+    exit;
+}
+// Check if student already has a pending booking
+$checkStmt = $conn->prepare("
+    SELECT id 
+    FROM bookings 
+    WHERE student_id = ? AND status = 'pending'
+    LIMIT 1
+");
+$checkStmt->bind_param("s", $student_id);
+$checkStmt->execute();
+$existing = $checkStmt->get_result()->fetch_assoc();
+
+if ($existing) {
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'You already have a pending booking.'
+];
+    header("Location: view_room.php?house_id=$house_id&error=one_pending");
     exit;
 }
 
 /* 1️⃣ Insert booking */
-$stmt = $conn->prepare("
-    INSERT INTO bookings (student_id, room_id, status)
-    VALUES (?, ?, 'pending')
+$insert = $conn->prepare("
+    INSERT INTO bookings (student_id, room_id, status, created_at, expires_at)
+    VALUES (?, ?, 'pending', NOW(), DATE_ADD(NOW(), INTERVAL 3 HOUR))
 ");
-$stmt->bind_param("si", $student_id, $room_id);
-$stmt->execute();
+$insert->bind_param("ii", $student_id, $room_id);
+$insert->execute();
 // Get landlord id from house
 $sql = "SELECT landlord_id FROM houses WHERE house_id = ?";
 $stmt = $conn->prepare($sql);
@@ -55,6 +83,10 @@ $update->bind_param("i", $room_id);
 $update->execute();
 
 /* 3️⃣ Redirect BACK WITH house_id */
+$_SESSION['toast'] = [
+    'type' => 'success',
+    'message' => 'Room booked successfully! Awaiting landlord approval.'
+];
 header("Location: view_room.php?house_id=$house_id");
 exit;
 ?>

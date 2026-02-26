@@ -1,11 +1,17 @@
 <?php
-session_start();
+require_once "../session.php";
 require_once "../db_connect.php";
+include "../toast.php";
 
 // 1️⃣ Security check
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord') {
-    header("Location: ../index/index.php");
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'For that you need to be logged in.'
+];
+    header("Location: login_form.php");
     exit;
+
 }
 
 // 2️⃣ Validate booking id
@@ -42,5 +48,9 @@ $stmt->bind_param("i", $room_id);
 $stmt->execute();
 
 // 6️⃣ Redirect back
+$_SESSION['toast'] = [
+    'type' => 'info',
+    'message' => 'Booking rejected and room status updated to vacant.'
+];
 header("Location: manage_booking.php");
 exit;

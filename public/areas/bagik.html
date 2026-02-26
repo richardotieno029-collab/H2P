@@ -1,111 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bagik Houses</title>
-    <link rel="stylesheet" href="../assets/styles.css">
-</head>
+<?php
+session_start();
+require_once "../db_connect.php"; // adjust path if needed
 
-<body class="gakwegori-theme">
+// optional: session / role check
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord') {
+    header("Location: ../auth/login.php");
+    exit;
+}
 
-    <!-- HEADER (SAME AS HOMEPAGE) -->
-    <header>
-        <h1>Bagik Houses</h1>
-            <nav>
-<ul>
-<li><a href="../index.html">🏠 Home</a></li>
-  <li><div class="dropdown">
-    <input type="checkbox" id="areas-toggle">
-    <label for="areas-toggle" class="dropbtn">📍 Areas ▾</label>
+// 1. Validate room id
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    die("Room not specified");
+}
 
-    <div class="dropdown-content">
-        <a href="bagik.html">Bagik</a>
-        <a href="njukiri.html">Njukiri</a>
-        <a href="kangaru.html">Kangaru</a>
-        <a href="kamiu.html">Kamiu</a>
-        <a href="gakwegori.html">Gakwegori</a>
-        <a href="kayole.html">Kayole</a>
-        <a href="leaders.html">Leaders</a>
-        <a href="springvalley.html">spring valley</a>
-    </div></li>
-    <li><a href="../about.html">👤 About</a></li>
-    <li><a href="../contact.html">☎ Contact</a></li>
-    <li><a href="../favorites.html">❤ Favourites</a></li>
-    </ul>
-        </nav>
-    </header>
+$room_id = (int) $_GET['id'];
 
-    <!-- PAGE INTRO -->
-    <section class="hero small-hero">
-        <h2>Bagik Area</h2>
-        <p>Available rooms near bagik hostels.</p>
-    </section>
+// 2. Fetch room
+$query = "SELECT * FROM rooms WHERE id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $room_id);
+$stmt->execute();
+$result = $stmt->get_result();
 
-    <section class="rooms-page">
+if ($result->num_rows !== 1) {
+    die("Room not found");
+}
 
-        <!-- ⭐ SINGLE ROOMS -->
-        <h2 class="category-title">Single Rooms</h2>
-        <div class="rooms">
-            <div class="room-card">
-                <img src="images/gakwegori/single/mugo.jpg" alt="Single Room">
-                <div class="room-info">
-                    <button class="favorite-btn" onclick="toggleFavorite(101)">❤</button>
-                    <h3>Cozy Single Room</h3>
-                    <p><strong>Price:</strong> KES 3000</p>
-                    <p><strong>Landlord:</strong> 0712345678</p>
-                    <p>Clean single room near Kangaru stage.</p>
-                </div>
-            </div>
-        </div>
+$room = $result->fetch_assoc();
 
-        <!-- ⭐ BEDSITTERS -->
-        <h2 class="category-title">Bedsitters</h2>
-        <div class="rooms">
-            <div class="room-card">
-                <img src="../images/kangaru_bedsitter1.jpg" alt="Bedsitter">
-                <div class="room-info">
-                    <button class="favorite-btn" onclick="toggleFavorite(102)">❤</button>
-                    <h3>Spacious Bedsitter</h3>
-                    <p><strong>Price:</strong> KES 4500</p>
-                    <p><strong>Landlord:</strong> 0798765432</p>
-                    <p>Large bedsitter with tiled floor, near shops.</p>
-                </div>
-            </div>
-        </div>
+// 3. Handle update
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-        <!-- ⭐ ONE BEDROOM -->
-        <h2 class="category-title">One Bedroom</h2>
-        <div class="rooms">
-            <div class="room-card">
-                <img src="../images/kangaru_onebed1.jpg" alt="One Bedroom">
-                <div class="room-info">
-                    <button class="favorite-btn" onclick="toggleFavorite(103)">❤</button>
-                    <h3>Modern One-Bedroom</h3>
-                    <p><strong>Price:</strong> KES 6500</p>
-                    <p><strong>Landlord:</strong> 0755112233</p>
-                    <p>Spacious one-bedroom close to main road.</p>
-                </div>
-            </div>
-        </div>
+    $price       = $_POST['price'];
+    $description = $_POST['description'];
+    $status      = $_POST['status'];
 
-        <!-- ⭐ TWO BEDROOM -->
-        <h2 class="category-title">Two Bedroom</h2>
-        <div class="rooms">
-            <div class="room-card">
-                <img src="../images/kangaru_twobed1.jpg" alt="Two Bedroom">
-                <div class="room-info">
-                    <button class="favorite-btn" onclick="toggleFavorite(104)">❤</button>
-                    <h3>Executive Two Bedroom</h3>
-                    <p><strong>Price:</strong> KES 9000</p>
-                    <p><strong>Landlord:</strong> 0788001122</p>
-                    <p>Perfect for comrades combining rent 😂.</p>
-                </div>
-            </div>
-        </div>
+    // image handling (optional)
+    if (!empty($_FILES['image']['name'])) {
+        $image_name = time() . "_" . $_FILES['image']['name'];
+        $target = "../uploads/" . $image_name;
+        move_uploaded_file($_FILES['image']['tmp_name'], $target);
+    } else {
+        $image_name = $room['image']; // keep old image
+    }
 
-    </section>
+    $update = "UPDATE rooms 
+               SET price = ?, description = ?, status = ?, image = ?
+               WHERE id = ?";
 
-    <script src="../script.js"></script>
-</body>
-</html>
+    $stmt = $conn->prepare($update);
+    $stmt->bind_param("dsssi", $price, $description, $status, $image_name, $room_id);
+
+    if ($stmt->execute()) {
+        header("Location: rooms.php?house_id=" . $room['house_id']);
+        exit;
+    } else {
+        $error = "Failed to update room";
+    }
+}

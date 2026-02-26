@@ -1,11 +1,16 @@
 <?php
-session_start();
+require_once "../session.php";
 include "../db_connect.php";
 
 /* Protect */
-if (!isset($_SESSION['user_id'])) {
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'For that you need to be logged in.'
+];
     header("Location: login_form.php");
-    exit();
+    exit;
+
 }
 
 /* Validate house */
@@ -30,7 +35,7 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
-    <?php include "../dashboard_header.php"; ?>
+    <?php include "../toast.php"; ?>
 <div class="dash-wrapper">
 
     <aside class="sidebar">
@@ -59,7 +64,9 @@ $result = $stmt->get_result();
  <?php while ($rooms = $result->fetch_assoc()): ?>
 <tr>
     <td>
-        <img src="<?= $rooms['image_path']; ?>" class="room-img">
+            <a href="room_details.php?id=<?= $rooms['id']; ?>">
+               <img src="<?= $rooms['image_path']; ?>" class="room-img">
+    </a>
     </td>
 
     <td class="type">
