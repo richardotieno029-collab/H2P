@@ -12,6 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 if (!hash_equals($_SESSION['tocken'], $_POST['token'])) {
     die("Invalid request.");
 }
+$ip = $_SERVER['REMOTE_ADDR'];
 $name     = trim($_POST['name'] ?? '');
 $email    = trim($_POST['email'] ?? '');
 $phone    = trim($_POST['phone'] ?? '');
@@ -27,7 +28,7 @@ if ($name === '' || $email === '' || $phone === '' || $password === '') {
 }
 
 /* CHECK EMAIL */
-$check = $conn->prepare("SELECT landlord_id FROM landlords WHERE email = ?");
+$check = $conn->prepare("SELECT id FROM landlords WHERE email = ?");
 $check->bind_param("s", $email);
 $check->execute();
 $check->store_result();
@@ -97,7 +98,7 @@ if (!in_array($mime, $allowed_types)) {
 
 /* INSERT */
 $stmt = $conn->prepare(
-    "INSERT INTO landlords (full_name, email, phone, profile_image, password)
+    "INSERT INTO landlords (full_name, email, phone, profile_image, password, ip_address)
      VALUES (?, ?, ?, ?, ?)"
 );
 $stmt->bind_param(

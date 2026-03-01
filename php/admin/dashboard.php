@@ -8,6 +8,7 @@ $newReports = $conn->query("SELECT COUNT(*) as total FROM reports WHERE status='
 
 $totalLandlords = $conn->query("SELECT COUNT(*) as total FROM landlords")->fetch_assoc()['total'];
 $totalStudents = $conn->query("SELECT COUNT(*) as total FROM students")->fetch_assoc()['total'];
+$totalFlags = $conn->query("SELECT COUNT(*) as total FROM spam_flags")->fetch_assoc()['total'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -17,6 +18,9 @@ $totalStudents = $conn->query("SELECT COUNT(*) as total FROM students")->fetch_a
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
+     <a href="../index/index.php" class="back-btn" title="Go back">
+    Home
+</a>
 
 <div class="admin-wrapper">
 
@@ -51,12 +55,13 @@ $totalStudents = $conn->query("SELECT COUNT(*) as total FROM students")->fetch_a
 <p>Students</p>
 <a href="users.php?type=student">Manage</a>
 </div>
-<td>
-    <a href="reset_password.php?type=<?= $type ?>&id=<?= $row['id'] ?>" 
-       onclick="return confirm('Reset this user password?')">
-       Reset Password
-    </a>
-</td>
+
+<div class="card">
+<i class="fa-solid fa-flag"></i>
+<h3><?= $totalFlags ?></h3>
+<p>Total Spam Flags</p>
+<a href="spam.php">View Spam Flags</a>
+</div>
 
 </div>
 

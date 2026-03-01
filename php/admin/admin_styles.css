@@ -154,3 +154,41 @@ a.success {
     border-radius: 5px;
     text-decoration: none;
 }
+.back-btn {
+    display: inline-flex;
+    align-items: left;
+    gap: 6px;
+    font-size: 20px;
+    color: #333;
+    text-decoration: none;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+    z-index: 9999;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    animation: slideIn 0.4s ease;
+}
+
+.toast-success { background: #28a745; }
+.toast-error   { background: #dc3545; }
+.toast-warning { background: #ffc107; color:#000; }
+.toast-info    { background: #17a2b8; }
+
+.toast.hide {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: all 0.4s ease;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(50px); opacity:0; }
+    to   { transform: translateX(0); opacity:1; }
+}

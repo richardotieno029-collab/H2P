@@ -81,6 +81,27 @@ if (move_uploaded_file($_FILES['house_image']['tmp_name'], $targetPath)) {
 } else {
     die("Image upload failed");
 }
+
+//spam detection
+$stmt = $conn->prepare("
+    SELECT COUNT(*) as total 
+    FROM houses 
+    WHERE landlord_id=? 
+    AND created_at > NOW() - INTERVAL 10 MINUTE
+");
+$stmt->bind_param("i", $landlord_id);
+$stmt->execute();
+$count = $stmt->get_result()->fetch_assoc()['total'];
+
+if ($count >= 5) {
+
+    $flag = $conn->prepare("
+        INSERT INTO spam_flags (user_type, user_id, reason, severity)
+        VALUES ('landlord', ?, 'Too many houses created within 10 minutes', 'high')
+    ");
+    $flag->bind_param("i", $landlord_id);
+    $flag->execute();
+}
   $_SESSION['token'] = bin2hex(random_bytes(32));
 // INSERT
 $sql = "INSERT INTO houses 

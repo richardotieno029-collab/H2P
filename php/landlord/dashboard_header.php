@@ -1,7 +1,7 @@
 <?php
 require_once "auth_landlord.php";
 
-$landlord_id = $_SESSION['user_id'];
+$id = $_SESSION['user_id'];
 
 $stmt = $conn->prepare(
     "SELECT full_name, profile_image 

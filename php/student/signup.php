@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Invalid request.");
     }
 }
-
+$ip = $_SERVER['REMOTE_ADDR'];
 $student_id = trim($_POST['student_id']);
 $full_name  = trim($_POST['full_name']);
 $email      = trim($_POST['email']);
@@ -99,8 +99,8 @@ if (!in_array($mime, $allowed_types)) {
 /* 🧾 Insert student */
 $stmt = $conn->prepare(
     "INSERT INTO students 
-    (student_id, full_name, email, phone, password, profile_image)
-    VALUES (?, ?, ?, ?, ?, ?)"
+    (student_id, full_name, email, phone, password, profile_image, ip_address)
+    VALUES (?, ?, ?, ?, ?, ?, ?)"
 );
 
 $stmt->bind_param(
@@ -110,7 +110,8 @@ $stmt->bind_param(
     $email,
     $phone,
     $hashedPassword,
-    $profileImagePath
+    $profileImagePath,
+    $ip
 );
 
 $_SESSION['token'] = bin2hex(random_bytes(32));

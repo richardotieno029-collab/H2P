@@ -44,11 +44,11 @@ $result = $stmt->get_result();
         <a href="admin_rooms.php?house_id=<?= $row['house_id']; ?>" class="success">View Rooms</a> |
     
         <?php if ($row['status'] === 'active'): ?>
-<a href="toggle_house.php?landlord_id=<?= $landlord_id ?>house_id=<?= $row['house_id'] ?>&action=suspend" class="danger">
+<a href="toggle_house.php?landlord_id=<?= $landlord_id ?>&house_id=<?= $row['house_id'] ?>&action=suspend" class="danger">
 Suspend
 </a>
 <?php else: ?>
-<a href="toggle_house.php?landlord_id=<?= $landlord_id ?>&id=<?= $row['house_id'] ?>&action=activate" class="success">
+<a href="toggle_house.php?landlord_id=<?= $landlord_id ?>&house_id=<?= $row['house_id'] ?>&action=activate" class="success">
 Activate
 </a>
 <?php endif; ?>
