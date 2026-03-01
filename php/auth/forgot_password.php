@@ -79,7 +79,7 @@ $stmt->execute();
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
             $mail->Username   = 'richardotieno029@gmail.com';
-            $mail->Password   = 'ybpm ohln hbjk gugx';
+            $mail->Password   = getenv('SMTP_PASS'); // Use environment variable for security
             $mail->SMTPSecure = 'tls';
             $mail->Port       = 587;
 
