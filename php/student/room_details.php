@@ -1,4 +1,5 @@
 <?php
+require_once "auth_student.php";
 require_once "../db_connect.php";
 
 $id = $_GET['id'];
@@ -82,7 +83,7 @@ $images = $stmt2->get_result();
         <p>🚰 Shared Water Point</p>
     <?php endif; ?>
 
-</div>-->
+</div> -->
 <script>
     let currentSlide = 0;
 

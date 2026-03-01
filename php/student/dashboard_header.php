@@ -1,21 +1,18 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
+include "../toast.php";
 $user = null;
 $profilePic = "../uploads/profiles/default.png";
 $name = "Account";
 
 if (isset($_SESSION['user_id'])) {
-    $student_id = $_SESSION['user_id'];
+    $id = $_SESSION['user_id'];
 
     $stmt = $conn->prepare("
         SELECT full_name, profile_image 
         FROM students 
-        WHERE student_id = ?
+        WHERE id = ?
     ");
-    $stmt->bind_param("s", $student_id);
+    $stmt->bind_param("s", $id);
     $stmt->execute();
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
@@ -57,7 +54,7 @@ if (isset($_SESSION['user_id'])) {
             <a href="view_profile.php">Profile</a>
             <a href="../auth/change_password.php">Change Password</a>
             <hr>
-            <a href="../auth/logout.php" class="danger" onclick="return confirm('Are you sure you want to reject this booking?')
+            <a href="logout.php" class="danger" onclick="return confirm('Are you sure you want to logout?')
             ">Logout</a>
             <a href="../auth/delete_account.php" class="danger">Delete Account</a>
         </div>

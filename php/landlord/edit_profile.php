@@ -1,16 +1,6 @@
 <?php
-require_once "../session.php";
+require_once "auth_landlord.php";
 require_once "../db_connect.php";
-
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
-    $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'For that you need to be logged in.'
-];
-    header("Location: login_form.php");
-    exit;
-
-}
 
 /* 1. Ensure form was submitted */
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -27,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Invalid request.");
     }
 }
-$landlord_id = $_SESSION['user_id'];
+$id = $_SESSION['user_id'];
 
 $full_name  = trim($_POST['full_name']);
 $email = trim($_POST['email']);
@@ -35,9 +25,9 @@ $phone = trim($_POST['phone']);
 
 /* 1️⃣ Get old image */
 $stmt = $conn->prepare("
-    SELECT profile_image FROM landlords WHERE landlord_id = ?
+    SELECT profile_image FROM landlords WHERE id = ?
 ");
-$stmt->bind_param("s", $landlord_id);
+$stmt->bind_param("s", $id);
 $stmt->execute();
 $old = $stmt->get_result()->fetch_assoc();
 $profile_image = $old['profile_image'];
@@ -88,7 +78,7 @@ if (!in_array($mime, $allowed_types)) {
 $update = $conn->prepare("
     UPDATE landlords 
     SET full_name = ?, email = ?, phone = ?, profile_image = ?
-    WHERE landlord_id = ?
+    WHERE id = ?
 ");
 $update->bind_param(
     "sssss",
@@ -96,7 +86,7 @@ $update->bind_param(
     $email,
     $phone,
     $profile_image,
-    $landlord_id
+    $id
 );
 $update->execute();
 

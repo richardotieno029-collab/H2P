@@ -1,24 +1,14 @@
 <?php
-require_once "../session.php";
-
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
-    $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'For that you need to be logged in.'
-];
-    header("Location: login_form.php");
-    exit;
-
-}
+require_once "auth_landlord.php";
 
 $landlord_id = $_SESSION['user_id'];
 
 $stmt = $conn->prepare(
     "SELECT full_name, profile_image 
      FROM landlords 
-     WHERE landlord_id = ?"
+     WHERE id = ?"
 );
-$stmt->bind_param("s", $landlord_id);
+$stmt->bind_param("s", $id);
 $stmt->execute();
 $result = $stmt->get_result();
 $user = $result->fetch_assoc();
@@ -62,7 +52,7 @@ $name = $_SESSION['user_name']
             <a href="view_profile.php">Profile</a>
             <a href="../auth/change_password.php">Change Password</a>
             <hr>
-            <a href="../auth/logout.php" onclick="return confirm('Logout?')"
+            <a href="logout.php" onclick="return confirm('Logout?')"
             class="danger">Logout</a>
             <a href="../auth/delete_account.php" class="danger">Delete Account</a>
         </div>

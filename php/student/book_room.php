@@ -1,22 +1,13 @@
 <?php
-require_once "../session.php";
+require_once "auth_student.php";
 require_once "../db_connect.php";
 include "../toast.php";
-
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'student') {
-    $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'You must be logged in to book a room.'
-];
-    header("Location: ../login_form.php");
-    exit;
-}
 
 if (!isset($_POST['room_id'], $_POST['house_id'])) {
     die("Invalid request.");
 }
 
-$student_id = $_SESSION['user_id'];
+$student_internal_id = $_SESSION['user_id'];
 $room_id    = (int) $_POST['room_id'];
 $house_id   = (int) $_POST['house_id'];
 
@@ -38,10 +29,10 @@ if ($status !== 'vacant') {
 $checkStmt = $conn->prepare("
     SELECT id 
     FROM bookings 
-    WHERE student_id = ? AND status = 'pending'
+    WHERE student_internal_id = ? AND status = 'pending'
     LIMIT 1
 ");
-$checkStmt->bind_param("s", $student_id);
+$checkStmt->bind_param("s", $student_internal_id);
 $checkStmt->execute();
 $existing = $checkStmt->get_result()->fetch_assoc();
 
@@ -56,10 +47,10 @@ if ($existing) {
 
 /* 1️⃣ Insert booking */
 $insert = $conn->prepare("
-    INSERT INTO bookings (student_id, room_id, status, created_at, expires_at)
-    VALUES (?, ?, 'pending', NOW(), DATE_ADD(NOW(), INTERVAL 3 HOUR))
+    INSERT INTO bookings (student_internal_id, room_id, status, created_at, expires_at)
+    VALUES (?, ?, 'pending', NOW(), DATE_ADD(NOW(), INTERVAL 24 HOUR))
 ");
-$insert->bind_param("ii", $student_id, $room_id);
+$insert->bind_param("ii", $student_internal_id, $room_id);
 $insert->execute();
 // Get landlord id from house
 $sql = "SELECT landlord_id FROM houses WHERE house_id = ?";

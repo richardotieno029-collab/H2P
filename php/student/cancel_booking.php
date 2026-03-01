@@ -1,18 +1,9 @@
 <?php
-session_start();
+require_once "auth_student.php";
 require_once "../db_connect.php";
 include "../toast.php";
 
-if (!isset($_SESSION['user_id'])) {
-    $_SESSION['toast'] = [
-    'type' => 'warning',
-    'message' => 'UNKNOWN USER.'
-];
-    header("Location: ../student/login_form.php");
-    exit;
-}
-
-$student_id = $_SESSION['user_id'];
+$student_internal_id = $_SESSION['user_id'];
 
 if (!isset($_POST['booking_id'], $_POST['room_id'],)) {
     die("Invalid request.");
@@ -26,10 +17,10 @@ $checkStmt = $conn->prepare("
     FROM bookings b
     JOIN rooms r ON b.room_id = r.id
     WHERE b.id = ? 
-      AND b.student_id = ? 
+      AND b.student_internal_id = ? 
       AND b.status = 'pending'
 ");
-$checkStmt->bind_param("ii", $booking_id, $student_id);
+$checkStmt->bind_param("ii", $booking_id, $student_internal_id);
 $checkStmt->execute();
 $booking = $checkStmt->get_result()->fetch_assoc();
 

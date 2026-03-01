@@ -1,25 +1,23 @@
 <?php
-require_once "../session.php";
+require_once "auth_student.php";
 require_once "../db_connect.php";
 
-if ($_SESSION['user_role'] !== 'student') {
-        $_SESSION['toast'] = [
-            "message" => "You are not authorized to access this page.",
-            "type" => "error"
-        ];
-    header("Location: ../index/index.php");
-    exit;
-}
 /* 1. Ensure form was submitted */
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: edit_profile_form.php");
     exit;
 }
 
-$student_id = $_SESSION['user_id'];
+$id = $_SESSION['user_id'];
 
-if (!hash_equals($_SESSION['tocken'], $_POST['token'])) {
-    die("Invalid request.");
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (!isset($_POST['token']) || 
+        !isset($_SESSION['token']) || 
+        !hash_equals($_SESSION['token'], $_POST['token'])) {
+
+        die("Invalid request.");
+    }
 }
 $full_name  = trim($_POST['full_name']);
 $email = trim($_POST['email']);
@@ -27,9 +25,9 @@ $phone = trim($_POST['phone']);
 
 /* 1️⃣ Get old image */
 $stmt = $conn->prepare("
-    SELECT profile_image FROM students WHERE student_id = ?
+    SELECT profile_image FROM students WHERE id = ?
 ");
-$stmt->bind_param("s", $student_id);
+$stmt->bind_param("s", $id);
 $stmt->execute();
 $old = $stmt->get_result()->fetch_assoc();
 $profile_image = $old['profile_image'];
@@ -79,7 +77,7 @@ if (!in_array($mime, $allowed_types)) {
 $update = $conn->prepare("
     UPDATE students 
     SET full_name = ?, email = ?, phone = ?, profile_image = ?
-    WHERE student_id = ?
+    WHERE id = ?
 ");
 $update->bind_param(
     "sssss",
@@ -87,7 +85,7 @@ $update->bind_param(
     $email,
     $phone,
     $profile_image,
-    $student_id
+    $id
 );
 $update->execute();
 
@@ -96,5 +94,5 @@ $update->execute();
             "message" => "Profile updated successfully.",
             "type" => "success"
         ];
-header("Location: view_profile.php?success=1");
+header("Location: dashboard.php?success=1");
 exit;

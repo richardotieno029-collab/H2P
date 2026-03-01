@@ -5,6 +5,7 @@ $pass = "";
 $db = "h2p"; 
 
 $conn = mysqli_connect($host, $user, $pass, $db);
+date_default_timezone_set('Africa/Nairobi');
 //auto expire on idle student
 $conn->query("
     UPDATE rooms r

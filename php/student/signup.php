@@ -113,6 +113,8 @@ $stmt->bind_param(
     $profileImagePath
 );
 
+$_SESSION['token'] = bin2hex(random_bytes(32));
+
 if ($stmt->execute()) {
     $_SESSION['toast'] = [
         'type' => 'success',

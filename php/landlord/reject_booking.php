@@ -1,18 +1,7 @@
 <?php
-require_once "../session.php";
+require_once "auth_landlord.php";
 require_once "../db_connect.php";
 include "../toast.php";
-
-// 1️⃣ Security check
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
-    $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'For that you need to be logged in.'
-];
-    header("Location: login_form.php");
-    exit;
-
-}
 
 // 2️⃣ Validate booking id
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {

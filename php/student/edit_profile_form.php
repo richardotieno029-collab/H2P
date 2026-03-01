@@ -1,25 +1,15 @@
 <?php
-session_start();
-$_SESSION['tocken'] = bin2hex(random_bytes(32)); // CSRF token generation
+require_once "auth_student.php";
 require_once "../db_connect.php";
 
-if ($_SESSION['user_role'] !== 'student') {
-        $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'Access denied.'
-    ];
-    header("Location: ../index/index.php");
-    exit;
-}
-
-$student_id = $_SESSION['user_id'];
+$id = $_SESSION['user_id'];
 
 $stmt = $conn->prepare("
     SELECT full_name, email, phone, profile_image
     FROM students
-    WHERE student_id = ?
+    WHERE id = ?
 ");
-$stmt->bind_param("s", $student_id);
+$stmt->bind_param("s", $id);
 $stmt->execute();
 $student = $stmt->get_result()->fetch_assoc();
 ?>
@@ -43,6 +33,7 @@ $student = $stmt->get_result()->fetch_assoc();
 
     <form method="POST" action="edit_profile.php" enctype="multipart/form-data">
 
+    <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
         <label>Name</label>
         <input type="text" name="full_name" 
                value="<?= htmlspecialchars($student['full_name']) ?>" required>

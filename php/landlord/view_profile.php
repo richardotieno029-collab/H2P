@@ -1,24 +1,15 @@
 <?php
-require_once "../session.php";
+require_once "auth_landlord.php";
 require_once "../db_connect.php";
 
-if ($_SESSION['user_role'] !== 'landlord') {
-        $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'Access denied.'
-    ];
-    header("Location: ../index/index.php");
-    exit;
-}
-
-$landlord_id = $_SESSION['user_id'];
+$id = $_SESSION['user_id'];
 
 $stmt = $conn->prepare("
     SELECT full_name, email, phone, profile_image 
     FROM landlords 
-    WHERE landlord_id = ?
+    WHERE id = ?
 ");
-$stmt->bind_param("s", $landlord_id);
+$stmt->bind_param("s", $id);
 $stmt->execute();
 $landlord = $stmt->get_result()->fetch_assoc();
 ?>

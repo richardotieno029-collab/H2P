@@ -1,20 +1,7 @@
 <?php
-require_once "../session.php";
+require_once "auth_landlord.php";
 require "../db_connect.php";
 include "../toast.php";
-
-/* =========================
-   1️⃣ Access control
-========================= */
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
-    $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'For that you need to be logged in.'
-];
-    header("Location: login_form.php");
-    exit;
-
-}
 
 /* =========================
    2️⃣ Validate booking ID
@@ -29,7 +16,7 @@ $booking_id = (int) $_GET['id'];
    3️⃣ Get student + room from booking
 ========================= */
 $stmt = $conn->prepare("
-    SELECT student_id, room_id, status
+    SELECT student_internal_id, room_id, status
     FROM bookings 
     WHERE id = ? AND status = 'pending'
 ");
@@ -42,7 +29,7 @@ if ($result->num_rows === 0) {
 }
 
 $booking    = $result->fetch_assoc();
-$student_id = $booking['student_id'];
+$student_id = $booking['student_internal_id'];
 $room_id    = $booking['room_id'];
 
 /* =========================

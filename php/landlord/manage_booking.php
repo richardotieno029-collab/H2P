@@ -1,16 +1,6 @@
 <?php
-require_once "../session.php";
+require_once "auth_landlord.php";
 require_once "../db_connect.php";
-
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
-    $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'For that you need to be logged in.'
-];
-    header("Location: login_form.php");
-    exit;
-
-}
 
 $landlord_id = $_SESSION['user_id'];
 //auto expire on idle student after approval
@@ -57,7 +47,7 @@ SELECT
 FROM bookings b
 JOIN rooms r ON b.room_id = r.id
 JOIN houses h ON r.house_id = h.house_id
-JOIN students s ON b.student_id = s.student_id
+JOIN students s ON b.student_internal_id = s.id
 WHERE h.landlord_id = ?
 AND b.status = 'pending'
 ";

@@ -173,19 +173,19 @@ button:hover {
 <div class="social-section">
     <h3>Follow Us</h3>
 
-    <a href="https://wa.me/254712345678" target="_blank" class="social whatsapp">
+    <a href="https://wa.me/254107426493" target="_blank" class="social whatsapp">
         <i class="fa-brands fa-whatsapp"></i> WhatsApp
     </a>
 
-    <a href="https://instagram.com/h2p" target="_blank" class="social instagram">
+    <a href="https://instagram.com/Le Chevre" target="_blank" class="social instagram">
         <i class="fa-brands fa-instagram"></i> Instagram
     </a>
 
-    <a href="https://tiktok.com/@h2p" target="_blank" class="social tiktok">
+    <a href="https://tiktok.com/Le Chevre" target="_blank" class="social tiktok">
         <i class="fa-brands fa-tiktok"></i> TikTok
     </a>
 
-    <a href="https://facebook.com/h2p" target="_blank" class="social facebook">
+    <a href="https://facebook.com/Le Chevre" target="_blank" class="social facebook">
         <i class="fa-brands fa-facebook"></i> Facebook
     </a>
 

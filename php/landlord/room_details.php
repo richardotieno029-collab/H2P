@@ -1,9 +1,10 @@
 <?php
+require_once "auth_landlord.php";
 require_once "../db_connect.php";
 
 $id = $_GET['id'];
 
-// Fetch house info
+// Fetch room info
 $stmt = $conn->prepare("SELECT * FROM rooms WHERE id = ?");
 $stmt->bind_param("i", $id);
 $stmt->execute();

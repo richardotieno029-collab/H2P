@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once "auth_student.php";
 require_once "../db_connect.php";
 
 /* =========================
@@ -10,7 +10,7 @@ if (!isset($_GET['house_id']) || !is_numeric($_GET['house_id'])) {
 }
 
 $house_id = (int) $_GET['house_id'];
-$student_id = $_SESSION['user_id'] ?? null;
+$student_internal_id = $_SESSION['user_id'] ?? null;
 
 /* =========================
    2️⃣ Fetch house name
@@ -38,12 +38,16 @@ $roomStmt = $conn->prepare(
      WHERE house_id = ?
      ORDER BY room_number ASC"
 );
-//Contact landlord limit
+//auto expire on idle student after approval
 $conn->query("
-    UPDATE bookings
-    SET status = 'expired'
-    WHERE status = 'approved'
-      AND approved_expires_at < NOW()
+    UPDATE rooms r
+    JOIN bookings b ON r.id = b.room_id
+    SET 
+        b.status = 'expired',
+        r.status = 'vacant'
+    WHERE 
+        b.status = 'approved'
+        AND b.approved_expires_at < NOW()
 ");
 /* expiration of booking */
 $conn->query("
@@ -62,6 +66,23 @@ SET
 $roomStmt->bind_param("i", $house_id);
 $roomStmt->execute();
 $rooms = $roomStmt->get_result();
+//check favourited
+$student_internal_id = $_SESSION['user_id'];
+
+$favRooms = [];
+
+$stmt = $conn->prepare("
+    SELECT room_id 
+    FROM favourites 
+    WHERE student_internal_id = ?
+");
+$stmt->bind_param("i", $student_internal_id);
+$stmt->execute();
+$resultFav = $stmt->get_result();
+
+while ($rowFav = $resultFav->fetch_assoc()) {
+    $favRooms[] = $rowFav['room_id'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -91,11 +112,11 @@ $bookingStmt = $conn->prepare("
         status,id,
         TIMESTAMPDIFF(SECOND, NOW(), expires_at) AS seconds_left
     FROM bookings
-    WHERE room_id = ? AND student_id = ? AND STATUS IN ('pending', 'approved')
+    WHERE room_id = ? AND student_internal_id = ? AND STATUS IN ('pending', 'approved')
     ORDER BY created_at DESC
     LIMIT 1
 ");
-$bookingStmt->bind_param("is", $room['id'], $student_id);
+$bookingStmt->bind_param("is", $room['id'], $student_internal_id);
 $bookingStmt->execute();
 $myBooking = $bookingStmt->get_result()->fetch_assoc();?>
             <div class="house-card">
@@ -173,12 +194,13 @@ $myBooking = $bookingStmt->get_result()->fetch_assoc();?>
     </div>
 </div>
 
-<button 
-  class="fav-btn <?= $isFavourited ? 'active' : '' ?>"
-  data-room-id="<?= $room['id'] ?>">
-  ♥
-</button>
-<script>
+ <!-- Favourite toggle -->
+  <button 
+    class="fav-btn <?= in_array($room['id'], $favRooms) ? 'active' : '' ?>"
+    data-room-id="<?= $room['id'] ?>">
+    ♥
+  </button>
+      <script>
 document.querySelectorAll('.fav-btn').forEach(btn => {
     btn.addEventListener('click', function () {
         const roomId = this.dataset.roomId;
@@ -198,6 +220,9 @@ document.querySelectorAll('.fav-btn').forEach(btn => {
         });
     });
 });
+</script>
+
+<script>
 // Countdown timer for pending bookings
 document.querySelectorAll('.countdown').forEach(badge => {
     let seconds = parseInt(badge.dataset.seconds);

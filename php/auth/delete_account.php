@@ -1,4 +1,6 @@
 <?php
+session_start();
+include "../toast.php";
 require_once '../session.php';
 require_once '../db_connect.php';
 include "../toast.php";
@@ -7,7 +9,7 @@ $user_id = $_SESSION['user_id'];
 $role = $_SESSION['user_role'];
 
 $table = ($role === 'landlord') ? 'landlords' : 'students';
-$id_col = ($role === 'landlord') ? 'landlord_id' : 'student_id';
+$id_col = ($role === 'landlord') ? 'id' : 'id';
 
 $message = "";
 

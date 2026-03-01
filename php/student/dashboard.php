@@ -1,15 +1,7 @@
 <?php
-require_once "../session.php";
+require_once "auth_student.php";
 require_once "../db_connect.php";
 
-if ($_SESSION['user_role'] !== 'student') {
-    $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'You are not authorized to access this page.'
-];
-    header("Location: ../index/index.php");
-    exit;
-}
 // Fetch unread notifications count
 $notifStmt = $conn->prepare("
     SELECT COUNT(*) AS total 

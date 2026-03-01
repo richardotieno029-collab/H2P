@@ -1,12 +1,8 @@
 <?php
-session_start();
+require_once "auth_student.php";
 require_once "../db_connect.php";
 
-if (!isset($_SESSION['user_id'])) {
-    die("Please login first.");
-}
-
-$student_id = $_SESSION['user_id'];
+$student_internal_id = $_SESSION['user_id'];
 
 /* Validate room_id */
 if (!isset($_GET['room_id']) || !is_numeric($_GET['room_id'])) {
@@ -24,18 +20,18 @@ $stmt = $conn->prepare("
     SELECT id
     FROM bookings
     WHERE room_id = ?
-      AND student_id = ?
+      AND student_internal_id = ?
       AND status = 'approved'
       AND approved_expires_at > NOW()
     FOR UPDATE
 ");
-$stmt->bind_param("is", $room_id, $student_id);
+$stmt->bind_param("is", $room_id, $student_internal_id);
 $stmt->execute();
 $booking = $stmt->get_result()->fetch_assoc();
 
 if (!$booking) {
     $conn->rollback();
-    die("Invalid or expired approval.");
+    die("You are all caught up.");
 }
 
 /* Ensure booking is APPROVED for this student */
@@ -50,14 +46,14 @@ $stmt = $conn->prepare("
     FROM bookings b
     JOIN rooms r ON b.room_id = r.id
     JOIN houses h ON r.house_id = h.house_id
-    JOIN landlords l ON h.landlord_id = l.landlord_id
+    JOIN landlords l ON h.landlord_id = l.id
     WHERE b.room_id = ?
-      AND b.student_id = ?
+      AND b.student_internal_id = ?
       AND b.status IN ('approved', 'occupied')
     LIMIT 1
 ");
 
-$stmt->bind_param("is", $room_id, $student_id);
+$stmt->bind_param("is", $room_id, $student_internal_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
@@ -93,7 +89,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_occupy'])) {
 
     $conn->commit();
 
-    header("Location: contact_landlord.php?room_id=$room_id&success=occupied");
+$_SESSION['toast'] = [
+            'type' => 'success',
+            'message' => 'Room status changed successfully.'
+        ];
+    header("Location: browse_houses.php?&success=occupied");
     exit;
 }
 ?>

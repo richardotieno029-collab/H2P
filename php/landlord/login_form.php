@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <div class="auth-page">
       <div class="auth-container"> 
-<a href="javascript:history.back()" class="back-btn" title="Go back">
+<a href="../index/index.php" class="back-btn" title="Go back">
     ←
 </a>
         <div class="logo-container">
@@ -101,6 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     </form>
     <div class="auth-footer">
+         <a href="../auth/forgot_password.php">Forgot Password</a></br>
             Don't have an account?
             <a href="signup_form.php">signup</a>
         </div>

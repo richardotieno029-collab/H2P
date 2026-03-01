@@ -8,10 +8,9 @@ $_SESSION = [];
 // Destroy the session
 session_destroy();
 
-// Optional: prevent back-button access
 $_SESSION['toast'] = [
     'type' => 'info',
-    'message' => 'Loogged out successfully.'
+    'message' => 'Logged out successfully.'
 ];
 header("Location: login_form.php");
 exit;

@@ -1,5 +1,5 @@
 <?php
-require_once "../session.php";
+require_once "auth_student.php";
 require_once "../db_connect.php";
 
 // Mark notifications as read
@@ -24,12 +24,12 @@ SELECT
             FROM bookings b
             JOIN rooms r2 ON b.room_id = r2.id
             WHERE r2.house_id = h.house_id
-              AND b.student_id = ?
+              AND b.student_internal_id = ?
               AND b.status = 'pending'
         ) THEN 1 ELSE 0
     END AS has_pending
 FROM houses h
-JOIN landlords l ON h.landlord_id = l.landlord_id
+JOIN landlords l ON h.landlord_id = l.id
 LEFT JOIN rooms r ON h.house_id = r.house_id
 WHERE 1=1
 ";
@@ -115,6 +115,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         <option value="Single">Single</option>
         <option value="Bedsitter">Bedsitter</option>
         <option value="One Bedroom">1 Bedroom</option>
+        <option value="Hostel">Hostel</option>
     </select>
 
     <input type="number" name="min_price" placeholder="Min Price">

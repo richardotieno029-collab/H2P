@@ -11,7 +11,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-$student_id = $_SESSION['user_id'];
+$student_internal_id = $_SESSION['user_id'];
 
 $query = "
 SELECT 
@@ -22,8 +22,8 @@ SELECT
 FROM favourites
 JOIN rooms ON favourites.room_id = rooms.id
 JOIN houses ON rooms.house_id = houses.house_id
-JOIN landlords ON houses.landlord_id = landlords.landlord_id
-WHERE favourites.student_id = ?
+JOIN landlords ON houses.landlord_id = landlords.id
+WHERE favourites.student_internal_id = ?
 ";
 
 $stmt = $conn->prepare($query);
@@ -73,7 +73,7 @@ document.querySelectorAll('.fav-btn').forEach(btn => {
     btn.addEventListener('click', function () {
         const roomId = this.dataset.roomId;
 
-        fetch('../favourites/favourite.php', {
+        fetch('favourite.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
             body: 'room_id=' + roomId

@@ -1,24 +1,15 @@
 <?php
-session_start();
+require_once "auth_student.php";
 require_once "../db_connect.php";
 
-if ($_SESSION['user_role'] !== 'student') {
-        $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'Access denied.'
-    ];
-    header("Location: ../index/index.php");
-    exit;
-}
-
-$student_id = $_SESSION['user_id'];
+$id = $_SESSION['user_id'];
 
 $stmt = $conn->prepare("
     SELECT full_name, email, phone, profile_image 
     FROM students 
-    WHERE student_id = ?
+    WHERE id = ?
 ");
-$stmt->bind_param("s", $student_id);
+$stmt->bind_param("s", $id);
 $stmt->execute();
 $student = $stmt->get_result()->fetch_assoc();
 ?>

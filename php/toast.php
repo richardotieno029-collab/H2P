@@ -1,4 +1,7 @@
 <?php
+if (session_status()===PHP_SESSION_NONE){
+    session_start();
+}
 if (isset($_SESSION['toast'])):
     $toast = $_SESSION['toast'];
     unset($_SESSION['toast']); // show once

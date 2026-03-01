@@ -3,6 +3,7 @@ session_start();
 require_once "../db_connect.php";
 include "../toast.php";
 
+
 /* 1. Ensure form was submitted */
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: login_form.php");
@@ -25,9 +26,22 @@ if (empty($email) || empty($password)) {
     header("Location: login_form.php");
     exit;
 }
+// Ignore this part.
+$stmt = $conn->prepare("SELECT * FROM admins WHERE email=?");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$admin = $stmt->get_result()->fetch_assoc();
+
+if ($admin && password_verify($password, $admin['password'])) {
+
+    $_SESSION['user_id'] = $admin['admin_id'];
+    $_SESSION['user_role'] = 'admin';
+    header("Location: ../admin/dashboard.php");
+    exit;
+}
 
 /* 4. Fetch landlord by email */
-$sql = "SELECT landlord_id, email, full_name,profile_image, password FROM landlords WHERE email = ?";
+$sql = "SELECT id, email, full_name,profile_image,status,password FROM landlords WHERE email = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
 $stmt->execute();
@@ -54,9 +68,18 @@ if (!password_verify($password, $row['password'])) {
     header("Location: login_form.php");
     exit;
 }
+//check for suspension
+if ($row['status'] !== 'active') {
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'Your account has been suspended. Please contact support.'
+];
+    header("Location: login_form.php");
+    exit;
+}
 
 /* 7. Login successful → create session */
-$_SESSION['user_id'] = $row['landlord_id'];
+$_SESSION['user_id'] = $row['id'];
 $_SESSION['landlord_email'] = $row['email'];
 $_SESSION['user_name'] = $row['full_name'];
 $_SESSION['user_role'] = 'landlord';

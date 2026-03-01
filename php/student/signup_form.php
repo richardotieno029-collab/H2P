@@ -16,9 +16,6 @@ include "../toast.php";
 
 <div class="auth-page">
       <div class="auth-container"> 
-<a href="javascript:history.back()" class="back-btn" title="Go back">
-    ←
-</a>
         <div class="logo-container">
     <img src="../../images/logo.jpeg" alt="H2P Logo" class="logo-img">
     <h1 class="logo-text">WELCOME TO H2P</h1>

@@ -15,7 +15,8 @@ include "../toast.php";
 <?php include "../toast.php"; ?>
 <div class="auth-page">
       <div class="auth-container"> 
-<a href="javascript:history.back()" class="back-btn" title="Go back">
+        
+<a href="../index/index.php" class="back-btn" title="Go back">
     ←
 </a>
         <div class="logo-container">
@@ -25,7 +26,6 @@ include "../toast.php";
 </div>
 
 <h2>Student Login</h2>
-
 <form method="POST" action="login.php">
 
     <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
@@ -38,6 +38,7 @@ include "../toast.php";
     <button type="submit">Login</button>
 </form>
 <div class="auth-footer">
+    <a href="../auth/forgot_password.php">Forgot Password</a></br>
             Don't have an account?
 <a href="signup_form.php">Signup</a>
         </div>

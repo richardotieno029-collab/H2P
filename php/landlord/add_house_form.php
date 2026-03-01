@@ -1,15 +1,5 @@
 <?php
-require_once "../session.php";
-
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
-    $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'For that you need to be logged in.'
-];
-    header("Location: login_form.php");
-    exit;
-
-}
+require_once "auth_landlord.php";
 
 ?>
 
@@ -57,6 +47,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
             <option>Bedsitter</option>
             <option>One Bedroom</option>
             <option>Two Bedroom</option>
+            <option>Hostel</option>
         </select>
 
         <label>Price (KES)</label>
@@ -66,7 +57,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
         <input type="file" name="house_image" required>
 
         <label>Upload other Images</label>
-        <input type="file" name="gallery_images[]" multiple required>
+        <input type="file" name="gallery_images[]" multiple >
 
 
         <button type="button" class="toggle-btn" onclick="toggleDetails()">

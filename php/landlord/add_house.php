@@ -1,17 +1,7 @@
 <?php
-require_once "../session.php";
+require_once "auth_landlord.php";
 require_once "../db_connect.php";
 include "../toast.php";
-
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord'){
-    $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'For that you need to be logged in.'
-];
-    header("Location: login_form.php");
-    exit;
-
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -91,7 +81,7 @@ if (move_uploaded_file($_FILES['house_image']['tmp_name'], $targetPath)) {
 } else {
     die("Image upload failed");
 }
-
+  $_SESSION['token'] = bin2hex(random_bytes(32));
 // INSERT
 $sql = "INSERT INTO houses 
 (landlord_id, house_name, area, room_type, price, description, image_path,
