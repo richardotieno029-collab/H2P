@@ -1,10 +1,11 @@
 <?php
 session_start();
 require_once "../db_connect.php";
+require_once "../includes/risk_engine.php";
 include "../toast.php";
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-    header("Location: signupform.php");
+    header("Location: signup_form.php");
     exit;
 }
 
@@ -96,22 +97,61 @@ if (!in_array($mime, $allowed_types)) {
     $profileImagePath = "../uploads/profiles/" . $newName;
 }
 
+
 /* INSERT */
 $stmt = $conn->prepare(
     "INSERT INTO landlords (full_name, email, phone, profile_image, password, ip_address)
-     VALUES (?, ?, ?, ?, ?)"
+     VALUES (?, ?, ?, ?, ?, ?)"
 );
 $stmt->bind_param(
-    "sssss",
+    "ssssss",
     $name,
     $email,
     $phone,
     $profileImagePath,
-    $hashed_password
+    $hashed_password,
+    $ip
 );
+$landlord_id = $conn->insert_id;
 
 if ($stmt->execute()) {
-    $_SESSION['toast'] = [
+
+//log activity
+$user_type = 'landlord';
+$user_id   = $_SESSION['user_id'];
+$ip        = $_SERVER['REMOTE_ADDR'];
+
+$log = $conn->prepare("
+    INSERT INTO activity_logs (user_type, user_id, action, ip_address)
+    VALUES (?, ?, ?, ?)
+");
+$action = 'CREATE_ACCOUNT';
+$log->bind_param("siss", $user_type, $user_id, $action, $ip);
+$log->execute();
+      //too many users on same ip
+$stmt = $conn->prepare("
+    SELECT COUNT(*) as total 
+    FROM landlords 
+    WHERE ip_address=? 
+    AND created_at > NOW() - INTERVAL 1 HOUR
+");
+$stmt->bind_param("s", $ip);
+$stmt->execute();
+$count = $stmt->get_result()->fetch_assoc()['total'];
+
+if ($count >= 3) {
+
+    $flag = $conn->prepare("
+        INSERT INTO spam_flags (user_type, user_id, reason, severity)
+        VALUES ('landlord', ?, 'Multiple registrations from same IP', 'high')
+    ");
+    $flag->bind_param("i", $landlord_id);
+    $flag->execute();
+
+    //risk score
+addRisk($conn, $user_type, $user_id, 7);
+}
+$_SESSION['toast'] = [
         'type' => 'success',
         'message' => 'Account created successfully. Please login.'
     ];
@@ -123,5 +163,5 @@ $_SESSION['toast'] = [
     'type' => 'error',
     'message' => 'Failed to create account.'
 ];
-header("Location: signupform.php");
+header("Location: signup_form.php");
 exit;

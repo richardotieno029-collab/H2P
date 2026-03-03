@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once "../db_connect.php";
+require_once "../includes/risk_engine.php";
 include "../toast.php";
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -114,9 +115,61 @@ $stmt->bind_param(
     $ip
 );
 
-$_SESSION['token'] = bin2hex(random_bytes(32));
-
 if ($stmt->execute()) {
+
+//log activity
+$user_type = 'student';
+$user_id   = $_SESSION['user_id'];
+$ip        = $_SERVER['REMOTE_ADDR'];
+
+$log = $conn->prepare("
+    INSERT INTO activity_logs (user_type, user_id, action, ip_address)
+    VALUES (?, ?, ?, ?)
+");
+$action = 'CREATE_ACCOUNT';
+$log->bind_param("siss", $user_type, $user_id, $action, $ip);
+$log->execute();
+//too many users on same ip
+$stmt = $conn->prepare("
+    SELECT COUNT(*) as total 
+    FROM students 
+    WHERE ip_address=? 
+    AND created_at > NOW() - INTERVAL 1 HOUR
+");
+$stmt->bind_param("s", $ip);
+$stmt->execute();
+$count = $stmt->get_result()->fetch_assoc()['total'];
+
+if ($count >= 3) {
+
+//prevent duplicate flags
+    $existing = $conn->prepare("
+        SELECT id FROM spam_flags
+        WHERE user_type='student'
+        AND user_id=?
+        AND reason='Multiple registrations from same IP'
+        AND created_at > NOW() - INTERVAL 10 MINUTE
+    ");
+    $existing->bind_param("i", $user_id);
+    $existing->execute();
+
+    if ($existing->get_result()->num_rows == 0) {
+
+    $flag = $conn->prepare("
+        INSERT INTO spam_flags (user_type, user_id, reason, severity)
+        VALUES ('student', ?, 'Multiple registrations from same IP', 'high')
+    ");
+    $flag->bind_param("i", $user_id);
+    $flag->execute();
+    
+         // risk score
+    $user_type = 'student';
+    $user_id   = $row['id'];
+
+    addRisk($conn, $user_type, $user_id, 5);
+    }
+}
+
     $_SESSION['toast'] = [
         'type' => 'success',
         'message' => 'Signup successful. Please login.'

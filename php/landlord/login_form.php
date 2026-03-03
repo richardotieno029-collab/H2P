@@ -1,5 +1,6 @@
 <?php
 session_start();
+include "../toast.php";
 $_SESSION['token'] = bin2hex(random_bytes(32)); // CSRF token generation
 require_once "../db_connect.php"; // adjust if your db file has a different name
 

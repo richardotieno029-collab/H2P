@@ -164,6 +164,7 @@ a.success {
     margin-bottom: 15px;
     cursor: pointer;
 }
+
 .toast {
     position: fixed;
     top: 20px;

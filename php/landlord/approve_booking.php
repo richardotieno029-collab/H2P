@@ -67,6 +67,19 @@ $notify = $conn->prepare("
 $notify->bind_param("is", $student_id, $message);
 $notify->execute();
 
+//log activity
+$user_type = 'landlord';
+$user_id   = $_SESSION['user_id'];
+$ip        = $_SERVER['REMOTE_ADDR'];
+
+$log = $conn->prepare("
+    INSERT INTO activity_logs (user_type, user_id, action, ip_address)
+    VALUES (?, ?, ?, ?)
+");
+$action = 'APPROVE_BOOKING:' . $booking_id;
+$log->bind_param("siss", $user_type, $user_id, $action, $ip);
+$log->execute();
+
 /* =========================
    7️⃣ Redirect back
 ========================= */

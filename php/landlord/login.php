@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once "../db_connect.php";
+require_once "../includes/risk_engine.php";
 include "../toast.php";
 
 
@@ -16,7 +17,7 @@ if (!hash_equals($_SESSION['token'], $_POST['token'])) {
 }
 $email = trim($_POST['email'] ?? '');
 $password = trim($_POST['password'] ?? '');
-
+$ip = $_SERVER['REMOTE_ADDR'];
 /* 3. Basic validation */
 if (empty($email) || empty($password)) {
     $_SESSION['toast'] = [
@@ -41,7 +42,7 @@ if ($admin && password_verify($password, $admin['password'])) {
 }
 
 /* 4. Fetch landlord by email */
-$sql = "SELECT id, email, full_name,profile_image,status,password FROM landlords WHERE email = ?";
+$sql = "SELECT id, email, full_name,profile_image,status,password,ip_address FROM landlords WHERE email = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
 $stmt->execute();
@@ -65,9 +66,55 @@ if (!password_verify($password, $row['password'])) {
     'type' => 'error',
     'message' => 'Wrong password.'
 ];
+//log failed attempts
+$attempt = $conn->prepare("
+    INSERT INTO login_attempts (user_type, user_id, ip_address, success)
+    VALUES (?, ?, ?, 0)
+");
+$type = 'landlord';
+$attempt->bind_param("sis", $type, $row['id'], $ip);
+$attempt->execute();
+//flag for too many failed attempts
+$stmt = $conn->prepare("
+    SELECT COUNT(*) as total 
+    FROM login_attempts 
+    WHERE ip_address=? 
+    AND success=0
+    AND created_at > NOW() - INTERVAL 10 MINUTE
+");
+$stmt->bind_param("s", $ip);
+$stmt->execute();
+$count = $stmt->get_result()->fetch_assoc()['total'];
+
+if ($count >= 2) {
+            // Prevent duplicate flags within 10 mins
+    $existing = $conn->prepare("
+        SELECT id FROM spam_flags
+        WHERE user_type='landlord'
+        AND user_id=?
+        AND reason='Multiple failed login attempts from same IP'
+        AND created_at > NOW() - INTERVAL 10 MINUTE
+    ");
+    $existing->bind_param("i", $user_id);
+    $existing->execute();
+
+    if ($existing->get_result()->num_rows == 0) {
+    // insert spam flag
+    $flag = $conn->prepare("
+        INSERT INTO spam_flags (user_type, user_id, reason, severity)
+        VALUES ('landlord', ?, 'Multiple failed login attempts from same IP', 'medium')
+    ");
+    $flag->bind_param("i", $row['id']);
+    $flag->execute();
+
+    //risk score
+addRisk($conn, $user_type, $user_id, 5);
+    }
+}
     header("Location: login_form.php");
     exit;
 }
+
 //check for suspension
 if ($row['status'] !== 'active') {
     $_SESSION['toast'] = [

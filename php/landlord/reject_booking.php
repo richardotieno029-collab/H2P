@@ -36,6 +36,19 @@ $stmt = $conn->prepare($roomUpdate);
 $stmt->bind_param("i", $room_id);
 $stmt->execute();
 
+//log activity
+$user_type = 'landlord';
+$user_id   = $_SESSION['user_id'];
+$ip        = $_SERVER['REMOTE_ADDR'];
+
+$log = $conn->prepare("
+    INSERT INTO activity_logs (user_type, user_id, action, ip_address)
+    VALUES (?, ?, ?, ?)
+");
+$action = 'REJECT_BOOKING:' . $booking_id;
+$log->bind_param("siss", $user_type, $user_id, $action, $ip);
+$log->execute();
+
 // 6️⃣ Redirect back
 $_SESSION['toast'] = [
     'type' => 'info',
