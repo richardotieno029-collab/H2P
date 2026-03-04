@@ -12,12 +12,19 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
 }
 
 /* 2. Get & sanitize inputs */
-if (!hash_equals($_SESSION['token'], $_POST['token'])) {
-    die("Invalid request.");
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    if (!isset($_POST['token']) || 
+        !isset($_SESSION['token']) || 
+        !hash_equals($_SESSION['token'], $_POST['token'])) {
+
+        die("Invalid request.");
+    }
 }
 $email = trim($_POST['email'] ?? '');
 $password = trim($_POST['password'] ?? '');
 $ip = $_SERVER['REMOTE_ADDR'];
+$user_agent = $_SERVER['HTTP_USER_AGENT'];
 /* 3. Basic validation */
 if (empty($email) || empty($password)) {
     $_SESSION['toast'] = [
@@ -42,7 +49,7 @@ if ($admin && password_verify($password, $admin['password'])) {
 }
 
 /* 4. Fetch landlord by email */
-$sql = "SELECT id, email, full_name,profile_image,status,password,ip_address FROM landlords WHERE email = ?";
+$sql = "SELECT * FROM landlords WHERE email = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
 $stmt->execute();
@@ -74,15 +81,20 @@ $attempt = $conn->prepare("
 $type = 'landlord';
 $attempt->bind_param("sis", $type, $row['id'], $ip);
 $attempt->execute();
+       // risk score
+    $user_type = 'landlord';
+    $user_id   = $row['id'];
+
+    addRisk($conn, $user_type, $user_id, 5);
 //flag for too many failed attempts
 $stmt = $conn->prepare("
     SELECT COUNT(*) as total 
-    FROM login_attempts 
+    FROM landlords 
     WHERE ip_address=? 
-    AND success=0
-    AND created_at > NOW() - INTERVAL 10 MINUTE
+    AND user_agent=? 
+    AND created_at > NOW() - INTERVAL 1 HOUR
 ");
-$stmt->bind_param("s", $ip);
+$stmt->bind_param("ss", $ip, $user_agent);
 $stmt->execute();
 $count = $stmt->get_result()->fetch_assoc()['total'];
 
@@ -107,8 +119,12 @@ if ($count >= 2) {
     $flag->bind_param("i", $row['id']);
     $flag->execute();
 
-    //risk score
-addRisk($conn, $user_type, $user_id, 5);
+            // risk score
+    $user_type = 'landlord';
+    $user_id   = $row['id'];
+
+    addRisk($conn, $user_type, $user_id, 15);
+    
     }
 }
     header("Location: login_form.php");
@@ -116,6 +132,11 @@ addRisk($conn, $user_type, $user_id, 5);
 }
 
 //check for suspension
+    //risk recalculation
+        $user_type = 'landlord';
+    $user_id   = $row['id'];
+
+    addRisk($conn, $user_type, $user_id, 0);
 if ($row['status'] !== 'active') {
     $_SESSION['toast'] = [
     'type' => 'error',

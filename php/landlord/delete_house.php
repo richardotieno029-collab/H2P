@@ -112,7 +112,7 @@ if ($count >= 8) {
     $user_type = 'landlord';
     $user_id   = $_SESSION['user_id'];
 
-    addRisk($conn, $user_type, $user_id, 5);
+    addRisk($conn, $user_type, $user_id, 20);
     }
 }
 

@@ -102,7 +102,7 @@ $check->bind_param("i", $user_id);
 $check->execute();
 $count = $check->get_result()->fetch_assoc()['total'];
 
-if ($count >= 6) {
+if ($count >= 3) {
 
     $existing = $conn->prepare("
         SELECT id FROM spam_flags
@@ -127,7 +127,7 @@ if ($count >= 6) {
     $user_type = 'student';
     $user_id   = $_SESSION['user_id'];
 
-    addRisk($conn, $user_type, $user_id, 5);
+    addRisk($conn, $user_type, $user_id, 15);
     }
 }
 

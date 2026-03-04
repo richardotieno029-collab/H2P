@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 $ip = $_SERVER['REMOTE_ADDR'];
+$user_agent = $_SERVER['HTTP_USER_AGENT'];
 $student_id = trim($_POST['student_id']);
 $full_name  = trim($_POST['full_name']);
 $email      = trim($_POST['email']);
@@ -100,47 +101,52 @@ if (!in_array($mime, $allowed_types)) {
 /* 🧾 Insert student */
 $stmt = $conn->prepare(
     "INSERT INTO students 
-    (student_id, full_name, email, phone, password, profile_image, ip_address)
-    VALUES (?, ?, ?, ?, ?, ?, ?)"
+    (student_id, full_name, email, phone, password, profile_image, ip_address, user_agent)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 );
 
 $stmt->bind_param(
-    "ssssss",
+    "sssssss",
     $student_id,
     $full_name,
     $email,
     $phone,
     $hashedPassword,
     $profileImagePath,
-    $ip
+    $ip,
+    $user_agent
 );
 
 if ($stmt->execute()) {
 
+    $student_id = $conn->insert_id;
+
 //log activity
 $user_type = 'student';
-$user_id   = $_SESSION['user_id'];
+$user_id   = $student_id;
 $ip        = $_SERVER['REMOTE_ADDR'];
+$user_agent = $_SERVER['HTTP_USER_AGENT'];
 
 $log = $conn->prepare("
-    INSERT INTO activity_logs (user_type, user_id, action, ip_address)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO activity_logs (user_type, user_id, action, ip_address, user_agent)
+    VALUES (?, ?, ?, ?, ?)
 ");
 $action = 'CREATE_ACCOUNT';
-$log->bind_param("siss", $user_type, $user_id, $action, $ip);
+$log->bind_param("siss", $user_type, $user_id, $action, $ip, $user_agent);
 $log->execute();
 //too many users on same ip
 $stmt = $conn->prepare("
     SELECT COUNT(*) as total 
     FROM students 
     WHERE ip_address=? 
+    AND user_agent=?
     AND created_at > NOW() - INTERVAL 1 HOUR
 ");
-$stmt->bind_param("s", $ip);
+$stmt->bind_param("s", $ip, $user_agent);
 $stmt->execute();
 $count = $stmt->get_result()->fetch_assoc()['total'];
 
-if ($count >= 3) {
+if ($count >= 2) {
 
 //prevent duplicate flags
     $existing = $conn->prepare("
@@ -164,9 +170,9 @@ if ($count >= 3) {
     
          // risk score
     $user_type = 'student';
-    $user_id   = $row['id'];
+    $user_id   = $student_id;
 
-    addRisk($conn, $user_type, $user_id, 5);
+    addRisk($conn, $user_type, $user_id, 25);
     }
 }
 

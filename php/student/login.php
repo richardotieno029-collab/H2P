@@ -16,10 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $student_id = trim($_POST['student_id']);
 $password   = $_POST['password'];
 $ip = $_SERVER['REMOTE_ADDR'];
+$user_agent = $_SERVER['HTTP_USER_AGENT'];
 
 $stmt = $conn->prepare(
-    "SELECT id, student_id, full_name, password,status, profile_image 
-     FROM students WHERE student_id = ?"
+    "SELECT * FROM students WHERE student_id = ?"
 );
 $stmt->bind_param("s", $student_id);
 $stmt->execute();
@@ -27,6 +27,11 @@ $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
     if (password_verify($password, $row['password'])) {
+    //risk recalculation
+        $user_type = 'student';
+    $user_id   = $row['id'];
+
+    addRisk($conn, $user_type, $user_id, 0);
 
     //check for suspension
 if ($row['status'] !== 'active') {
@@ -65,25 +70,31 @@ $_SESSION['toast'] = [
 ];
 //log failed attempts
 $attempt = $conn->prepare("
-    INSERT INTO login_attempts (user_type, user_id, ip_address, success)
-    VALUES (?, ?, ?, 0)
+    INSERT INTO login_attempts (user_type, user_id, ip_address, user_agent, success)
+    VALUES (?, ?, ?, ?, 0)
 ");
 $type = 'student';
-$attempt->bind_param("sis", $type, $row['id'], $ip);
+$attempt->bind_param("siss", $type, $row['id'], $ip, $user_agent);
 $attempt->execute();
+       // risk score
+    $user_type = 'student';
+    $user_id   = $row['id'];
+
+    addRisk($conn, $user_type, $user_id, 5);
 //flag for too many failed attempts
 $stmt = $conn->prepare("
     SELECT COUNT(*) as total 
     FROM login_attempts 
-    WHERE ip_address=? 
+    WHERE ip_address=?
+    AND user_agent=?
     AND success=0
     AND created_at > NOW() - INTERVAL 10 MINUTE
 ");
-$stmt->bind_param("s", $ip);
+$stmt->bind_param("ss", $ip, $user_agent);
 $stmt->execute();
 $count = $stmt->get_result()->fetch_assoc()['total'];
 
-if ($count >= 2) {
+if ($count >= 5) {
 
 //prevent duplicate flags within 10 mins
     $existing = $conn->prepare("
@@ -110,7 +121,7 @@ if ($count >= 2) {
     $user_type = 'student';
     $user_id   = $row['id'];
 
-    addRisk($conn, $user_type, $user_id, 5);
+    addRisk($conn, $user_type, $user_id, 7);
 }
 }
 

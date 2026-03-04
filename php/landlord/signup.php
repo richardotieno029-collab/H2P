@@ -14,6 +14,7 @@ if (!hash_equals($_SESSION['tocken'], $_POST['token'])) {
     die("Invalid request.");
 }
 $ip = $_SERVER['REMOTE_ADDR'];
+$user_agent = $_SERVER['HTTP_USER_AGENT'];
 $name     = trim($_POST['name'] ?? '');
 $email    = trim($_POST['email'] ?? '');
 $phone    = trim($_POST['phone'] ?? '');
@@ -100,8 +101,8 @@ if (!in_array($mime, $allowed_types)) {
 
 /* INSERT */
 $stmt = $conn->prepare(
-    "INSERT INTO landlords (full_name, email, phone, profile_image, password, ip_address)
-     VALUES (?, ?, ?, ?, ?, ?)"
+    "INSERT INTO landlords (full_name, email, phone, profile_image, password, ip_address, user_agent)
+     VALUES (?, ?, ?, ?, ?, ?, ?)"
 );
 $stmt->bind_param(
     "ssssss",
@@ -110,54 +111,75 @@ $stmt->bind_param(
     $phone,
     $profileImagePath,
     $hashed_password,
-    $ip
+    $ip,
+    $user_agent
 );
-$landlord_id = $conn->insert_id;
-
 if ($stmt->execute()) {
 
-//log activity
-$user_type = 'landlord';
-$user_id   = $_SESSION['user_id'];
-$ip        = $_SERVER['REMOTE_ADDR'];
+    $landlord_id = $conn->insert_id;
 
-$log = $conn->prepare("
-    INSERT INTO activity_logs (user_type, user_id, action, ip_address)
-    VALUES (?, ?, ?, ?)
-");
-$action = 'CREATE_ACCOUNT';
-$log->bind_param("siss", $user_type, $user_id, $action, $ip);
-$log->execute();
-      //too many users on same ip
+    // Log activity
+    $user_type = 'landlord';
+    $user_id   = $landlord_id;
+    $ip        = $_SERVER['REMOTE_ADDR'];
+
+    $log = $conn->prepare("
+        INSERT INTO activity_logs (user_type, user_id, action, ip_address)
+        VALUES (?, ?, ?, ?)
+    ");
+    $action = 'CREATE_ACCOUNT';
+    $log->bind_param("siss", $user_type, $user_id, $action, $ip);
+    $log->execute();
+
+
+    // Check multiple accounts from same IP
 $stmt = $conn->prepare("
     SELECT COUNT(*) as total 
     FROM landlords 
     WHERE ip_address=? 
+    AND user_agent=? 
     AND created_at > NOW() - INTERVAL 1 HOUR
 ");
-$stmt->bind_param("s", $ip);
+$stmt->bind_param("ss", $ip, $user_agent);
 $stmt->execute();
 $count = $stmt->get_result()->fetch_assoc()['total'];
+    if ($count >= 3) {
 
-if ($count >= 3) {
+        $existing = $conn->prepare("
+            SELECT id FROM spam_flags
+            WHERE user_type='landlord'
+            AND user_id=?
+            AND reason='Multiple registrations from same IP'
+            AND created_at > NOW() - INTERVAL 10 MINUTE
+        ");
+        $existing->bind_param("i", $landlord_id);
+        $existing->execute();
 
-    $flag = $conn->prepare("
-        INSERT INTO spam_flags (user_type, user_id, reason, severity)
-        VALUES ('landlord', ?, 'Multiple registrations from same IP', 'high')
-    ");
-    $flag->bind_param("i", $landlord_id);
-    $flag->execute();
+        if ($existing->get_result()->num_rows == 0) {
 
-    //risk score
-addRisk($conn, $user_type, $user_id, 7);
+            $flag = $conn->prepare("
+                INSERT INTO spam_flags (user_type, user_id, reason, severity)
+                VALUES ('landlord', ?, 'Multiple registrations from same IP', 'high')
+            ");
+            $flag->bind_param("i", $landlord_id);
+            $flag->execute();
+
+         // risk score
+    $user_type = 'landlord';
+    $user_id   = $landlord_id;
+
+    addRisk($conn, $user_type, $user_id, 25);
+        }
+    }
 }
+
 $_SESSION['toast'] = [
         'type' => 'success',
         'message' => 'Account created successfully. Please login.'
     ];
     header("Location: login.php");
     exit;
-}
+
 
 $_SESSION['toast'] = [
     'type' => 'error',

@@ -9,6 +9,7 @@ $newReports = $conn->query("SELECT COUNT(*) as total FROM reports WHERE status='
 $totalLandlords = $conn->query("SELECT COUNT(*) as total FROM landlords")->fetch_assoc()['total'];
 $totalStudents = $conn->query("SELECT COUNT(*) as total FROM students")->fetch_assoc()['total'];
 $totalFlags = $conn->query("SELECT COUNT(*) as total FROM spam_flags")->fetch_assoc()['total'];
+$totallogs = $conn->query("SELECT COUNT(*) as total FROM activity_logs")->fetch_assoc()['total'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -57,12 +58,18 @@ $totalFlags = $conn->query("SELECT COUNT(*) as total FROM spam_flags")->fetch_as
 </div>
 
 <div class="card">
-<i class="fa-solid fa-flag"></i>
+<i class="fa-solid fa-triangle-exclamation"></i>
 <h3><?= $totalFlags ?></h3>
 <p>Total Spam Flags</p>
 <a href="spam.php">View Spam Flags</a>
 </div>
 
+<div class="card">
+<i class="fa-solid fa-book"></i>
+<h3><?= $totallogs ?></h3>
+<p>Total Logs</p>
+<a href="logs.php">View logs</a>
+</div>
 </div>
 
 </div>

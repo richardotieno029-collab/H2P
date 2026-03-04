@@ -1,5 +1,5 @@
 <?php
-session_star();
+session_start();
 require_once "auth_student.php";
 require_once "../db_connect.php";
 require_once "../includes/risk_engine.php";
@@ -83,7 +83,7 @@ $check->bind_param("i", $user_id);
 $check->execute();
 $count = $check->get_result()->fetch_assoc()['total'];
 
-if ($count >= 6) {
+if ($count >= 3) {
 
     $existing = $conn->prepare("
         SELECT id FROM spam_flags
@@ -108,7 +108,7 @@ if ($count >= 6) {
     $user_type = 'student';
     $user_id   = $_SESSION['user_id'];
 
-    addRisk($conn, $user_type, $user_id, 5);
+    addRisk($conn, $user_type, $user_id, 15);
     }
 }
 

@@ -84,12 +84,12 @@ if ($count >= 8) {
         $flag->bind_param("i", $user_id);
         $flag->execute();
 
-
-                    // risk score
+             // risk score
     $user_type = 'landlord';
     $user_id   = $_SESSION['user_id'];
 
-    addRisk($conn, $user_type, $user_id, 5);
+
+           addRisk($conn, $user_type, $user_id, 15);
     }
 }
 

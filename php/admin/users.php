@@ -30,6 +30,7 @@ Managing <?= ucfirst($type) ?>s
 <th>ID</th>
 <th>Name</th>
 <th>Email</th>
+<th>Risk Score</th>
 <th>Status</th>
 <th>Action</th>
 <th>Houses</th>
@@ -44,6 +45,7 @@ Managing <?= ucfirst($type) ?>s
 <td><?= $row['id'] ?></td>
 <td><?= htmlspecialchars($row['full_name']) ?></td>
 <td><?= htmlspecialchars($row['email']) ?></td>
+<td><?= htmlspecialchars($row['risk_score']) ?></td>
 
 <td>
 <span class="status <?= $row['status'] ?>">
