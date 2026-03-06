@@ -203,6 +203,12 @@ $count = $check->get_result()->fetch_assoc()['total'];
 
 if ($count >= 8) {
 
+            // risk score
+    $user_type = 'landlord';
+    $user_id   = $_SESSION['user_id'];
+
+    addRisk($conn, $user_type, $user_id, 15);
+
     // Prevent duplicate flags within 10 mins
     $existing = $conn->prepare("
         SELECT id FROM spam_flags
@@ -222,12 +228,6 @@ if ($count >= 8) {
         ");
         $flag->bind_param("i", $user_id);
         $flag->execute();
-
-               // risk score
-    $user_type = 'landlord';
-    $user_id   = $_SESSION['user_id'];
-
-    addRisk($conn, $user_type, $user_id, 15);
     
     }
 }

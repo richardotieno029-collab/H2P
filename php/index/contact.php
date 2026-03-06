@@ -38,6 +38,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     background: #f4f6f9;
     font-family: Arial, sans-serif;
 }
+.back-btn {
+    display: inline-flex;
+    align-items: left;
+    gap: 6px;
+    font-size: 20px;
+    color: #333;
+    text-decoration: none;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
 
 .contact-container {
     width: 90%;
@@ -152,6 +162,9 @@ button:hover {
 <body>
 
 <div class="contact-container">
+    <a href="javascript:history.back()" class="back-btn" title="Go back">
+    ←
+</a>
 
 <h2>Contact & Support</h2>
 

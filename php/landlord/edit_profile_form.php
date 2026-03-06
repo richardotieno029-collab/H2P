@@ -24,7 +24,7 @@ $landlord = $stmt->get_result()->fetch_assoc();
 
 <div class="auth-page">
       <div class="auth-container">
-         <a href="view_profile.php" class="back-btn" title="Go back">
+         <a href="landlord_dashboard.php" class="back-btn" title="Go back">
     ←
 </a>
     <h2>Edit Profile</h2>

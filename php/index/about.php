@@ -33,6 +33,7 @@
             Traditional house hunting is time-consuming and unreliable.
             H2P bridges the gap between students and landlords by providing
             real-time availability, booking workflows, and verified listings.
+            <a href="../index/contact.php">Contact and Support</a>
         </p>
     </div>
 

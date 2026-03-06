@@ -21,20 +21,29 @@ $result = $stmt->get_result();
 <head>
     <title>Manage Rooms</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
+    
+   <div class="top-bar">
+<button id="menu-toggle" class="menu-btn">
+<i class="fa fa-bars"></i>
+</button>
+
+</div>
     <?php include "../toast.php"; ?>
 <div class="dash-wrapper">
 
-    <aside class="sidebar">
+    <aside id="sidebar" class="sidebar">
 
 <a href="add_room_form.php?house_id=<?php echo $house_id; ?>">
     ➕ Add Room
 </a>
-<a href="landlord_dashboard.php">⬅ Back to Dashboard</a>
+<a href="landlord_dashboard.php">Back to Dashboard</a>
+<a href="../index/about.php">About</a>
+        <a href="../index/contact.php">Contact and Support</a>
 </aside>
-<br><br>
 
 <main class="dash-content">
 <h2>Rooms in This House</h2>
@@ -86,6 +95,34 @@ $result = $stmt->get_result();
 <?php endif; ?>
 
     </main>
+    </div>
+
+<script>
+const menuBtn = document.getElementById("menu-toggle");
+const sidebar = document.getElementById("sidebar");
+const content = document.querySelector(".dash-content");
+
+menuBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    sidebar.classList.toggle("active");
+    content.classList.toggle("shift");
+});
+
+/* close sidebar when clicking anywhere else */
+document.addEventListener("click", function (e) {
+
+    if (
+        sidebar.classList.contains("active") &&
+        !sidebar.contains(e.target) &&
+        e.target !== menuBtn
+    ) {
+        sidebar.classList.remove("active");
+        content.classList.remove("shift");
+    }
+
+});
+
+</script>
 
 </body>
 </html>

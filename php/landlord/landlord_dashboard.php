@@ -5,7 +5,8 @@ require_once "../db_connect.php";
 $sql = "SELECT COUNT(*) AS total FROM notifications 
         WHERE user_id = ? AND is_read = 0";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $_SESSION['user_id']);
+$user_id = $_SESSION['user_id'];
+$stmt->bind_param("i", $user_id);
 $stmt->execute();
 $count = $stmt->get_result()->fetch_assoc()['total'];
 
@@ -15,42 +16,24 @@ $count = $stmt->get_result()->fetch_assoc()['total'];
 <head>
     <meta charset="UTF-8">
     <title>Landlord Dashboard | H2P</title>
- 
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
    <link rel="stylesheet" href="../styles.css">
-
-   <script>
-const btn = document.getElementById("accountBtn");
-const dropdown = document.getElementById("accountDropdown");
-
-btn.addEventListener("click", function (e) {
-    e.stopPropagation();
-    dropdown.classList.toggle("show");
-});
-
-// close dropdown when clicking elsewhere
-document.addEventListener("click", function () {
-    dropdown.classList.remove("show");
-});
-</script>
 </head>
 <body>
     <?php include "../toast.php"; ?>
-    <header>
-<?php
-        $sql = "SELECT COUNT(*) AS total FROM notifications 
-        WHERE user_id = ? AND is_read = 0";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $_SESSION['user_id']);
-$stmt->execute();
-$count = $stmt->get_result()->fetch_assoc()['total'];
-?>
-</header>
-
 
 <?php include "dashboard_header.php"; ?>
-<div class="dash-wrapper">
 
-    <aside class="sidebar">
+   <div class="top-bar">
+<button id="menu-toggle" class="menu-btn">
+<i class="fa fa-bars"></i>
+</button>
+
+</div>
+<div class="dash-wrapper">
+ 
+
+    <aside id="sidebar" class="sidebar">
         <h3 class="logo">H2P Landlord</h3>
 
        <a href="manage_booking.php" class="btn-notify">
@@ -60,6 +43,8 @@ $count = $stmt->get_result()->fetch_assoc()['total'];
     <?php endif; ?>
 </a>
         <a href="add_house_form.php">➕ Add House</a>
+        <a href="../index/about.php">About</a>
+        <a href="../index/contact.php">Contact and Support</a>
         <a href="#">⚙ Settings</a>
     </aside>
 
@@ -106,6 +91,34 @@ $result = $stmt->get_result();
     <p>You haven’t added any houses yet.</p>
 <?php endif; ?>
     </main>
+</div>
+
+<script>
+const menuBtn = document.getElementById("menu-toggle");
+const sidebar = document.getElementById("sidebar");
+const content = document.querySelector(".dash-content");
+
+menuBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    sidebar.classList.toggle("active");
+    content.classList.toggle("shift");
+});
+
+/* close sidebar when clicking anywhere else */
+document.addEventListener("click", function (e) {
+
+    if (
+        sidebar.classList.contains("active") &&
+        !sidebar.contains(e.target) &&
+        e.target !== menuBtn
+    ) {
+        sidebar.classList.remove("active");
+        content.classList.remove("shift");
+    }
+
+});
+
+</script>
 
 </body>
 </html>

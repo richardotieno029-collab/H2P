@@ -25,13 +25,14 @@ $stmt->bind_param("s", $student_id);
 $stmt->execute();
 $result = $stmt->get_result();
 
+
 if ($row = $result->fetch_assoc()) {
-    if (password_verify($password, $row['password'])) {
-    //risk recalculation
+        //risk recalculation
         $user_type = 'student';
     $user_id   = $row['id'];
 
     addRisk($conn, $user_type, $user_id, 0);
+    if (password_verify($password, $row['password'])) {
 
     //check for suspension
 if ($row['status'] !== 'active') {

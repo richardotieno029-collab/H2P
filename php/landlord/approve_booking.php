@@ -76,7 +76,7 @@ $log = $conn->prepare("
     INSERT INTO activity_logs (user_type, user_id, action, ip_address)
     VALUES (?, ?, ?, ?)
 ");
-$action = 'APPROVE_BOOKING:' . $booking_id;
+$action = 'APPROVE_BOOKING';
 $log->bind_param("siss", $user_type, $user_id, $action, $ip);
 $log->execute();
 

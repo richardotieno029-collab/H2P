@@ -84,6 +84,11 @@ $check->execute();
 $count = $check->get_result()->fetch_assoc()['total'];
 
 if ($count >= 3) {
+             // risk score
+    $user_type = 'student';
+    $user_id   = $_SESSION['user_id'];
+
+    addRisk($conn, $user_type, $user_id, 15);
 
     $existing = $conn->prepare("
         SELECT id FROM spam_flags
@@ -103,12 +108,6 @@ if ($count >= 3) {
         ");
         $flag->bind_param("i", $user_id);
         $flag->execute();
-
-         // risk score
-    $user_type = 'student';
-    $user_id   = $_SESSION['user_id'];
-
-    addRisk($conn, $user_type, $user_id, 15);
     }
 }
 

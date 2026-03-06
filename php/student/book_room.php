@@ -34,7 +34,7 @@ $checkStmt = $conn->prepare("
     WHERE student_internal_id = ? AND status = 'pending'
     LIMIT 1
 ");
-$checkStmt->bind_param("s", $student_internal_id);
+$checkStmt->bind_param("i", $student_internal_id);
 $checkStmt->execute();
 $existing = $checkStmt->get_result()->fetch_assoc();
 
@@ -104,6 +104,12 @@ $count = $check->get_result()->fetch_assoc()['total'];
 
 if ($count >= 3) {
 
+         // risk score
+    $user_type = 'student';
+    $user_id   = $_SESSION['user_id'];
+
+    addRisk($conn, $user_type, $user_id, 15);
+
     $existing = $conn->prepare("
         SELECT id FROM spam_flags
         WHERE user_type='student'
@@ -123,11 +129,6 @@ if ($count >= 3) {
         $flag->bind_param("i", $user_id);
         $flag->execute();
 
-         // risk score
-    $user_type = 'student';
-    $user_id   = $_SESSION['user_id'];
-
-    addRisk($conn, $user_type, $user_id, 15);
     }
 }
 

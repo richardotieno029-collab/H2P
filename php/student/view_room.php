@@ -134,12 +134,12 @@ $myBooking = $bookingStmt->get_result()->fetch_assoc();?>
 
     <?php elseif ($room['status'] === 'occupied'): ?>
         <span class="Bbadge badge-occupied">
-            ❌ Occupied
+            Occupied
         </span>
 
     <?php elseif ($room['status'] === 'pending'): ?>
         <span class="Bbadge badge-selected">
-            🟡 Selected
+            🟡 Reserved
         </span>
 
     <?php else: ?>
@@ -175,16 +175,26 @@ $myBooking = $bookingStmt->get_result()->fetch_assoc();?>
     <form method="POST" action="cancel_booking.php">
         <input type="hidden" name="booking_id" value="<?= $myBooking['id'] ?>">
         <input type="hidden" name="room_id" value="<?= $room['id'] ?>">
-        <button class="Bbadge badge-occupied">
-            ❌ Cancel
+        <button class="booked-btn">
+            Cancel Request
         </button>
     </form>
+
+        <?php elseif ($room['status'] === 'pending'): ?>
+        <button class="pending-btn">
+            Resets after 24hrs
+        </button>
+
+        <?php elseif ($room['status'] === 'occupied'): ?>
+            <button class="booked-btn">
+            Not Available
+        </button>
 
         <?php elseif (!$myBooking && $room['status'] === 'vacant'): ?>
             <form method="POST" action="book_room.php">
                 <input type="hidden" name="room_id" value="<?= $room['id'] ?>">
         <input type="hidden" name="house_id" value="<?= $house_id ?>">
-                <button class="Bbadge badge-available">
+                <button class="book-btn">
                     Book room
                 </button>
             </form>

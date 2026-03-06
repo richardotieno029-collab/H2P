@@ -95,5 +95,5 @@ $update->execute();
             "message" => "Profile updated successfully.",
             "type" => "success"
         ];
-header("Location: view_profile.php?success=1");
+header("Location: edit_profile_form.php?success=1");
 exit;
