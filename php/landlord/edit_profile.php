@@ -73,11 +73,40 @@ if (!in_array($mime, $allowed_types)) {
     }
 }
   $_SESSION['token'] = bin2hex(random_bytes(32));
+  //check last update
+$stmt = $conn->prepare("
+SELECT profile_updated_at 
+FROM landlords 
+WHERE id=?
+");
+$stmt->bind_param("i", $_SESSION['user_id']);
+$stmt->execute();
+$row = $stmt->get_result()->fetch_assoc();
+
+if ($row['profile_updated_at']) {
+
+$last = strtotime($row['profile_updated_at']);
+$now  = time();
+
+$days = ($now - $last) / 86400;
+
+if ($days < 15) {
+
+$_SESSION['toast'] = [
+'type' => 'info',
+'message' => 'Profile can only be updated once every 15 days.'
+];
+
+header("Location: edit_profile_form.php");
+exit;
+
+}
+}
 
 /* 3️⃣ Update profile */
 $update = $conn->prepare("
     UPDATE landlords 
-    SET full_name = ?, email = ?, phone = ?, profile_image = ?
+    SET full_name = ?, email = ?, phone = ?, profile_updated_at=NOW(), profile_image = ?
     WHERE id = ?
 ");
 $update->bind_param(

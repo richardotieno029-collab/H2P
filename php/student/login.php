@@ -4,6 +4,14 @@ require_once "../db_connect.php";
 require_once "../includes/risk_engine.php";
 include "../toast.php";
 
+
+/* 1. Ensure form was submitted */
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    header("Location: login_form.php");
+    exit;
+}
+
+/* 2. Get & sanitize inputs */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!isset($_POST['token']) || 
@@ -13,69 +21,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Invalid request.");
     }
 }
-$student_id = trim($_POST['student_id']);
-$password   = $_POST['password'];
+$email = trim($_POST['email'] ?? '');
+$password = trim($_POST['password'] ?? '');
 $ip = $_SERVER['REMOTE_ADDR'];
 $user_agent = $_SERVER['HTTP_USER_AGENT'];
+/* 3. Basic validation */
+if (empty($email) || empty($password)) {
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'Please enter both fields.'
+];
+    header("Location: login_form.php");
+    exit;
+}
+// Ignore this part.
+$stmt = $conn->prepare("SELECT * FROM admins WHERE email=?");
+$stmt->bind_param("s", $email);
+$stmt->execute();
+$admin = $stmt->get_result()->fetch_assoc();
 
-$stmt = $conn->prepare(
-    "SELECT * FROM students WHERE student_id = ?"
-);
-$stmt->bind_param("s", $student_id);
+if ($admin && password_verify($password, $admin['password'])) {
+
+    $_SESSION['user_id'] = $admin['admin_id'];
+    $_SESSION['user_role'] = 'admin';
+    header("Location: ../admin/dashboard.php");
+    exit;
+}
+
+/* 4. Fetch student by email */
+$sql = "SELECT * FROM students WHERE email = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
 
 
-if ($row = $result->fetch_assoc()) {
-        //risk recalculation
-        $user_type = 'student';
-    $user_id   = $row['id'];
-
-    addRisk($conn, $user_type, $user_id, 0);
-    if (password_verify($password, $row['password'])) {
-
-    //check for suspension
-if ($row['status'] !== 'active') {
+/* 5. Check user exists */
+if ($result->num_rows !== 1) {
     $_SESSION['toast'] = [
     'type' => 'error',
-    'message' => 'Your account has been suspended. Please contact support.'
+    'message' => 'Invalid email or password.'
 ];
     header("Location: login_form.php");
     exit;
 }
 
-        /* ✅ Login success */
-        $_SESSION['user_id'] = $row['id'];
-        $_SESSION['user_name'] = $row['full_name'];
-        $_SESSION['profile_image'] = $row['profile_image'];
-            $_SESSION['user_role'] = 'student';
-            
+$row = $result->fetch_assoc();
 
-            $_SESSION['token'] = bin2hex(random_bytes(32));
-
-            
-        $_SESSION['toast'] = [
-            'type' => 'success',
-            'message' => 'Login successful.'
-        ];
-
-        header("Location: dashboard.php");
-        exit;
-    }
-}
-
-/* ❌ Failed login */
-$_SESSION['toast'] = [
+/* 6. Verify password */
+if (!password_verify($password, $row['password'])) {
+    $_SESSION['toast'] = [
     'type' => 'error',
-    'message' => 'Invalid Student ID or Password.'  
+    'message' => 'Wrong password.'
 ];
 //log failed attempts
 $attempt = $conn->prepare("
-    INSERT INTO login_attempts (user_type, user_id, ip_address, user_agent, success)
-    VALUES (?, ?, ?, ?, 0)
+    INSERT INTO login_attempts (user_type, user_id, ip_address, success)
+    VALUES (?, ?, ?, 0)
 ");
 $type = 'student';
-$attempt->bind_param("siss", $type, $row['id'], $ip, $user_agent);
+$attempt->bind_param("sis", $type, $row['id'], $ip);
 $attempt->execute();
        // risk score
     $user_type = 'student';
@@ -85,19 +90,17 @@ $attempt->execute();
 //flag for too many failed attempts
 $stmt = $conn->prepare("
     SELECT COUNT(*) as total 
-    FROM login_attempts 
-    WHERE ip_address=?
-    AND user_agent=?
-    AND success=0
-    AND created_at > NOW() - INTERVAL 10 MINUTE
+    FROM students 
+    WHERE ip_address=? 
+    AND user_agent=? 
+    AND created_at > NOW() - INTERVAL 1 HOUR
 ");
 $stmt->bind_param("ss", $ip, $user_agent);
 $stmt->execute();
 $count = $stmt->get_result()->fetch_assoc()['total'];
 
-if ($count >= 5) {
-
-//prevent duplicate flags within 10 mins
+if ($count >= 2) {
+            // Prevent duplicate flags within 10 mins
     $existing = $conn->prepare("
         SELECT id FROM spam_flags
         WHERE user_type='student'
@@ -105,29 +108,61 @@ if ($count >= 5) {
         AND reason='Multiple failed login attempts from same IP'
         AND created_at > NOW() - INTERVAL 10 MINUTE
     ");
-    $existing->bind_param("i", $row['id']);
+    $existing->bind_param("i", $user_id);
     $existing->execute();
-    $existing_result = $existing->get_result();
 
-    if ($existing_result->num_rows == 0) {
-        // insert spam flag
-        $flag = $conn->prepare("
-            INSERT INTO spam_flags (user_type, user_id, reason, severity)
-            VALUES ('student', ?, 'Multiple failed login attempts from same IP', 'medium')
-        ");
+    if ($existing->get_result()->num_rows == 0) {
+    // insert spam flag
+    $flag = $conn->prepare("
+        INSERT INTO spam_flags (user_type, user_id, reason, severity)
+        VALUES ('student', ?, 'Multiple failed login attempts from same IP', 'medium')
+    ");
     $flag->bind_param("i", $row['id']);
     $flag->execute();
 
-       // risk score
+            // risk score
     $user_type = 'student';
     $user_id   = $row['id'];
 
-    addRisk($conn, $user_type, $user_id, 7);
+    addRisk($conn, $user_type, $user_id, 15);
+    
+    }
 }
+    header("Location: login_form.php");
+    exit;
 }
 
+//EMAIL NOT VERIFIED
+if ($row['email_verified'] == 0) {
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'Please verify your email before logging in.'
+];
+    header("Location: verify_notice.php");
+    exit;
+}
+//check for suspension
+if ($row['status'] !== 'active') {
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'Your account has been suspended. Please contact support.'
+];
+    header("Location: login_form.php");
+    exit;
+}
+
+/* 7. Login successful → create session */
+$_SESSION['user_id'] = $row['id'];
+$_SESSION['student_email'] = $row['email'];
+$_SESSION['user_name'] = $row['full_name'];
+$_SESSION['user_role'] = 'student';
+$_SESSION['profile_image'] = $row['profile_image'];
 
 
-
-header("Location: login_form.php");
+/* 8. Redirect to dashboard */
+$_SESSION['toast'] = [
+    'type' => 'success',
+    'message' => 'Login successfull.'
+];
+header("Location: dashboard.php");
 exit;

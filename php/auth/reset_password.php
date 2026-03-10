@@ -87,6 +87,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $count = $stmt->get_result()->fetch_assoc()['total'];
 
     if ($count >= 3) {
+
+                // risk score
+    addRisk($conn, $user_type, $user_id, 15);
+
                     // Prevent duplicate flags within 10 mins
     $existing = $conn->prepare("
         SELECT id FROM spam_flags
@@ -106,8 +110,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         ");
         $flag->bind_param("si", $user_type, $user_id);
         $flag->execute();
-    
-    addRisk($conn, $user_type, $user_id, 7);
     }
 }
 
@@ -123,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <html>
 <head>
     <title>Reset Password</title>
-    <link rel="stylesheet" href="../auth_styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body class="auth-page">
 <?php include "../toast.php"; ?>

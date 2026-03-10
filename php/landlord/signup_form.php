@@ -1,13 +1,13 @@
 <?php
 session_start();
-$_SESSION['tocken'] = bin2hex(random_bytes(32)); // CSRF token generation
+$_SESSION['token'] = bin2hex(random_bytes(32)); // CSRF token generation
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Landlord Signup</title>
-    <link rel="stylesheet" href="../auth_styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
 
@@ -26,7 +26,7 @@ $_SESSION['tocken'] = bin2hex(random_bytes(32)); // CSRF token generation
         <!-- IMPORTANT: multipart/form-data -->
         <form method="POST" action="signup.php" enctype="multipart/form-data">
 
-        <input type="hidden" name="token" value="<?= $_SESSION['tocken'] ?>">
+        <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
             <label>Full Name</label>
             <input type="text" name="name" required>
 

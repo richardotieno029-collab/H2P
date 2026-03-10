@@ -28,12 +28,12 @@ if (isset($_SESSION['user_id'], $_SESSION['user_role'])) {
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f4f6f8;
+            background: #88f591;
             font-family: Arial, sans-serif;
         }
 
         .role-container {
-            background: #fff;
+            background: #2089df;
             padding: 40px;
             border-radius: 12px;
             max-width: 900px;

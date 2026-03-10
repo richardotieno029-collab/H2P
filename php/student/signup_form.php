@@ -8,7 +8,7 @@ include "../toast.php";
 <html>
 <head>
     <title>Student Signup</title>
-    <link rel="stylesheet" href="../auth_styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
 
@@ -26,17 +26,14 @@ include "../toast.php";
 <form method="POST" action="signup.php" enctype="multipart/form-data">
 
     <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
-    <label>Student ID</label>
-    <input type="text" name="student_id" required>
-
     <label>Full Name</label>
-    <input type="text" name="full_name" required>
+    <input type="text" name="full_name" placeholder="Firstname Othername" required>
 
-    <label>Email</label>
-    <input type="email" name="email" required>
+    <label>Student Email</label>
+    <input type="email" name="email" placeholder="12345@student.embuni.ac.ke" required>
 
     <label>Phone</label>
-    <input type="text" name="phone" required>
+    <input type="text" name="phone" placeholder="0712345678" required>
 
     <label>Password</label>
     <input type="password" name="password" required>

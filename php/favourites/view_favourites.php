@@ -13,21 +13,17 @@ if (!isset($_SESSION['user_id'])) {
 
 $student_internal_id = $_SESSION['user_id'];
 
-$query = "
-SELECT 
-    rooms.*,
-    houses.house_name,
-    houses.area,
-    landlords.full_name AS landlord_name
-FROM favourites
-JOIN rooms ON favourites.room_id = rooms.id
-JOIN houses ON rooms.house_id = houses.house_id
-JOIN landlords ON houses.landlord_id = landlords.id
-WHERE favourites.student_internal_id = ?
-";
-
-$stmt = $conn->prepare($query);
-$stmt->bind_param("s", $_SESSION['user_id']);
+// Fetch favourite rooms with house and landlord details
+$stmt = $conn->prepare("
+    SELECT 
+        houses.*,
+        landlords.full_name AS landlord_name
+    FROM favourites
+    JOIN houses ON favourites.house_id = houses.house_id
+    JOIN landlords ON houses.landlord_id = landlords.id
+    WHERE favourites.student_internal_id = ?
+");
+$stmt->bind_param("i", $student_internal_id);
 $stmt->execute();
 $result = $stmt->get_result();
 ?>
@@ -48,35 +44,61 @@ $result = $stmt->get_result();
 <div class="houses-container">
 <?php if ($result->num_rows > 0): ?>
     <?php while ($row = $result->fetch_assoc()): ?>
-        <div class="house-card">
-            <img 
-            src="<?php echo htmlspecialchars($row['image_path']); ?>" 
-            alt="Room Image"
-        >
+        
+<div class="house-card">
+         <!-- show house details as in browse houses -->
+<a href="../student/house_details.php?id=<?= $row['house_id']; ?>">
+    <div class="card">
+    <div class="image-wrapper">
+        <img src="<?= $row['image_path']; ?>" alt="House Image">
 
+        <div class="icon-overlay">
+            <?php if($row['electricity_available'] == 1): ?>
+                <i class="fas fa-bolt"></i>
+            <?php endif; ?>
 
-  <h3><?= htmlspecialchars($row['house_name']) ?></h3>
-   <h3>Room Number: <?php echo htmlspecialchars($row['room_number']); ?></h3>
-  <p><strong>Area:</strong> <?= $row['area'] ?></p>
-  <p><strong>Landlord:</strong> <?= $row['landlord_name'] ?></p>
-  <p><strong>Status:</strong> <?= ucfirst($row['status']) ?></p>
+            <?php if($row['water_available'] == 1): ?>
+                <i class="fas fa-tint"></i>
+            <?php endif; ?>
 
+            <?php if($row['wifi_available'] == 1): ?>
+                <i class="fas fa-wifi"></i>
+            <?php endif; ?>
+
+            <?php if($row['hot_shower'] == 1): ?>
+                <i class="fas fa-shower"></i>
+            <?php endif; ?>
+        </div>
+    </div>
+    </div>
+</a>
+
+            <h3><?php echo htmlspecialchars($row['house_name']); ?></h3>
+
+        <p><strong>Landlord:</strong> <?php echo htmlspecialchars($row['landlord_name']); ?></p>
+            <p><strong>Area:</strong> <?php echo htmlspecialchars($row['area']); ?></p>
+            <p><strong>Room Type:</strong> <?php echo htmlspecialchars($row['room_type']); ?></p>
+            <p><strong>Price:</strong> From KES <?php echo number_format($row['price']); ?></p>
+            <p><strong>Description:</strong> <?php echo nl2br(htmlspecialchars($row['description'])); ?></p>
+<a href="../student/view_room.php?house_id=<?php echo $row['house_id']; ?>" class="btn">
+                View Rooms
+            </a>
   <!-- Favourite toggle -->
   <button 
     class="fav-btn active"
-    data-room-id="<?= $row['id'] ?>">
+    data-house-id="<?= $row['house_id'] ?>">
     ♥
   </button>
 
       <script>
 document.querySelectorAll('.fav-btn').forEach(btn => {
     btn.addEventListener('click', function () {
-        const roomId = this.dataset.roomId;
+        const houseId = this.dataset.houseId;
 
-        fetch('favourite.php', {
+        fetch('toggle_favourite.php', {
             method: 'POST',
             headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: 'room_id=' + roomId
+            body: 'house_id=' + houseId
         })
         .then(res => res.json())
         .then(data => {

@@ -38,6 +38,25 @@ $types = "";
 $params[] = $_SESSION['user_id'];
 $types .= "i";
 
+//fetch favourites
+$student_id = $_SESSION['user_id'];
+
+$favHouses = [];
+
+$stmtFav = $conn->prepare("
+    SELECT house_id
+    FROM favourites
+    WHERE student_internal_id = ?
+");
+
+$stmtFav->bind_param("i", $student_id);
+$stmtFav->execute();
+$resultFav = $stmtFav->get_result();
+
+while ($row = $resultFav->fetch_assoc()) {
+    $favHouses[] = $row['house_id'];
+}
+
 
 // Area filter
 if (!empty($_GET['area'])) {
@@ -192,8 +211,7 @@ if ($house['available_rooms'] > 0 && $house['available_rooms'] <= 2) {
             <p><strong>Room Type:</strong> <?php echo htmlspecialchars($house['room_type']); ?></p>
             <p><strong>Price:</strong> From KES <?php echo number_format($house['price']); ?></p>
             <p><strong>Landlord:</strong> <?php echo htmlspecialchars($house['landlord_name']); ?></p>
-
-            <p><?php echo nl2br(htmlspecialchars($house['description'])); ?></p>
+            <p><strong>Description:</strong> <?php echo nl2br(htmlspecialchars($house['description'])); ?></p>
             <div class="availability">
     <?php if ($house['available_rooms'] > 0): ?>
         <span class="badge available">
@@ -209,7 +227,11 @@ if ($house['available_rooms'] > 0 && $house['available_rooms'] <= 2) {
             <a href="view_room.php?house_id=<?php echo $house['house_id']; ?>" class="btn">
                 View Rooms
             </a>
-
+<button 
+class="fav-btn <?= in_array($house['house_id'], $favHouses) ? 'active' : '' ?>"
+data-house-id="<?= $house['house_id'] ?>">
+<i class="fa fa-heart"></i>
+</button>
         </div>
     <?php endwhile; ?>
 <?php else: ?>
@@ -217,6 +239,51 @@ if ($house['available_rooms'] > 0 && $house['available_rooms'] <= 2) {
 <?php endif; ?>
 
 </div>
+<script>
+
+document.querySelectorAll('.fav-btn').forEach(button => {
+
+button.addEventListener('click', function(e){
+
+e.preventDefault();
+e.stopPropagation();
+
+const houseId = this.dataset.houseId;
+const btn = this;
+
+fetch('../favourites/toggle_favourite.php', {
+
+method: 'POST',
+
+headers: {
+'Content-Type': 'application/x-www-form-urlencoded'
+},
+
+body: 'house_id=' + houseId
+
+})
+
+.then(res => res.json())
+
+.then(data => {
+
+if(data.status === 'added'){
+
+btn.classList.add('active');
+
+}else{
+
+btn.classList.remove('active');
+
+}
+
+});
+
+});
+
+});
+
+</script>
 
 </body>
 </html>

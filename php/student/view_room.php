@@ -66,23 +66,7 @@ SET
 $roomStmt->bind_param("i", $house_id);
 $roomStmt->execute();
 $rooms = $roomStmt->get_result();
-//check favourited
-$student_internal_id = $_SESSION['user_id'];
 
-$favRooms = [];
-
-$stmt = $conn->prepare("
-    SELECT room_id 
-    FROM favourites 
-    WHERE student_internal_id = ?
-");
-$stmt->bind_param("i", $student_internal_id);
-$stmt->execute();
-$resultFav = $stmt->get_result();
-
-while ($rowFav = $resultFav->fetch_assoc()) {
-    $favRooms[] = $rowFav['room_id'];
-}
 ?>
 
 <!DOCTYPE html>
@@ -203,35 +187,6 @@ $myBooking = $bookingStmt->get_result()->fetch_assoc();?>
 
     </div>
 </div>
-
- <!-- Favourite toggle -->
-  <button 
-    class="fav-btn <?= in_array($room['id'], $favRooms) ? 'active' : '' ?>"
-    data-room-id="<?= $room['id'] ?>">
-    ♥
-  </button>
-      <script>
-document.querySelectorAll('.fav-btn').forEach(btn => {
-    btn.addEventListener('click', function () {
-        const roomId = this.dataset.roomId;
-
-        fetch('../favourites/favourite.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: 'room_id=' + roomId
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'added') {
-                this.classList.add('active');
-            } else {
-                this.classList.remove('active');
-            }
-        });
-    });
-});
-</script>
-
 <script>
 // Countdown timer for pending bookings
 document.querySelectorAll('.countdown').forEach(badge => {

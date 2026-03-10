@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
     body {
-    background: #f4f6f9;
+    background: rgb(48, 231, 130);
     font-family: Arial, sans-serif;
 }
 .back-btn {
@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     width: 90%;
     max-width: 600px;
     margin: 60px auto;
-    background: #fff;
+    background: #34d4e9;
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -190,15 +190,15 @@ button:hover {
         <i class="fa-brands fa-whatsapp"></i> WhatsApp
     </a>
 
-    <a href="https://instagram.com/Le Chevre" target="_blank" class="social instagram">
+    <a href="https://instagram.com/h2p_ke" target="_blank" class="social instagram">
         <i class="fa-brands fa-instagram"></i> Instagram
     </a>
 
-    <a href="https://tiktok.com/Le Chevre" target="_blank" class="social tiktok">
+    <a href="https://tiktok.com/@h2p_ke" target="_blank" class="social tiktok">
         <i class="fa-brands fa-tiktok"></i> TikTok
     </a>
 
-    <a href="https://facebook.com/Le Chevre" target="_blank" class="social facebook">
+    <a href="https://facebook.com/Htwop" target="_blank" class="social facebook">
         <i class="fa-brands fa-facebook"></i> Facebook
     </a>
 

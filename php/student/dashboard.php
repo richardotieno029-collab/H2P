@@ -44,7 +44,7 @@ $recentResult = mysqli_query($conn, $recentQuery);
     <div class="dashboard-actions">
 
         <a href="browse_houses.php" class="dash-card">
-            <h3>🔍 Browse Houses</h3>
+            <h3>🔍 Browse All Houses</h3>
             <p>Explore all available houses and rooms</p>
             <?php if ($notif['total'] > 0): ?>
         <span class="notify-dot"></span>

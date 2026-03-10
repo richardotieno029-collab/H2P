@@ -6,12 +6,13 @@
 }
 
 body {
-    background: #f7f7f7;
+    background: #43a1379d;
+    background-color: #04f08e;
 }
 
 /* HEADER */
 header {
-    background: #222;
+    background: #37899e;
     color: white;
     padding: 20px;
     display: flex;
@@ -148,8 +149,8 @@ nav ul li a:hover, .active {
 }
 
 body {
-    background: #f8f8fc;
-    color: #333;
+    background: #385c30;
+    color: #faf4f4;
 }
 
 /* ------------------------------
@@ -207,7 +208,7 @@ nav a:hover {
 
 .room-card {
     width: 270px;
-    background: white;
+    background: rgb(68, 151, 75);
     padding: 15px;
     border-radius: 15px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -288,7 +289,7 @@ nav a:hover {
     top:0;
     width:220px;
     height:100%;
-    background:#1f2937;
+    background:#314c72;
     padding:20px;
     transition:0.3s ease;
     z-index:1000;
@@ -354,7 +355,7 @@ nav a:hover {
 }
 
 .house-card {
-    background: white;
+    background: rgb(60, 128, 74);
     padding: 15px;
     border-radius: 10px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
@@ -379,7 +380,7 @@ nav a:hover {
 .form-wrapper {
     width: 450px;
     margin: 50px auto;
-    background: white;
+    background: rgb(51, 206, 218);
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -407,7 +408,7 @@ nav a:hover {
 .about-header {
   text-align: center;
   padding: 3rem 1rem;
-  background: #f5f5f5;
+  background: #3f9b53;
 }
 
 .about-header h1 {
@@ -430,7 +431,7 @@ nav a:hover {
 }
 
 .about-box {
-  background: #ffffff;
+  background: #377041;
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 3px 6px rgba(0,0,0,0.1);
@@ -450,17 +451,10 @@ nav a:hover {
   color: #555;
   line-height: 1.6;
 }
-/* ---------- General Style ---------- */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f0f2f5;
-  color: #333;
-}
 
 /* ---------- Header ---------- */
 header {
-  background: #222;
+  background: #3b4bdf;
   padding: 20px;
   text-align: center;
   color: white;
@@ -502,7 +496,7 @@ nav a.active {
 
 /* ---------- Card Style (Matches Your Previous Pages) ---------- */
 .card {
-  background: white;
+  background: rgb(48, 231, 130);
   padding: 25px;
   margin-bottom: 25px;
   border-radius: 12px;
@@ -513,26 +507,6 @@ nav a.active {
   margin-top: 0;
   border-bottom: 2px solid #eee;
   padding-bottom: 8px;
-}
-
-/* ---------- Social List ---------- */
-.social-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.social-list li {
-  margin: 10px 0;
-}
-
-.social-list a {
-  color: #222;
-  text-decoration: none;
-}
-
-.social-list a:hover {
-  text-decoration: underline;
 }
 
 /* ---------- Footer ---------- */
@@ -581,7 +555,7 @@ footer {
 
 body {
     font-family: Arial, sans-serif;
-    background: #f5f7fa;
+    background: rgb(48, 231, 130);
     color: #333;
 }
 
@@ -603,7 +577,7 @@ table {
 
 /* Table Header */
 th {
-    background: #f0f2f5;
+    background: #2a5ca7;
     padding: 12px;
     font-weight: bold;
     text-align: left;
@@ -616,6 +590,7 @@ td {
     border-bottom: 1px solid #e0e0e0;
     vertical-align: middle;
     font-size: 14px;
+    background: #87e49d;
 }
 
 /* Hover Effect */
@@ -658,6 +633,11 @@ tr:hover {
 .status.occupied {
     background: #f8d7da;
     color: #721c24;
+}
+
+.status.pending {
+    background: #f8d7da;
+    color: #cf9311;
 }
 
 /* Actions Column */
@@ -711,6 +691,7 @@ tr:hover {
     max-width: 1200px;
     margin: 40px auto;
     padding: 20px;
+    background: #318f31;
 }
 
 .dashboard-title {
@@ -728,7 +709,7 @@ tr:hover {
 }
 
 .dash-card {
-    background: #ffffff;
+    background: #66f7e3;
     border-radius: 12px;
     padding: 25px 20px;
     text-decoration: none;
@@ -765,13 +746,14 @@ tr:hover {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
     align-items: stretch;
+    background: #04f08e;
 }
 
 .house-card {
     position: relative;
     display: flex;
     flex-direction: column;
-    background: #fff;
+    background: #2dbbc5;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 6px 15px rgba(0,0,0,0.08);
@@ -829,23 +811,25 @@ tr:hover {
         padding: 20px;
     }
 }
+
+
+
 /* ===== DASHBOARD HEADER ===== */
 .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #111;
-    padding: 12px 20px;
+    padding: 14px 20px;
+    background: #0609d6;
     color: #fff;
 }
 
-.dashboard-header a {
+.dashboard-header .logo a {
     color: #fff;
+    font-size: 20px;
+    font-weight: bold;
     text-decoration: none;
-    margin-right: 15px;
-    font-weight: 500;
 }
-
 .dashboard-header a:hover {
     color: #f39c12;
 }
@@ -893,22 +877,6 @@ tr:hover {
     color: #e63946; /* red */
 }
 
-/* ===== DASHBOARD HEADER ===== */
-.dashboard-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 20px;
-    background: #0609d6;
-    color: #fff;
-}
-
-.dashboard-header .logo a {
-    color: #fff;
-    font-size: 20px;
-    font-weight: bold;
-    text-decoration: none;
-}
 
 /* ===== ACCOUNT DROPDOWN ===== */
 .account-wrapper {
@@ -935,7 +903,7 @@ tr:hover {
     position: absolute;
     right: 0;
     top: 130%;
-    background: #fff;
+    background: #5febd8;
     color: #333;
     min-width: 190px;
     border-radius: 6px;
@@ -983,13 +951,13 @@ tr:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #f4f6f8, #e9ecf1);
+    background: linear-gradient(135deg, #5ee044, #52ee4d);
 }
 
 .auth-container {
     width: 100%;
     max-width: 420px;
-    background: #ffffff;
+    background: #77ddf7;
     padding: 30px;
     border-radius: 12px;
     box-shadow: 0 15px 35px rgba(0,0,0,0.1);
@@ -1024,7 +992,7 @@ tr:hover {
 }
 
 .auth-container button {
-    width: 100%;
+    width: 80%;
     padding: 12px;
     background: #4f46e5;
     color: white;
@@ -1033,6 +1001,11 @@ tr:hover {
     font-weight: bold;
     cursor: pointer;
     transition: background 0.3s;
+}
+
+    .auth-container button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .auth-container button:hover {
@@ -1130,7 +1103,7 @@ tr:hover {
     flex-wrap: wrap;
     gap: 12px;
     align-items: center;
-    background: #f4fdf7;
+    background: #349b57;
     padding: 15px;
     border-radius: 12px;
     margin-bottom: 20px;
@@ -1411,11 +1384,12 @@ tr:hover {
     from { transform: translateX(50px); opacity:0; }
     to   { transform: translateX(0); opacity:1; }
 }
+
 .profile-card {
     max-width: 420px;
     margin: 30px auto;
     padding: 20px;
-    background: #fff;
+    background: #40b9c2;
     border-radius: 12px;
     text-align: center;
 }

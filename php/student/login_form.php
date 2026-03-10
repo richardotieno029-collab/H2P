@@ -8,7 +8,7 @@ include "../toast.php";
 <html>
 <head>
     <title>Student Login</title>
-    <link rel="stylesheet" href="../auth_styles.css">
+    <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
 
@@ -29,8 +29,8 @@ include "../toast.php";
 <form method="POST" action="login.php">
 
     <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
-    <label>Student ID</label>
-    <input type="text" name="student_id" required>
+    <label>Student Email</label>
+    <input type="email" name="email" required>
 
     <label>Password</label>
     <input type="password" name="password" required>
@@ -38,9 +38,9 @@ include "../toast.php";
     <button type="submit">Login</button>
 </form>
 <div class="auth-footer">
-    <a href="../auth/forgot_password.php">Forgot Password</a></br>
+    <a href="../auth/forgot_password_form.php">Forgot Password</a></br>
             Don't have an account?
-<a href="signup_form.php">Signup</a>
+<a href="signup_form.php">Signup</a><br>
         </div>
         </div>
         </div>

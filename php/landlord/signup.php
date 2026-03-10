@@ -9,28 +9,35 @@ if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     exit;
 }
 
-/* BASIC INPUT */
-if (!hash_equals($_SESSION['tocken'], $_POST['token'])) {
+/* CSRF TOKEN CHECK */
+if (!isset($_POST['token']) || 
+    !isset($_SESSION['token']) || 
+    !hash_equals($_SESSION['token'], $_POST['token'])) {
     die("Invalid request.");
 }
+
 $ip = $_SERVER['REMOTE_ADDR'];
 $user_agent = $_SERVER['HTTP_USER_AGENT'];
-$name     = trim($_POST['name'] ?? '');
-$email    = trim($_POST['email'] ?? '');
-$phone    = trim($_POST['phone'] ?? '');
-$password = $_POST['password'] ?? '';
 
-if ($name === '' || $email === '' || $phone === '' || $password === '') {
+$full_name  = trim($_POST['name']);
+$email      = trim($_POST['email']);
+$phone      = trim($_POST['phone']);
+$password   = $_POST['password'];
+
+/* REQUIRED FIELDS */
+if (empty($full_name) || empty($email) || empty($phone) || empty($password)) {
     $_SESSION['toast'] = [
         'type' => 'error',
-        'message' => 'All fields except profile picture are required.'
+        'message' => 'All fields are required.'
     ];
     header("Location: signup_form.php");
     exit;
 }
 
-/* CHECK EMAIL */
-$check = $conn->prepare("SELECT id FROM landlords WHERE email = ?");
+/* CHECK DUPLICATE EMAIL */
+$check = $conn->prepare(
+    "SELECT id FROM landlords WHERE email = ?"
+);
 $check->bind_param("s", $email);
 $check->execute();
 $check->store_result();
@@ -43,147 +50,124 @@ if ($check->num_rows > 0) {
     header("Location: signup_form.php");
     exit;
 }
-
-/* PASSWORD */
-$hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-/* IMAGE UPLOAD */
-$profileImagePath = "../uploads/profiles/default.png"; // fallback
-
-if (
-    isset($_FILES['profile_pic']) &&
-    $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK
-) {
-    //sanitize image upload
-$finfo = finfo_open(FILEINFO_MIME_TYPE);
-if (!isset($_FILES['profile_pic']) || $_FILES['profile_pic']['error'] !== 0) {
-    die("No image uploaded.");
-}
-if ($_FILES['profile_pic']['size'] > 5 * 1024 * 1024) {
-    die("File too large.");
-}
-
-$finfo = finfo_open(FILEINFO_MIME_TYPE);
-$mime = finfo_file($finfo, $_FILES['profile_pic']['tmp_name']);
-
-$allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
-
-if (!in_array($mime, $allowed_types)) {
-    die("Invalid file type.");
-}
-
-    $uploadDir = "../uploads/profiles/";
-
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
-    }
-
-    $tmpName = $_FILES['profile_pic']['tmp_name'];
-    $originalName = $_FILES['profile_pic']['name'];
-    $fileSize = $_FILES['profile_pic']['size'];
-
-
-    $newName = "user_" . time() . "_" . random_int(1000, 9999) . "." . $ext;
-    $destination = $uploadDir . $newName;
-
-    if (!move_uploaded_file($tmpName, $destination)) {
+    // 2️⃣ Strong password validation
+    if (
+        strlen($password) < 8 ||
+        !preg_match('/[A-Za-z]/', $password) ||
+        !preg_match('/[0-9]/', $password)
+    ) {
         $_SESSION['toast'] = [
             'type' => 'error',
-            'message' => 'Failed to upload image.'
+            'message' => 'Password must be at least 8 characters and contain letters and numbers.'
         ];
-        header("Location: signup_form.php");
-        exit;
+            header("Location: signup_form.php");
+    exit;
     }
 
-    $profileImagePath = "../uploads/profiles/" . $newName;
+/* HASH PASSWORD */
+$hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+/* GENERATE EMAIL TOKEN */
+$token = bin2hex(random_bytes(32));
+
+/* PROFILE IMAGE */
+$profileImagePath = null;
+
+if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_ERR_OK) {
+
+    if ($_FILES['profile_pic']['size'] > 5 * 1024 * 1024) {
+        die("File too large.");
+    }
+
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $_FILES['profile_pic']['tmp_name']);
+
+    $allowed = ['image/jpeg','image/png','image/gif'];
+
+    if (!in_array($mime, $allowed)) {
+        die("Invalid file type.");
+    }
+
+    $uploadDir = "../uploads/profile/";
+
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir,0777,true);
+    }
+
+    $ext = pathinfo($_FILES['profile_pic']['name'], PATHINFO_EXTENSION);
+
+    $newName = "student_" . time() . "_" . random_int(1000,9999) . "." . $ext;
+
+    $destination = $uploadDir . $newName;
+
+    move_uploaded_file($_FILES['profile_pic']['tmp_name'],$destination);
+
+    $profileImagePath = $destination;
 }
 
+/* INSERT LANDLORD */
+$stmt = $conn->prepare("
+INSERT INTO landlords
+(full_name,email,phone,password,profile_image,verification_token,ip_address,user_agent,
+email_verified,token_expires,status)
+VALUES (?,?,?,?,?,?,?,?,0,DATE_ADD(NOW(), INTERVAL 1 HOUR),'active')
+");
 
-/* INSERT */
-$stmt = $conn->prepare(
-    "INSERT INTO landlords (full_name, email, phone, profile_image, password, ip_address, user_agent)
-     VALUES (?, ?, ?, ?, ?, ?, ?)"
-);
 $stmt->bind_param(
-    "ssssss",
-    $name,
-    $email,
-    $phone,
-    $profileImagePath,
-    $hashed_password,
-    $ip,
-    $user_agent
+"ssssssss",
+$full_name,
+$email,
+$phone,
+$hashedPassword,
+$profileImagePath,
+$token,
+$ip,
+$user_agent
 );
+
 if ($stmt->execute()) {
 
-    $landlord_id = $conn->insert_id;
+$landlord_id = $conn->insert_id;
 
-    // Log activity
-    $user_type = 'landlord';
-    $user_id   = $landlord_id;
-    $ip        = $_SERVER['REMOTE_ADDR'];
+/* LOG ACTIVITY */
+$action = 'CREATE_ACCOUNT';
 
-    $log = $conn->prepare("
-        INSERT INTO activity_logs (user_type, user_id, action, ip_address)
-        VALUES (?, ?, ?, ?)
-    ");
-    $action = 'CREATE_ACCOUNT';
-    $log->bind_param("siss", $user_type, $user_id, $action, $ip);
-    $log->execute();
-
-
-    // Check multiple accounts from same IP
-$stmt = $conn->prepare("
-    SELECT COUNT(*) as total 
-    FROM landlords 
-    WHERE ip_address=? 
-    AND user_agent=? 
-    AND created_at > NOW() - INTERVAL 1 HOUR
+$log = $conn->prepare("
+INSERT INTO activity_logs
+(user_type,user_id,action,ip_address)
+VALUES ('landlord',?,?,?)
 ");
-$stmt->bind_param("ss", $ip, $user_agent);
-$stmt->execute();
-$count = $stmt->get_result()->fetch_assoc()['total'];
-    if ($count >= 3) {
 
-        $existing = $conn->prepare("
-            SELECT id FROM spam_flags
-            WHERE user_type='landlord'
-            AND user_id=?
-            AND reason='Multiple registrations from same IP'
-            AND created_at > NOW() - INTERVAL 10 MINUTE
-        ");
-        $existing->bind_param("i", $landlord_id);
-        $existing->execute();
+$log->bind_param("iss",$landlord_id,$action,$ip);
+$log->execute();
 
-        if ($existing->get_result()->num_rows == 0) {
 
-            $flag = $conn->prepare("
-                INSERT INTO spam_flags (user_type, user_id, reason, severity)
-                VALUES ('landlord', ?, 'Multiple registrations from same IP', 'high')
-            ");
-            $flag->bind_param("i", $landlord_id);
-            $flag->execute();
 
-         // risk score
-    $user_type = 'landlord';
-    $user_id   = $landlord_id;
+/* Email verification */
+require_once "../includes/mailer.php";
+$verificationLink = "http://" . $_SERVER['HTTP_HOST'] . "/H2P/php/landlord/verify_email.php?token=" . $token;
+$subject = "Verify Your H2P Account";
+$body = "Hi $full_name,<br><br>Please click the link below to verify your email:<br>
+<a href='$verificationLink'>Verify Account</a><br><br>This link will expire in 1 hour.<br><br>Ignore this email if you didn't sign up.<br><br>
+Best,<br>H2P Team";
 
-    addRisk($conn, $user_type, $user_id, 25);
-        }
-    }
-}
-
-$_SESSION['toast'] = [
-        'type' => 'success',
-        'message' => 'Account created successfully. Please login.'
-    ];
-    header("Location: login.php");
-    exit;
+sendMail($email, $full_name, $subject, $body);
 
 
 $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'Failed to create account.'
+'type'=>'success',
+'message'=>'Account created. Check your email to verify before login.'
 ];
+
+header("Location: verify_notice.php?email=".$email);
+
+} else {
+
+$_SESSION['toast'] = [
+'type'=>'error',
+'message'=>'Signup failed.'
+];
+
 header("Location: signup_form.php");
-exit;
+
+}

@@ -53,7 +53,8 @@ $landlord = $stmt->get_result()->fetch_assoc();
         <label>Profile Picture (optional)</label>
         <input type="file" name="profile_image" accept="image/*">
 
-        <button type="submit" class="btn btn-success">
+        <button type="submit" class="btn btn-success" onclick="return confirm
+        ('Edit profile? You can only edit once in 15 days.')">
             Save Changes
         </button>
     </form>

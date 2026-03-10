@@ -55,6 +55,7 @@ $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
 
+
 /* 5. Check user exists */
 if ($result->num_rows !== 1) {
     $_SESSION['toast'] = [
@@ -131,12 +132,16 @@ if ($count >= 2) {
     exit;
 }
 
+//EMAIL NOT VERIFIED
+if ($row['email_verified'] == 0) {
+    $_SESSION['toast'] = [
+    'type' => 'error',
+    'message' => 'Please verify your email before logging in.'
+];
+    header("Location: login_form.php");
+    exit;
+}
 //check for suspension
-    //risk recalculation
-        $user_type = 'landlord';
-    $user_id   = $row['id'];
-
-    addRisk($conn, $user_type, $user_id, 0);
 if ($row['status'] !== 'active') {
     $_SESSION['toast'] = [
     'type' => 'error',

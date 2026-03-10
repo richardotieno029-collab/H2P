@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Landlord Login</title>
-    <link rel="stylesheet" href="../auth_styles.css">
+    <link rel="stylesheet" href="../styles.css">
     
 </head>
 <body>
@@ -102,7 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     </form>
     <div class="auth-footer">
-         <a href="../auth/forgot_password.php">Forgot Password</a></br>
+         <a href="../auth/forgot_password_form.php">Forgot Password</a></br>
             Don't have an account?
             <a href="signup_form.php">signup</a>
         </div>
