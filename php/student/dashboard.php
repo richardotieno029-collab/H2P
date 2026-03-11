@@ -11,15 +11,6 @@ $notifStmt = $conn->prepare("
 $notifStmt->bind_param("s", $_SESSION['user_id']);
 $notifStmt->execute();
 $notif = $notifStmt->get_result()->fetch_assoc();
-
-// fetch recently added houses (optional preview)
-$recentQuery = "
-    SELECT h.house_id, h.house_name, h.area, h.image_path
-    FROM houses h
-    ORDER BY h.created_at DESC
-    LIMIT 3
-";
-$recentResult = mysqli_query($conn, $recentQuery);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -56,40 +47,174 @@ $recentResult = mysqli_query($conn, $recentQuery);
             <p>Rooms you’ve saved</p>
         </a>
 
-        <a href="#" class="dash-card">
+        <a href="roommate_quest/roommate_quest.php" class="dash-card">
             <h3>🆕 Room mate Quest</h3>
-            <p>Coming Soon</p>
+            <p>Coming Soon...</p>
         </a>
 
-        <a href="#" class="dash-card">
-            <h3>Furnished Rooms</h3>
-            <p>coming soon...</p>
+        <a href="trending.php" class="dash-card">
+            <h3>🔥 Trending Houses</h3>
+            <p>View currently trending houses</p>
         </a>
 
     </div>
+<h2>Discover Houses</h2>
+<h3>👀 Recently Viewed</h3>
 
-    <!-- RECENT PREVIEW -->
-    <div class="recent-section">
-        <h3>Recently Added Houses</h3>
+<div class="houses-container">
 
-        <div class="house-grid">
-            <?php if ($recentResult && mysqli_num_rows($recentResult) > 0): ?>
-                <?php while ($house = mysqli_fetch_assoc($recentResult)): ?>
-                    <div class="house-card">
-                        <img src="<?= htmlspecialchars($house['image_path']); ?>" alt="House image">
-                        <h4><?= htmlspecialchars($house['house_name']); ?></h4>
-                        <a href="view_room.php?house_id=<?= $house['house_id']; ?>" class="btn">
-                            View Details
-                        </a>
-                    </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <p>No houses added yet.</p>
-            <?php endif; ?>
-        </div>
-    </div>
+<?php
+$student_id = $_SESSION['user_id'];
+
+$stmt = $conn->prepare("
+SELECT h.*
+FROM houses h
+JOIN house_views v ON h.house_id = v.house_id
+WHERE v.student_id=?
+ORDER BY v.viewed_at DESC
+LIMIT 3
+");
+
+$stmt->bind_param("i",$student_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+while($house = $result->fetch_assoc()):
+?>
+
+<div class="house-card">
+<a href="house_details.php?id=<?= $house['house_id'] ?>">
+<img src="<?= $house['image_path'] ?>" width="100%">
+</a>
+<h4><?= htmlspecialchars($house['house_name']) ?></h4>
+<p><?= htmlspecialchars($house['area']) ?></p>
+<p>KES <?= number_format($house['price']) ?></p>
+            <a href="view_room.php?house_id=<?php echo $house['house_id']; ?>" class="btn">
+                View Rooms
+            </a>
+</div>
+
+<?php endwhile; ?>
+<a href="recently_viewed.php">View All →</a>
+</div>
+
+</br>
+
+<!-- MOST VIEWED -->
+<h3>🔥 Most Viewed Houses</h3>
+<div class="houses-container">
+
+<?php
+$query = "
+SELECT h.*, COUNT(v.id) AS views
+FROM houses h
+LEFT JOIN house_views v ON h.house_id = v.house_id
+GROUP BY h.house_id
+ORDER BY views DESC
+LIMIT 3
+";
+
+$result = $conn->query($query);
+
+while($house = $result->fetch_assoc()):
+?>
+
+<div class="house-card">
+<a href="house_details.php?id=<?= $house['house_id'] ?>">
+<img src="<?= $house['image_path'] ?>" width="100%">
+</a>
+ <span>👁 <?= $house['views'] ?></span>
+<h4><?= htmlspecialchars($house['house_name']) ?></h4>
+<p><?= htmlspecialchars($house['area']) ?></p>
+<p>KES <?= number_format($house['price']) ?></p>
+
+            <a href="view_room.php?house_id=<?php echo $house['house_id']; ?>" class="btn">
+                View Rooms
+            </a>
 
 </div>
 
+<?php endwhile; ?>
+<a href="most_viewed.php">View All →</a>
+</div>
+
+</br>
+<h3>⭐ Most Favourited Houses</h3>
+
+<div class="houses-container">
+
+<?php
+$query = "
+SELECT h.*, COUNT(f.fav_id) AS fav_count
+FROM houses h
+LEFT JOIN favourites f ON h.house_id = f.house_id
+GROUP BY h.house_id
+ORDER BY fav_count DESC
+LIMIT 3
+";
+
+$result = $conn->query($query);
+
+while($house = $result->fetch_assoc()):
+?>
+
+<div class="house-card">
+<a href="house_details.php?id=<?= $house['house_id'] ?>">
+<img src="<?= $house['image_path'] ?>" width="100%">
+</a>
+<span>❤️ <?= $house['fav_count'] ?></span>
+<h4><?= htmlspecialchars($house['house_name']) ?></h4>
+<p><?= htmlspecialchars($house['area']) ?></p>
+<p>KES <?= number_format($house['price']) ?></p>
+            <a href="view_room.php?house_id=<?php echo $house['house_id']; ?>" class="btn">
+                View Rooms
+            </a>
+</div>
+
+<?php endwhile; ?>
+<a href="most_favourited.php">View All →</a>
+</div>
+
+</br>
+
+
+<!-- RECENTLY ADDED -->
+<h3> Recently Added houses</h3>
+<div class="houses-container">
+
+<?php
+$query = "
+    SELECT h.house_id, h.*
+    FROM houses h
+    ORDER BY h.created_at DESC
+    LIMIT 3
+";
+$result = $conn->query($query);
+
+while($house = $result->fetch_assoc()):
+?>
+
+<div class="house-card">
+<a href="house_details.php?id=<?= $house['house_id'] ?>">
+<img src="<?= $house['image_path'] ?>" width="100%">
+</a>
+<h4><?= htmlspecialchars($house['house_name']) ?></h4>
+<p><?= htmlspecialchars($house['area']) ?></p>
+<p>KES <?= number_format($house['price']) ?></p>
+
+            <a href="view_room.php?house_id=<?php echo $house['house_id']; ?>" class="btn">
+                View Rooms
+            </a>
+
+</div>
+
+<?php endwhile; ?>
+<a href="recently_added.php">View All →</a>
+</div>
+
+</br>
+
+
+</div>
 </body>
 </html>

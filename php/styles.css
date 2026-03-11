@@ -1642,3 +1642,29 @@ tr:hover {
 .prev { left: 10px; }
 .next { right: 10px; }
 
+/* preview house cards */
+.phouses-container{
+display:flex;
+gap:15px;
+flex-wrap:wrap;
+margin-bottom:20px;
+}
+
+/* VIEWS PLUS FAVS*/
+.house-stats{
+display:flex;
+gap:15px;
+margin-top:8px;
+font-size:14px;
+color:#555;
+}
+.trend-badge{
+position:absolute;
+top:10px;
+left:10px;
+background:#ff5722;
+color:white;
+padding:4px 8px;
+font-size:12px;
+border-radius:6px;
+}

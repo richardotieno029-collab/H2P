@@ -39,7 +39,7 @@ $result = $stmt->get_result();
     ←
 </a>
 <header>
-<h2>My Favourite Rooms</h2>
+<h2>My Favourite Houses</h2>
 </header>
 <div class="houses-container">
 <?php if ($result->num_rows > 0): ?>

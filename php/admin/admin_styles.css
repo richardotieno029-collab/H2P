@@ -1,5 +1,5 @@
 body {
-    background: #f4f6f9;
+    background: #423f3f;
     font-family: Arial, sans-serif;
 }
 
@@ -7,7 +7,7 @@ body {
     width: 95%;
     max-width: 1100px;
     margin: 50px auto;
-    background: white;
+    background: #413c3c;
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -57,7 +57,7 @@ th {
     text-decoration: none;
 }
 body {
-    background: #f4f6f9;
+    background: #4d4848;
     font-family: Arial, sans-serif;
 }
 
@@ -78,7 +78,7 @@ h1 {
 }
 
 .card {
-    background: white;
+    background: #ffcc00;
     padding: 25px;
     border-radius: 10px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.08);
@@ -108,7 +108,7 @@ h1 {
 table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
+    background: #ffcc00;
     box-shadow: 0 6px 20px rgba(0,0,0,0.08);
 }
 
@@ -159,7 +159,7 @@ a.success {
     align-items: left;
     gap: 6px;
     font-size: 20px;
-    color: #333;
+    color: #111010;
     text-decoration: none;
     margin-bottom: 15px;
     cursor: pointer;
@@ -200,7 +200,7 @@ a.success {
 }
 
 .report-card, .reply-card {
-    background: #fff;
+    background: #e2af07;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);
@@ -228,7 +228,7 @@ a.success {
 .report-message {
     margin-top: 15px;
     padding: 10px;
-    background: #f9f9f9;
+    background: #f77272;
     border-radius: 8px;
 }
 
@@ -238,6 +238,7 @@ textarea {
     padding: 10px;
     border-radius: 8px;
     border: 1px solid #ccc;
+    background: #f77272;
     resize: vertical;
 }
 

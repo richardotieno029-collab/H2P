@@ -4,6 +4,35 @@ require_once "../db_connect.php";
 
 $id = $_GET['id'];
 
+//add house views
+$student_id = $_SESSION['user_id'];
+$house_id = intval($_GET['id']);
+
+/* Check if student already viewed this house */
+
+$check = $conn->prepare("
+SELECT id FROM house_views
+WHERE student_id=? AND house_id=?
+AND viewed_at >= NOW() - INTERVAL 12 HOUR 
+");
+
+$check->bind_param("ii", $student_id, $house_id);
+$check->execute();
+$res = $check->get_result();
+
+if($res->num_rows == 0){
+
+$insert = $conn->prepare("
+INSERT INTO house_views
+(house_id, student_id, viewed_date, viewed_at)
+VALUES (?, ?, CURDATE(), NOW())
+");
+
+$insert->bind_param("ii", $house_id, $student_id);
+$insert->execute();
+
+}
+
 // Fetch house info
 $stmt = $conn->prepare("SELECT * FROM houses WHERE house_id = ?");
 $stmt->bind_param("i", $id);

@@ -17,6 +17,8 @@ SELECT
    h.*,
     l.full_name AS landlord_name,
     COUNT(r.id) AS total_rooms,
+    COUNT(DISTINCT v.id) AS views,
+   COUNT(DISTINCT f.fav_id) AS favourites,
     SUM(r.status = 'vacant') AS available_rooms,
     CASE 
         WHEN EXISTS (
@@ -30,6 +32,8 @@ SELECT
     END AS has_pending
 FROM houses h
 JOIN landlords l ON h.landlord_id = l.id
+LEFT JOIN house_views v ON h.house_id = v.house_id
+LEFT JOIN favourites f ON h.house_id = f.house_id
 LEFT JOIN rooms r ON h.house_id = r.house_id
 WHERE 1=1
 ";
@@ -204,9 +208,12 @@ if ($house['available_rooms'] > 0 && $house['available_rooms'] <= 2) {
     </div>
 </a>
 
-            <h3><?php echo htmlspecialchars($house['house_name']); ?></h3>
+<div class="house-stats">
+    <span>👁 <?= $house['views'] ?></span>
+    <span>❤️ <?= $house['favourites'] ?></span>
+</div>
 
-        
+            <h3><?php echo htmlspecialchars($house['house_name']); ?></h3>
             <p><strong>Area:</strong> <?php echo htmlspecialchars($house['area']); ?></p>
             <p><strong>Room Type:</strong> <?php echo htmlspecialchars($house['room_type']); ?></p>
             <p><strong>Price:</strong> From KES <?php echo number_format($house['price']); ?></p>

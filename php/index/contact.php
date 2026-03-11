@@ -198,7 +198,7 @@ button:hover {
         <i class="fa-brands fa-tiktok"></i> TikTok
     </a>
 
-    <a href="https://facebook.com/Htwop" target="_blank" class="social facebook">
+    <a href="https://facebook.com/Htwop Kenya" target="_blank" class="social facebook">
         <i class="fa-brands fa-facebook"></i> Facebook
     </a>
 
