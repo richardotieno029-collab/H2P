@@ -1,6 +1,7 @@
 <?php
 require_once "auth_student.php";
 require_once "../../db_connect.php";
+include "../../toast.php";
 
 $student_id = $_SESSION['user_id'];
 
@@ -16,8 +17,27 @@ ORDER BY created_at DESC
 
 $stmt->bind_param("i",$student_id);
 $stmt->execute();
-
 $result = $stmt->get_result();
+
+/* Fetch hosts the student already requested */
+
+$sentRequests = [];
+
+$req = $conn->prepare("
+SELECT host_id
+FROM roommate_requests
+WHERE student_id = ?
+");
+
+$req->bind_param("i",$student_id);
+$req->execute();
+
+$resReq = $req->get_result();
+
+while($row = $resReq->fetch_assoc()){
+    $sentRequests[] = $row['host_id'];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -25,7 +45,8 @@ $result = $stmt->get_result();
 <head>
 
 <meta charset="UTF-8">
-<title>Join a Roommate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join a Roommate</title>
 
 <link rel="stylesheet" href="../../styles.css">
 <link rel="stylesheet" href="roommate.css">
@@ -55,20 +76,24 @@ $result = $stmt->get_result();
 <h3><?= htmlspecialchars($host['name']); ?></h3>
 
 <p>Age: <?= $host['age']; ?></p>
-<p><?= htmlspecialchars($host['year_of_study']); ?></p>
+<p>Level: <?= htmlspecialchars($host['year_of_study']); ?></p>
 
 </div>
 
 </div>
 
-<div class="host-room">
+<div>
 
-<div class="house-card">
+<div class="card">
+<div class="image-wrapper">
+
 <?php if($host['room_photo']): ?>
 
 <img src="../../uploads/<?= $host['room_photo']; ?>" class="room-photo">
 
 <?php endif; ?>
+
+</div>
 </div>
 
 <p><strong>Area:</strong> <?= htmlspecialchars($host['area']); ?></p>
@@ -87,9 +112,25 @@ $result = $stmt->get_result();
 
 </div>
 
-<a href="join_host.php?host_id=<?= $host['host_id']; ?>" class="join-btn">
+<?php if(in_array($host['host_id'],$sentRequests)): ?>
+
+<button  disabled>
+Request Sent
+</button>
+
+<a href="cancel_request.php?host_id=<?= $host['host_id']; ?>" 
+class="danger-btn" onclick="return confirm('Cancel roommate request?')">
+Cancel Request
+</a>
+
+<?php else: ?>
+
+<a href="join_host.php?host_id=<?= $host['host_id']; ?>" 
+class="join-btn">
 Join Host
 </a>
+
+<?php endif; ?>
 
 </div>
 

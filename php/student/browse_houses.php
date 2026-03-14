@@ -76,17 +76,21 @@ if (!empty($_GET['room_type'])) {
     $types .= "s";
 }
 
-// Price filters
-if (!empty($_GET['min_price'])) {
-    $sql .= " AND h.price >= ?";
-    $params[] = $_GET['min_price'];
-    $types .= "i";
-}
+// Price range filter
+if (!empty($_GET['price_range'])) {
+    [$minPrice, $maxPrice] = explode('-', $_GET['price_range']);
 
-if (!empty($_GET['max_price'])) {
-    $sql .= " AND h.price <= ?";
-    $params[] = $_GET['max_price'];
-    $types .= "i";
+    if (is_numeric($minPrice)) {
+        $sql .= " AND h.price >= ?";
+        $params[] = (int) $minPrice;
+        $types .= "i";
+    }
+
+    if (is_numeric($maxPrice)) {
+        $sql .= " AND h.price <= ?";
+        $params[] = (int) $maxPrice;
+        $types .= "i";
+    }
 }
 
 // Only available houses
@@ -116,6 +120,7 @@ $result = $stmt->get_result();
     <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse Houses</title>
     <link rel="stylesheet" href="../styles.css">
 </head>
@@ -130,19 +135,42 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
      FILTERS
 --------------------------- -->
 <form method="GET" class="filters">
-    <input type="text" name="area" placeholder="Area"
-           value="<?php echo $_GET['area'] ?? ''; ?>">
+    <select name="area">
+        <option value="">All Areas</option>
+        <option value="Bagik" <?= (isset($_GET['area']) && $_GET['area'] === 'Bagik') ? 'selected' : '' ?>>Bagik</option>
+        <option value="Gakwegori" <?= (isset($_GET['area']) && $_GET['area'] === 'Gakwegori') ? 'selected' : '' ?>>Gakwegori</option>
+        <option value="Spring Valley" <?= (isset($_GET['area']) && $_GET['area'] === 'Spring Valley') ? 'selected' : '' ?>>Spring Valley</option>
+        <option value="Kamiu" <?= (isset($_GET['area']) && $_GET['area'] === 'Kamiu') ? 'selected' : '' ?>>Kamiu</option>
+        <option value="Kangaru" <?= (isset($_GET['area']) && $_GET['area'] === 'Kangaru') ? 'selected' : '' ?>>Kangaru</option>
+        <option value="Kayole" <?= (isset($_GET['area']) && $_GET['area'] === 'Kayole') ? 'selected' : '' ?>>Kayole</option>
+        <option value="Njukiri" <?= (isset($_GET['area']) && $_GET['area'] === 'Njukiri') ? 'selected' : '' ?>>Njukiri</option>
+        <option value="Leaders" <?= (isset($_GET['area']) && $_GET['area'] === 'Leaders') ? 'selected' : '' ?>>Leaders</option>
+        <option value="Perez" <?= (isset($_GET['area']) && $_GET['area'] === 'Perez') ? 'selected' : '' ?>>Perez</option>
+        <option value="Town" <?= (isset($_GET['area']) && $_GET['area'] === 'Town') ? 'selected' : '' ?>>Town</option>
+        <option value="Other" <?= (isset($_GET['area']) && $_GET['area'] === 'Other') ? 'selected' : '' ?>>Other</option>
+    </select>
 
     <select name="room_type">
         <option value="">All Room Types</option>
-        <option value="Single">Single</option>
-        <option value="Bedsitter">Bedsitter</option>
-        <option value="One Bedroom">1 Bedroom</option>
-        <option value="Hostel">Hostel</option>
+        <option value="Single" <?= (isset($_GET['room_type']) && $_GET['room_type'] === 'Single') ? 'selected' : '' ?>>Single</option>
+        <option value="Bedsitter" <?= (isset($_GET['room_type']) && $_GET['room_type'] === 'Bedsitter') ? 'selected' : '' ?>>Bedsitter</option>
+        <option value="One Bedroom" <?= (isset($_GET['room_type']) && $_GET['room_type'] === 'One Bedroom') ? 'selected' : '' ?>>1 Bedroom</option>
+        <option value="Hostel" <?= (isset($_GET['room_type']) && $_GET['room_type'] === 'Hostel') ? 'selected' : '' ?>>Hostel</option>
     </select>
 
-    <input type="number" name="min_price" placeholder="Min Price">
-    <input type="number" name="max_price" placeholder="Max Price">
+    <select name="price_range">
+        <option value="">Any Price</option>
+        <option value="0-2000" <?= (isset($_GET['price_range']) && $_GET['price_range'] === '0-2000') ? 'selected' : '' ?>>0 - 2,000</option>
+        <option value="2000-4000" <?= (isset($_GET['price_range']) && $_GET['price_range'] === '2000-4000') ? 'selected' : '' ?>>2,000 - 4,000</option>
+        <option value="4000-6000" <?= (isset($_GET['price_range']) && $_GET['price_range'] === '4000-6000') ? 'selected' : '' ?>>4,000 - 6,000</option>
+        <option value="6000-8000" <?= (isset($_GET['price_range']) && $_GET['price_range'] === '6000-8000') ? 'selected' : '' ?>>6,000 - 8,000</option>
+        <option value="8000-10000" <?= (isset($_GET['price_range']) && $_GET['price_range'] === '8000-10000') ? 'selected' : '' ?>>8,000 - 10,000</option>
+        <option value="10000-12000" <?= (isset($_GET['price_range']) && $_GET['price_range'] === '10000-12000') ? 'selected' : '' ?>>10,000 - 12,000</option>
+        <option value="12000-14000" <?= (isset($_GET['price_range']) && $_GET['price_range'] === '12000-14000') ? 'selected' : '' ?>>12,000 - 14,000</option>
+        <option value="14000-16000" <?= (isset($_GET['price_range']) && $_GET['price_range'] === '14000-16000') ? 'selected' : '' ?>>14,000 - 16,000</option>
+        <option value="16000-18000" <?= (isset($_GET['price_range']) && $_GET['price_range'] === '16000-18000') ? 'selected' : '' ?>>16,000 - 18,000</option>
+        <option value="18000-20000" <?= (isset($_GET['price_range']) && $_GET['price_range'] === '18000-20000') ? 'selected' : '' ?>>18,000 - 20,000</option>
+    </select>
 
     <label>
         <input type="checkbox" name="vacant" value="1"

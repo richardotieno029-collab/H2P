@@ -25,8 +25,8 @@ function addRisk($conn, $user_type, $user_id, $points) {
     $hoursPassed = floor(($now - $lastUpdate) / 3600);
     $decayedScore = max(0, $currentScore - $hoursPassed);
 
-    // 3️⃣ Add new points (CAP AT 60)
-    $newScore = min(60, $decayedScore + $points);
+    // 3️⃣ Add new points (CAP AT 100)
+    $newScore = min(100, $decayedScore + $points);
 
     // 4️⃣ Update risk + timestamp
     $update = $conn->prepare("

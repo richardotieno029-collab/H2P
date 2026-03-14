@@ -51,6 +51,15 @@ move_uploaded_file($_FILES["room_photo"]["tmp_name"],$target_file);
 $room_photo = $filename;
 
 }
+//delete old matches from roommate_matches for this host
+$stmt = $conn->prepare("
+DELETE FROM roommate_matches
+WHERE host_id=? OR guest_id=?
+");
+
+$stmt->bind_param("ii",$student_id,$student_id);
+$stmt->execute();
+
 
 
 /* INSERT HOST LISTING */
@@ -98,7 +107,8 @@ exit();
 <head>
 
 <meta charset="UTF-8">
-<title>Invite Roommate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invite Roommate</title>
 
 <link rel="stylesheet" href="../../styles.css">
 <link rel="stylesheet" href="roommate.css">
@@ -122,40 +132,71 @@ exit();
 <option value="">Select</option>
 <option>Male</option>
 <option>Female</option>
+<option>Other</option>
 </select>
 
 <label>Age</label>
 <input type="number" name="age" required>
 
 <label>Year of Study</label>
-<input type="text" name="year" placeholder="Example: Year 2">
+<select name="year" required>
+<option value="">Select</option>
+<option>Year 1</option>
+<option>Year 2</option>
+<option>Year 3</option>
+<option>Year 4</option>
+<option>Graduated</option>
+<option>Other</option>
+</select>
 
 <label>Religion</label>
-<input type="text" name="religion">
+<select name="religion" required>
+<option value="">Select</option>
+    <option>Christian</option>
+    <option>Muslim</option>
+    <option>Hindi</option>
+    <option>Budhist</option>
+    <option>Other</option>
+</select>
 
-<label>Allergies</label>
-<input type="text" name="allergies" placeholder="Leave blank if none">
+<label>Allergies(if any)</label>
+<input type="text" name="allergies" placeholder="e.g milk, perfumes, pollen...">
 
-<label>Disability</label>
-<input type="text" name="disability" placeholder="Leave blank if none">
+<label>Disability(if any)</label>
+<input type="text" name="disability" placeholder="e.g short sighted, physically handicapped...">
 
-<label>Likes</label>
-<textarea name="likes"></textarea>
+<label>Likes(Optional)</label>
+<textarea name="likes" placeholder="List your likes...e.g gaming, dancing"></textarea>
 
-<label>Dislikes</label>
-<textarea name="dislikes"></textarea>
+<label>Dislikes(Optional)</label>
+<textarea name="dislikes" placeholder="List your dislikes...e.g drugs, loud music"></textarea>
 
 
 <h3>Room Details</h3>
 
 <label>Area</label>
-<input type="text" name="area" required>
+<select name="area" required>
+<option value="">Select</option>
+<option>Bagik</option>
+<option>Gakwegori</option>
+<option>Spring Valley</option>
+<option>Kamiu</option>
+<option>Kangaru</option>
+<option>Kayole</option>
+<option>Njukiri</option>
+<option>Leaders</option>
+<option>Perez</option>
+<option>Town</option>
+<option>Other</option>
+</select>
+
 
 <label>Room Type</label>
 <select name="room_type">
 <option>Single</option>
 <option>Bedsitter</option>
 <option>One Bedroom</option>
+<option>Two Bedroom</option>
 <option>Hostel</option>
 </select>
 

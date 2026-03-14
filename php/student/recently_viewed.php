@@ -7,6 +7,7 @@ require_once "../db_connect.php";
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard | H2P</title>
     <link rel="stylesheet" href="../styles.css">
     <script src="../scripts.js"></script>

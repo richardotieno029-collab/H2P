@@ -8,10 +8,10 @@ $type = $_GET['type'];
 $id   = intval($_GET['id']);
 
 if ($type == 'landlord') {
-    $stmt = $conn->prepare("UPDATE landlords SET status='suspended' WHERE id=?");
+    $stmt = $conn->prepare("UPDATE landlords SET risk_score=100 WHERE id=?");
 }
 elseif ($type == 'student') {
-    $stmt = $conn->prepare("UPDATE students SET status='suspended' WHERE id=?");
+    $stmt = $conn->prepare("UPDATE students SET risk_score=100 WHERE id=?");
 }
 else {
     die("Invalid user type");

@@ -141,6 +141,20 @@ if ($row['email_verified'] == 0) {
     header("Location: login_form.php");
     exit;
 }
+       // risk score recalculation
+    $user_type = 'landlord';
+    $user_id   = $row['id'];
+
+    addRisk($conn, $user_type, $user_id, 0);
+//RISK RESET
+$stmt = $conn->prepare("
+UPDATE students
+SET status = 'active'
+WHERE id=? AND risk_score < 50
+");
+
+$stmt->bind_param("i",$row['id']);
+$stmt->execute();
 //check for suspension
 if ($row['status'] !== 'active') {
     $_SESSION['toast'] = [

@@ -4,6 +4,9 @@ include "../toast.php";
 $_SESSION['token'] = bin2hex(random_bytes(32)); // CSRF token generation
 require_once "../db_connect.php"; // adjust if your db file has a different name
 
+$unverified = isset($_GET['unverified']) && $_GET['unverified'] == '1';
+$unverifiedEmail = htmlspecialchars($_GET['email'] ?? '');
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!isset($_POST['token']) || 
@@ -68,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landlord Login</title>
     <link rel="stylesheet" href="../styles.css">
     

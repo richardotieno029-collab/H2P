@@ -1,143 +1,3 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
-body {
-    background: #43a1379d;
-    background-color: #04f08e;
-}
-
-/* HEADER */
-header {
-    background: #37899e;
-    color: white;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-nav ul {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  background-color: #900;
-  margin: 0;
-}
-
-nav ul li {
-  margin: 5px 10px;
-}
-
-nav ul li a {
-  color: white;
-  text-decoration: none;
-  padding: 8px 15px;
-  border-radius: 5px;
-}
-
-nav ul li a:hover, .active {
-  background-color: #ff3333;
-}
-
-/* HERO SECTION */
-.hero {
-    text-align: center;
-    padding: 60px 20px;
-    background: url('hero.jpg') center/cover no-repeat;
-    color: white;
-    background-color: #333;
-}
-
-
-/* ROOMS */
-.rooms {
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
-}
-
-.room-card {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.room-card img {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-}
-
-.room-info {
-    padding: 15px;
-}
-
-.room-info h3 {
-    font-size: 18px;
-    margin-bottom: 5px;
-}
-
-.room-info p {
-    color: #555;
-    margin-bottom: 8px;
-}
-
-.small-hero {
-    padding: 40px;
-    background: #cc0000; /* red theme */
-    color: white;
-    text-align: center;
-}
-
-.category-title {
-    margin: 30px 0 10px 20px;
-    font-size: 24px;
-    color: #333;
-}
-
-.rooms-page {
-    padding-bottom: 40px;
-}
-.areas-section {
-    padding: 40px 20px;
-    text-align: center;
-}
-
-.areas-section h2 {
-    margin-bottom: 20px;
-}
-
-.areas-list {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-}
-
-.area-card {
-    padding: 15px 25px;
-    background: #e7e4ff;
-    border-radius: 12px;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    transition: 0.2s;
-}
-
-.area-card:hover {
-    background: #c6c1ff;
-    transform: scale(1.05);
-}
 /* ------------------------------
    RESET + GLOBAL STYLES
 ------------------------------ */
@@ -183,7 +43,138 @@ nav a:hover {
 }
 
 /* ------------------------------
-          HERO SECTIONS
+         LANDING PAGE
+------------------------------ */
+.landing-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #88f591;
+}
+
+.landing-header {
+    padding: 15px 20px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.landing-header a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.2);
+    transition: background 0.2s ease;
+}
+
+.landing-header a:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.landing-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+}
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.logo-img {
+    width: 110px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.logo-text {
+    font-size: 36px;
+    font-weight: bold;
+    color: #2e7d32;
+    margin: 0;
+}
+
+.logo-tagline {
+    font-size: 14px;
+    color: #555;
+    margin-top: 5px;
+}
+
+.role-container {
+    background: #2089df;
+    padding: 40px;
+    border-radius: 12px;
+    max-width: 900px;
+    width: 90%;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+.role-container h1 {
+    margin-bottom: 10px;
+}
+
+.role-container p {
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.roles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.role-card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 30px 20px;
+    transition: 0.3s ease;
+    background: #fafafa;
+}
+
+.role-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.role-card h3 {
+    margin-bottom: 10px;
+}
+
+.role-card p {
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.role-card a {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+}
+
+.student-btn { background: #007bff; }
+.landlord-btn { background: #28a745; }
+.guest-btn { background: #6c757d; }
+
+.footer-note {
+    margin-top: 30px;
+    font-size: 13px;
+    color: #777;
+}
+
+/* ------------------------------
 ------------------------------ */
 .hero, 
 .hero-area {
@@ -193,7 +184,6 @@ nav a:hover {
     margin: 20px auto;
     width: 95%;
 }
-
 
 /* ------------------------------
          ROOMS + CARDS
@@ -239,6 +229,11 @@ nav a:hover {
 
 
 /* ------------------------------
+         ROOMS + CARDS
+------------------------------ */
+
+
+/* ------------------------------
         RESPONSIVE DESIGN
 ------------------------------ */
 
@@ -260,7 +255,9 @@ nav a:hover {
     .hero, .hero-area {
         width: 100%;
         margin: 10px 0;
+        padding: 30px 15px;
     }
+    
     .houses-container {
         justify-content: center;
     }
@@ -271,6 +268,88 @@ nav a:hover {
 
     .house-card img {
         height: 200px;
+    }
+    
+    .dashboard-title {
+        font-size: 1.5rem;
+    }
+
+    .dash-card {
+        padding: 15px;
+    }
+    
+    /* Additional mobile improvements */
+    body {
+        font-size: 16px;
+    }
+    
+    .category-title {
+        font-size: 20px;
+        margin: 20px 0 10px 10px;
+    }
+    
+    .rooms, .room-list {
+        padding: 10px;
+        gap: 15px;
+    }
+    
+    .room-card h4 {
+        font-size: 18px;
+    }
+    
+    .form-wrapper {
+        width: 95%;
+        margin: 20px auto;
+        padding: 20px;
+    }
+    
+    .about-container {
+        padding: 1rem;
+        gap: 15px;
+    }
+
+    /* Landing page responsive tweaks */
+    .landing-main {
+        padding: 30px 15px;
+    }
+
+    .logo-text {
+        font-size: 28px;
+    }
+
+    .logo-img {
+        width: 80px;
+    }
+
+    .role-container {
+        padding: 20px;
+        margin: 10px 0;
+    }
+
+    .roles {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .role-card {
+        padding: 20px 15px;
+    }
+
+    .role-card p {
+        font-size: 16px;
+    }
+
+    .role-card a {
+        padding: 12px 20px;
+        font-size: 16px;
+    }
+
+    .footer-note {
+        font-size: 14px;
+    }
+    
+    .about-box {
+        padding: 1rem;
     }
 }
 
@@ -450,63 +529,6 @@ nav a:hover {
 .about-box p {
   color: #555;
   line-height: 1.6;
-}
-
-/* ---------- Header ---------- */
-header {
-  background: #3b4bdf;
-  padding: 20px;
-  text-align: center;
-  color: white;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 2rem;
-}
-
-nav ul {
-  list-style: none;
-  padding: 0;
-  margin-top: 10px;
-}
-
-nav ul li {
-  display: inline-block;
-  margin: 0 15px;
-}
-
-nav a {
-  color: #ccc;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-nav a:hover,
-nav a.active {
-  color: white;
-}
-
-/* ---------- Main Container ---------- */
-.container {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 10px;
-}
-
-/* ---------- Card Style (Matches Your Previous Pages) ---------- */
-.card {
-  background: rgb(48, 231, 130);
-  padding: 25px;
-  margin-bottom: 25px;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.card h2 {
-  margin-top: 0;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 8px;
 }
 
 /* ---------- Footer ---------- */
@@ -801,19 +823,6 @@ tr:hover {
     background: #0056b3;
 }
 
-/* MOBILE ADJUSTMENTS */
-@media (max-width: 600px) {
-    .dashboard-title {
-        font-size: 1.5rem;
-    }
-
-    .dash-card {
-        padding: 20px;
-    }
-}
-
-
-
 /* ===== DASHBOARD HEADER ===== */
 .dashboard-header {
     display: flex;
@@ -1095,6 +1104,70 @@ tr:hover {
     color: #555;
     margin-top: 5px;
 }
+
+/* Mobile responsiveness for auth forms */
+@media (max-width: 768px) {
+    .auth-container {
+        padding: 20px;
+        margin: 10px;
+        max-width: 100%;
+    }
+    
+    .auth-container h2 {
+        font-size: 24px;
+    }
+    
+    .logo-container {
+        margin-top: 30px;
+        margin-bottom: 20px;
+    }
+    
+    .logo-img {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .logo-text {
+        font-size: 28px;
+    }
+    
+    .back-btn {
+        font-size: 16px;
+    }
+    
+    .toast {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        padding: 12px 16px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .auth-container {
+        padding: 15px;
+    }
+    
+    .auth-container h2 {
+        font-size: 20px;
+    }
+    
+    .logo-text {
+        font-size: 24px;
+    }
+    
+    .auth-container input {
+        padding: 12px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    .auth-container button {
+        padding: 14px;
+        font-size: 16px;
+    }
+}
+
 /* =========================
    FILTERS SECTION
 ========================= */
@@ -1217,50 +1290,6 @@ tr:hover {
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.08); }
-    100% { transform: scale(1); }
-}
-.u-badge.urgent {
-    background: #e53935;
-    color: #fff;
-}
-.badge-urgent {
-    background: red;
-    animation: pulse 1s infinite;
-}
-
-.badge-expired {
-    background: gray;
-    color: #fff;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); }
-    100% { transform: scale(1); }
-}
-
-/* Desktop hover magic */
-@media (hover: hover) {
-    .u-badge.urgent:hover {
-        animation: blink 0.8s infinite;
-    }
-}
-
-/* Mobile pulse (no hover devices) */
-@media (hover: none) {
-    .u-badge.urgent {
-        animation: pulse 2.5s infinite;
-    }
-}
-
-@keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-}
-
-@keyframes pulse {
-    0%   { transform: scale(1); }
-    50%  { transform: scale(1.08); }
     100% { transform: scale(1); }
 }
 

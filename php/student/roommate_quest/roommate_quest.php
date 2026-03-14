@@ -1,6 +1,8 @@
 <?php
 require_once "auth_student.php";
 require_once "../../db_connect.php";
+include "../../toast.php";
+
 
 $student_id = $_SESSION['user_id'];
 
@@ -16,6 +18,35 @@ $stmt->bind_param("i", $student_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $student = $result->fetch_assoc();
+
+/* Check if student already has an open roommate listing */
+
+$checkHost = $conn->prepare("
+SELECT host_id
+FROM roommate_hosts
+WHERE student_id = ?
+AND status = 'OPEN'
+LIMIT 1
+");
+
+$checkHost->bind_param("i",$student_id);
+$checkHost->execute();
+
+$hostResult = $checkHost->get_result();
+
+$hasHost = $hostResult->num_rows > 0;
+
+//check for match
+$matchCheck = $conn->prepare("
+SELECT match_id
+FROM roommate_matches
+WHERE host_id=? OR guest_id=?
+");
+
+$matchCheck->bind_param("ii",$student_id, $student_id);
+$matchCheck->execute();
+
+$hasMatch = $matchCheck->get_result()->num_rows > 0;
 ?>
 
 <!DOCTYPE html>
@@ -23,7 +54,8 @@ $student = $result->fetch_assoc();
 <head>
 
 <meta charset="UTF-8">
-<title>Roommate Quest</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roommate Quest</title>
 
 <link rel="stylesheet" href="../../styles.css">
 <link rel="stylesheet" href="roommate.css">
@@ -60,15 +92,33 @@ Find the perfect roommate or invite someone to share your space.
 
 <div class="rq-options">
 
+<div class="rq-options">
+
+<?php if($hasHost): ?>
+
+<a href="host_requests.php" class="rq-btn invite">
+View Requests
+</a>
+
+<?php else: ?>
+
 <a href="invite_roommate.php" class="rq-btn invite">
 Invite a Roommate
 </a>
+
+<?php endif; ?>
 
 <a href="view_hosts.php" class="rq-btn join">
 Join a Roommate
 </a>
 
 </div>
+
+<?php if($hasMatch): ?>
+<a href="my_roommate.php" class="rq-btn join">
+My Roommate 🎉
+</a>
+<?php endif; ?>
 
 </div>
 

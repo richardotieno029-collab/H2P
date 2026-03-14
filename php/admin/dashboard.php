@@ -14,9 +14,11 @@ $totallogs = $conn->query("SELECT COUNT(*) as total FROM activity_logs")->fetch_
 <!DOCTYPE html>
 <html>
 <head>
-<title>Admin Dashboard - H2P</title>
-<link rel="stylesheet" href="admin_styles.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - H2P</title>
+    <link rel="stylesheet" href="admin_styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
      <a href="../index/index.php" class="back-btn" title="Go back">

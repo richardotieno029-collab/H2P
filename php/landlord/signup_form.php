@@ -6,6 +6,7 @@ $_SESSION['token'] = bin2hex(random_bytes(32)); // CSRF token generation
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landlord Signup</title>
     <link rel="stylesheet" href="../styles.css">
 </head>

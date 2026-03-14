@@ -11,9 +11,11 @@ $result = $conn->query("SELECT * FROM $table ORDER BY id DESC");
 <!DOCTYPE html>
 <html>
 <head>
-<title>Manage Users</title>
-<link rel="stylesheet" href="admin_styles.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users</title>
+    <link rel="stylesheet" href="admin_styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
 
@@ -56,7 +58,8 @@ Managing <?= ucfirst($type) ?>s
 <td>
 
 <?php if ($row['status'] === 'active'): ?>
-<a href="toggle_user.php?type=<?= $type ?>&id=<?= $row['id'] ?>&action=suspend" class="danger">
+<a href="toggle_user.php?type=<?= $type ?>&id=<?= $row['id'] ?>&action=suspend" class="danger" onclick="return confirm
+('Are you sure you want to suspend this user?');">
 Suspend
 </a>
 <?php else: ?>

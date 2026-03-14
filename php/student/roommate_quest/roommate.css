@@ -114,7 +114,7 @@ padding:20px;
 
 .rq-host-card{
 
-background:#e3f2fd;
+background:#5aaae4;
 border-radius:10px;
 padding:20px;
 box-shadow:0 3px 8px rgba(0,0,0,0.1);
@@ -127,6 +127,9 @@ display:flex;
 gap:15px;
 align-items:center;
 
+}
+.host-room{
+    background:#5aaae4;
 }
 
 .host-photo{
@@ -163,4 +166,37 @@ text-decoration:none;
 
 background:#43a047;
 
+}
+.rq-actions{
+display:flex;
+gap:10px;
+margin-top:10px;
+}
+
+.accept-btn{
+flex:1;
+text-align:center;
+background:#4CAF50;
+color:white;
+padding:8px;
+border-radius:6px;
+text-decoration:none;
+}
+
+.reject-btn{
+flex:1;
+text-align:center;
+background:#e53935;
+color:white;
+padding:8px;
+border-radius:6px;
+text-decoration:none;
+}
+
+.accept-btn:hover{
+background:#43a047;
+}
+
+.reject-btn:hover{
+background:#d32f2f;
 }

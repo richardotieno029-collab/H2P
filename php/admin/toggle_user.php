@@ -10,9 +10,15 @@ $table = $type === 'landlord' ? 'landlords' : 'students';
 
 $newStatus = $action === 'suspend' ? 'suspended' : 'active';
 
-$stmt = $conn->prepare("UPDATE $table SET status=? WHERE id=?");
-$stmt->bind_param("si", $newStatus, $id);
-$stmt->execute();
+if ($action === 'suspend') {
+    $stmt = $conn->prepare("UPDATE $table SET status=?, risk_score=100 WHERE id=?");
+    $stmt->bind_param("si", $newStatus, $id);
+    $stmt->execute();
+} else {
+    $stmt = $conn->prepare("UPDATE $table SET status=? WHERE id=?");
+    $stmt->bind_param("si", $newStatus, $id);
+    $stmt->execute();
+}
 
 header("Location: users.php?type=$type");
 exit;

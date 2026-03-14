@@ -41,7 +41,7 @@ th {
 }
 
 .status.new {
-    background: #ffcc00;
+    background: #ebce5d;
 }
 
 .status.resolved {
@@ -55,10 +55,6 @@ th {
     padding: 6px 10px;
     border-radius: 5px;
     text-decoration: none;
-}
-body {
-    background: #4d4848;
-    font-family: Arial, sans-serif;
 }
 
 .admin-wrapper {
@@ -78,7 +74,7 @@ h1 {
 }
 
 .card {
-    background: #ffcc00;
+    background: #ebd16d;
     padding: 25px;
     border-radius: 10px;
     box-shadow: 0 8px 25px rgba(0,0,0,0.08);
@@ -108,7 +104,7 @@ h1 {
 table {
     width: 100%;
     border-collapse: collapse;
-    background: #ffcc00;
+    background: #eed264;
     box-shadow: 0 6px 20px rgba(0,0,0,0.08);
 }
 
@@ -200,7 +196,7 @@ a.success {
 }
 
 .report-card, .reply-card {
-    background: #e2af07;
+    background: #eecc5e;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.08);

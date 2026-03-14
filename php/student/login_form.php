@@ -2,12 +2,16 @@
 session_start();
 $_SESSION['token'] = bin2hex(random_bytes(32)); // CSRF token generation
 include "../toast.php";
+
+$unverified = isset($_GET['unverified']) && $_GET['unverified'] == '1';
+$unverifiedEmail = htmlspecialchars($_GET['email'] ?? '');
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>Student Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../styles.css">
 </head>
 <body>
@@ -30,13 +34,60 @@ include "../toast.php";
 
     <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
     <label>Student Email</label>
-    <input type="email" name="email" required>
+    <input type="email" name="email" required value="<?= $unverifiedEmail ?>">
 
     <label>Password</label>
     <input type="password" name="password" required>
 
     <button type="submit">Login</button>
 </form>
+
+<?php if ($unverified && $unverifiedEmail): ?>
+    <div class="resend-section">
+        <p>We sent a verification email to <strong><?= $unverifiedEmail ?></strong>. Didn’t receive it?</p>
+        <form action="../student/resend_verification.php" method="POST">
+            <input type="hidden" name="email" value="<?= $unverifiedEmail ?>">
+            <button type="submit" id="resendBtn" disabled>
+                Resend Verification Email (<span id="countdown">60</span>s)
+            </button>
+        </form>
+    </div>
+
+    <script>
+        const resendBtn = document.getElementById('resendBtn');
+        const countdown = document.getElementById('countdown');
+        const key = 'resendCooldown_student_<?= rawurlencode($unverifiedEmail) ?>';
+
+        let resendTime = localStorage.getItem(key);
+        if (!resendTime) {
+            resendTime = Date.now() + 60 * 1000;
+            localStorage.setItem(key, resendTime);
+        }
+
+        function updateTimer() {
+            const remaining = Math.floor((resendTime - Date.now()) / 1000);
+
+            if (remaining <= 0) {
+                resendBtn.disabled = false;
+                resendBtn.textContent = 'Resend Verification Email';
+                localStorage.removeItem(key);
+                return;
+            }
+
+            countdown.textContent = remaining;
+        }
+
+        updateTimer();
+
+        const timer = setInterval(() => {
+            updateTimer();
+            if (!localStorage.getItem(key)) {
+                clearInterval(timer);
+            }
+        }, 1000);
+    </script>
+<?php endif; ?>
+
 <div class="auth-footer">
     <a href="../auth/forgot_password_form.php">Forgot Password</a></br>
             Don't have an account?

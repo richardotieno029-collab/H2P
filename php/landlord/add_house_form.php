@@ -1,12 +1,26 @@
 <?php
 require_once "auth_landlord.php";
 
+$areaOptions = [
+    'Bagik',
+    'Gakwegori',
+    'Spring Valley',
+    'Kamiu',
+    'Kangaru',
+    'Kayole',
+    'Njukiri',
+    'Leaders',
+    'Perez',
+    'Town',
+    'Other',
+];
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add House | H2P</title>
     <link rel="stylesheet" href="../styles.css">
 </head>
@@ -31,14 +45,10 @@ require_once "auth_landlord.php";
 
         <label>Area</label>
         <select name="area" required>
-            <option>Kangaru</option>
-            <option>Gakwegori</option>
-            <option>Spring Valley</option>
-            <option>Kayole</option>
-            <option>Kamiu</option>
-            <option>Bagik</option>
-            <option>Njukiri</option>
-            <option>Leaders</option>
+            <option value="">Select area</option>
+            <?php foreach ($areaOptions as $areaOption): ?>
+                <option value="<?= htmlspecialchars($areaOption) ?>"><?= htmlspecialchars($areaOption) ?></option>
+            <?php endforeach; ?>
         </select>
 
         <label>House Type</label>

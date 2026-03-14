@@ -26,6 +26,8 @@ $result = $stmt;
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spam Flags</title>
     <link rel="stylesheet" href="admin_styles.css">
     <style>
@@ -67,7 +69,8 @@ $result = $stmt;
     <td><?= $row['created_at']; ?></td>
     <td>
         <a class="btn suspend"
-           href="suspend_user.php?type=<?= $row['user_type']; ?>&id=<?= $row['user_id']; ?>">
+           href="suspend_user.php?type=<?= $row['user_type']; ?>&id=<?= $row['user_id']; ?>" onclick="return confirm
+('Are you sure you want to suspend this user?');">
            Suspend
         </a>
 

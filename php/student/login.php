@@ -135,12 +135,27 @@ if ($count >= 2) {
 //EMAIL NOT VERIFIED
 if ($row['email_verified'] == 0) {
     $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'Please verify your email before logging in.'
-];
-    header("Location: verify_notice.php");
+        'type' => 'error',
+        'message' => 'Please verify your email before logging in.'
+    ];
+    $redirect = "login_form.php?unverified=1&email=" . urlencode($row['email']) . "&role=student";
+    header("Location: $redirect");
     exit;
 }
+       // risk score recalculation
+    $user_type = 'student';
+    $user_id   = $row['id'];
+
+    addRisk($conn, $user_type, $user_id, 0);
+//RISK RESET
+$stmt = $conn->prepare("
+UPDATE students
+SET status = 'active'
+WHERE id=? AND risk_score < 50
+");
+
+$stmt->bind_param("i",$row['id']);
+$stmt->execute();
 //check for suspension
 if ($row['status'] !== 'active') {
     $_SESSION['toast'] = [

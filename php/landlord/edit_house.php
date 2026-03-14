@@ -2,6 +2,20 @@
 require_once "auth_landlord.php";
 require_once "../db_connect.php";
 
+$areaOptions = [
+    'Bagik',
+    'Gakwegori',
+    'Spring Valley',
+    'Kamiu',
+    'Kangaru',
+    'Kayole',
+    'Njukiri',
+    'Leaders',
+    'Perez',
+    'Town',
+    'Other',
+];
+
 if (!isset($_GET['id'])) {
      $_SESSION['toast'] = [
     'type' => 'error',
@@ -34,6 +48,8 @@ $house = $result->fetch_assoc();
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit House</title>
     <link rel="stylesheet" href="../styles.css">
 </head>
@@ -60,16 +76,14 @@ $house = $result->fetch_assoc();
     <input type="text" name="house_name" value="<?php echo htmlspecialchars($house['house_name']); ?>" required>
 
     <label>Area</label>
-    <select name="area" value="<?php echo htmlspecialchars($house['area']); ?>" required>
-        <option>Kangaru</option>
-            <option>Gakwegori</option>
-            <option>Spring Valley</option>
-            <option>Kayole</option>
-            <option>Kamiu</option>
-            <option>Bagik</option>
-            <option>Njukiri</option>
-            <option>Leaders</option>
-        </select>
+    <select name="area" required>
+        <option value="">Select area</option>
+        <?php foreach ($areaOptions as $areaOption): ?>
+            <option value="<?= htmlspecialchars($areaOption) ?>" <?= ($house['area'] === $areaOption) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($areaOption) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
 
     <label>Room Type</label>
     <select name="room_type" value="<?php echo htmlspecialchars($house['room_type']); ?>" required>
