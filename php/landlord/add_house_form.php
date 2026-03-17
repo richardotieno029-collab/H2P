@@ -37,7 +37,7 @@ $areaOptions = [
 </div>
     <h2>Add a New House</h2>
 
-<form action="add_house.php" method="POST" enctype="multipart/form-data">
+<form action="add_house.php" method="POST" enctype="multipart/form-data" onsubmit="return handleSubmit(this, 'Saving house...')">
 
 <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
         <label>House Name</label>
@@ -64,10 +64,10 @@ $areaOptions = [
         <input type="number" name="price" required>
 
         <label>Upload cover Image</label>
-        <input type="file" name="house_image" required>
+        <input type="file" name="house_image" accept="image/*" data-max-size="5242880" required>
 
         <label>Upload other Images</label>
-        <input type="file" name="gallery_images[]" multiple >
+        <input type="file" name="gallery_images[]" accept="image/*" data-max-files="5" data-max-size="5242880" multiple >
 
 
         <button type="button" class="toggle-btn" onclick="toggleDetails()">

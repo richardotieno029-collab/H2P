@@ -55,7 +55,19 @@ $count = $stmt->get_result()->fetch_assoc()['total'];
         <?php
 $landlord_id = $_SESSION['user_id'];
 
-$query = "SELECT * FROM houses WHERE landlord_id = ?";
+$query = "
+SELECT
+    h.*,
+    COUNT(DISTINCT v.id) AS views,
+    COUNT(DISTINCT f.fav_id) AS favourites
+FROM houses h
+LEFT JOIN house_views v ON h.house_id = v.house_id
+LEFT JOIN favourites f ON h.house_id = f.house_id
+WHERE h.landlord_id = ?
+GROUP BY h.house_id
+ORDER BY h.house_id DESC
+";
+
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $landlord_id);
 $stmt->execute();
@@ -78,12 +90,14 @@ $result = $stmt->get_result();
                 <p><strong>Area:</strong> <?php echo $house['area']; ?></p>
                 <p><strong>Type:</strong> <?php echo $house['room_type']; ?></p>
                 <p><strong>Price:</strong> KES <?php echo $house['price']; ?></p>
+                <p><strong>Views:</strong> <?php echo $house['views']; ?></p>
+                <p><strong>Favourites:</strong> <?php echo $house['favourites']; ?></p>
 
                 <div class="actions">
                     <a href="rooms.php?house_id=<?php echo $house['house_id']; ?>">View Rooms</a>
                     <a href="edit_house.php?id=<?php echo $house['house_id']; ?>">✏ Edit</a>
                     <a href="delete_house.php?id=<?php echo $house['house_id']; ?>" 
-                       onclick="return confirm('Delete this house?')">🗑 Delete</a>
+                       onclick="if (confirm('Delete this house?')) { showLoading('Deleting listing...'); return true; } return false;">🗑 Delete</a>
                 </div>
             </div>
         <?php endwhile; ?>

@@ -1,6 +1,7 @@
 <?php
 require_once "auth_student.php";
 require_once "../db_connect.php";
+require_once "../includes/image_utils.php";
 
 /* 1. Ensure form was submitted */
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -22,6 +23,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $full_name  = trim($_POST['full_name']);
 $email = trim($_POST['email']);
 $phone = trim($_POST['phone']);
+
+/* EMAIL FORMAT VALIDATION */
+if (!preg_match('/^[0-9]{5}@student\.embuni\.ac\.ke$/', $email)) {
+    $_SESSION['toast'] = [
+        'type' => 'error',
+        'message' => 'Use a valid student email (12345@student.embuni.ac.ke)'
+    ];
+    header("Location: edit_profile_form.php");
+    exit;
+}
+
+/* CHECK DUPLICATE EMAIL */
+$checkEmail = $conn->prepare(
+    "SELECT id FROM students WHERE email = ? AND id <> ?"
+);
+$checkEmail->bind_param("si", $email, $id);
+$checkEmail->execute();
+$checkEmail->store_result();
+
+if ($checkEmail->num_rows > 0) {
+    $_SESSION['toast'] = [
+        'type' => 'error',
+        'message' => 'Email already registered.'
+    ];
+    header("Location: edit_profile_form.php");
+    exit;
+}
+
+/* PHONE FORMAT VALIDATION */
+$phonePattern = '/^(?:07|01)\d{8}$|^(?:2547|2541)\d{8}$/';
+if (!preg_match($phonePattern, $phone)) {
+    $_SESSION['toast'] = [
+        'type' => 'error',
+        'message' => 'Enter a valid phone number (e.g. 0712345678, 0112345678, 254712345678 or 254112345678).'
+    ];
+    header("Location: edit_profile_form.php");
+    exit;
+}
+
+/* CHECK DUPLICATE PHONE */
+$checkPhone = $conn->prepare(
+    "SELECT id FROM students WHERE phone = ? AND id <> ?"
+);
+$checkPhone->bind_param("si", $phone, $id);
+$checkPhone->execute();
+$checkPhone->store_result();
+
+if ($checkPhone->num_rows > 0) {
+    $_SESSION['toast'] = [
+        'type' => 'error',
+        'message' => 'Phone number already registered.'
+    ];
+    header("Location: edit_profile_form.php");
+    exit;
+}
 
 /* 1️⃣ Get old image */
 $stmt = $conn->prepare("
@@ -63,10 +119,11 @@ if (!in_array($mime, $allowed_types)) {
     $targetPath = $uploadDir . $newImage;
 
     if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $targetPath)) {
+        optimizeImageFile($targetPath, $targetPath, 1200, 70);
 
         // delete old image if exists
-        if ($profile_image && file_exists("" . $profile_image)) {
-            unlink("" . $profile_image);
+        if ($profile_image && file_exists($profile_image)) {
+            unlink($profile_image);
         }
 
         $profile_image = "../uploads/profiles/" . $newImage;

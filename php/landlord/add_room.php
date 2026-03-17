@@ -2,6 +2,7 @@
 require_once "auth_landlord.php";
 include "../db_connect.php";
 require_once "../includes/risk_engine.php";
+require_once "../includes/image_utils.php";
 session_start();
 include "../toast.php";
 
@@ -52,6 +53,9 @@ if (!move_uploaded_file($_FILES["room_image"]["tmp_name"], $target_file)) {
     die("Image upload failed.");
 }
 
+// Optimize uploaded image in-place (resize + compress)
+optimizeImageFile($target_file, $target_file, 1200, 70);
+
 /* Store RELATIVE path */
 $image_path = "../uploads/" . $image_name;
 
@@ -70,19 +74,45 @@ $stmt->bind_param(
 );
 $stmt->execute();
 $room_id = $conn->insert_id;
-//gallery
+//gallery images
 $uploadDir = "../uploads/";
 
+// Limit gallery images per room to 5 total
+$maxGallery = 5;
+$existingStmt = $conn->prepare("SELECT COUNT(*) AS total FROM room_images WHERE room_id = ?");
+$existingStmt->bind_param("i", $room_id);
+$existingStmt->execute();
+$existingCount = $existingStmt->get_result()->fetch_assoc()['total'];
+$remainingSlots = max(0, $maxGallery - $existingCount);
+
+if ($remainingSlots === 0 && !empty($_FILES['gallery_images']['name'][0])) {
+    $_SESSION['toast'] = [
+        'type' => 'info',
+        'message' => 'Maximum of 5 gallery images reached for this room. Remove existing images before adding more.'
+    ];
+}
+
 //sanitize and upload each gallery image
-if (!empty($_FILES['gallery_images']['name'][0])) {
+if (!empty($_FILES['gallery_images']['name'][0]) && $remainingSlots > 0) {
 
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
 
+    $uploadedCount = 0;
+
     foreach ($_FILES['gallery_images']['tmp_name'] as $key => $tmp_name) {
-        if ($_FILES['house_image']['size'] > 5 * 1024 * 1024) {
-    die("File too large.");
-}
+        if ($uploadedCount >= $remainingSlots) {
+            break;
+        }
+
+        $fileSize = $_FILES['gallery_images']['size'][$key] ?? 0;
+        if ($fileSize > 5 * 1024 * 1024) {
+            continue; // skip oversized file
+        }
+
+        if (!isset($_FILES['gallery_images']['name'][$key]) || empty($_FILES['gallery_images']['name'][$key])) {
+            continue;
+        }
 
         if ($_FILES['gallery_images']['error'][$key] !== 0) {
             continue;
@@ -98,12 +128,15 @@ if (!empty($_FILES['gallery_images']['name'][0])) {
         $targetPath = $uploadDir . $imageName;
 
         if (move_uploaded_file($tmp_name, $targetPath)) {
+            optimizeImageFile($targetPath, $targetPath, 1200, 70);
 
             $image_path = "../uploads/" . $imageName;
 
             $stmt = $conn->prepare("INSERT INTO room_images (room_id, image_path) VALUES (?, ?)");
             $stmt->bind_param("is", $room_id, $image_path);
             $stmt->execute();
+
+            $uploadedCount++;
         }
     }
 
@@ -177,11 +210,13 @@ if ($count >= 8) {
 }
 
 
-    $_SESSION['toast'] = [
-    'type' => 'success',
-    'message' => 'Room added successfully.'
-];
-  $_SESSION['token'] = bin2hex(random_bytes(32));
+    if (!isset($_SESSION['toast'])) {
+        $_SESSION['toast'] = [
+            'type' => 'success',
+            'message' => 'Room added successfully.'
+        ];
+    }
+    $_SESSION['token'] = bin2hex(random_bytes(32));
     header("Location: rooms.php?refresh=1&house_id=" . $house_id);
     exit();
 } else {

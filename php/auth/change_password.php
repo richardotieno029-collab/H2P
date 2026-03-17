@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <h2>⚠️ Change Password</h2>
 <p class="warning">This action affects your account security.</p>
 
-<form method="POST">
+<form method="POST" onsubmit="return handleSubmit(this, 'Updating password...')">
     <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
 
     <input type="password" name="old_password" placeholder="Old Password" required>

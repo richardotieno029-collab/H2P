@@ -2,6 +2,8 @@
 session_start();
 require_once "../db_connect.php";
 require_once "../includes/risk_engine.php";
+require_once "../includes/phone_utils.php";
+require_once "../includes/image_utils.php";
 include "../toast.php";
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
@@ -60,6 +62,39 @@ if ($check->num_rows > 0) {
     header("Location: signup_form.php");
     exit;
 }
+
+/* PHONE FORMAT VALIDATION */
+$phonePattern = '/^(?:07|01)\d{8}$|^(?:2547|2541)\d{8}$/';
+if (!preg_match($phonePattern, $phone)) {
+    $_SESSION['toast'] = [
+        'type' => 'error',
+        'message' => 'Enter a valid phone number (e.g. 0712345678, 0112345678, 254712345678 or 254112345678).'
+    ];
+    header("Location: signup_form.php");
+    exit;
+}
+
+/* Normalize phone so 2547... and 07... are treated as the same number */
+$normalizedPhone = normalizePhoneForDb($phone);
+$phoneVariants = getPhoneVariants($phone);
+
+/* CHECK DUPLICATE PHONE */
+$placeholders = implode(',', array_fill(0, count($phoneVariants), '?'));
+$checkPhoneSql = "SELECT id FROM students WHERE phone IN ($placeholders)";
+$checkPhone = $conn->prepare($checkPhoneSql);
+$types = str_repeat('s', count($phoneVariants));
+$checkPhone->bind_param($types, ...$phoneVariants);
+$checkPhone->execute();
+$checkPhone->store_result();
+
+if ($checkPhone->num_rows > 0) {
+    $_SESSION['toast'] = [
+        'type' => 'error',
+        'message' => 'Phone number already registered.'
+    ];
+    header("Location: signup_form.php");
+    exit;
+}
     // 2️⃣ Strong password validation
     if (
         strlen($password) < 8 ||
@@ -110,9 +145,10 @@ if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_
 
     $destination = $uploadDir . $newName;
 
-    move_uploaded_file($_FILES['profile_pic']['tmp_name'],$destination);
-
-    $profileImagePath = $destination;
+    if (move_uploaded_file($_FILES['profile_pic']['tmp_name'],$destination)) {
+        optimizeImageFile($destination, $destination, 1200, 70);
+        $profileImagePath = $destination;
+    }
 }
 
 /* INSERT STUDENT */
@@ -127,7 +163,7 @@ $stmt->bind_param(
 "ssssssss",
 $full_name,
 $email,
-$phone,
+$normalizedPhone,
 $hashedPassword,
 $profileImagePath,
 $token,
@@ -159,9 +195,16 @@ $subject = "Verify Your H2P Account";
 $body = "Hi $full_name,<br><br>Please click the link below to verify your email:<br>
 <a href='$verificationLink'>Verify Account</a><br><br>This link will expire in 1 hour.<br><br>Ignore this email if you didn't sign up.<br><br>
 Best,<br>H2P Team";
-sendMail($email, $full_name, $subject, $body);
 
-
+$mailResult = sendMail($email, $full_name, $subject, $body);
+if ($mailResult !== true) {
+    $_SESSION['toast'] = [
+        'type' => 'error',
+        'message' => 'Signup succeeded but verification email failed: ' . $mailResult
+    ];
+    header("Location: signup_form.php");
+    exit;
+}
 
 $_SESSION['toast'] = [
 'type'=>'success',

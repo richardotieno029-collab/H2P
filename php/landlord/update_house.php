@@ -2,6 +2,7 @@
 require_once "auth_landlord.php";
 require_once "../db_connect.php";
 require_once "../includes/risk_engine.php";
+require_once "../includes/image_utils.php";
 session_start();
 include "../toast.php";
 
@@ -63,32 +64,35 @@ $image_path = $row['image_path'];
 
 // 2️⃣ If new image uploaded
 if (!empty($_FILES['house_image']['name'])) {
-    //sanitize image upload
-$finfo = finfo_open(FILEINFO_MIME_TYPE);
-if (!isset($_FILES['house_image']) || $_FILES['house_image']['error'] !== 0) {
-    die("No image uploaded.");
-}
-if ($_FILES['house_image']['size'] > 5 * 1024 * 1024) {
-    die("File too large.");
-}
+    // sanitize image upload
+    if (!isset($_FILES['house_image']) || $_FILES['house_image']['error'] !== 0) {
+        die("No image uploaded.");
+    }
 
-$finfo = finfo_open(FILEINFO_MIME_TYPE);
-$mime = finfo_file($finfo, $_FILES['house_image']['tmp_name']);
+    if ($_FILES['house_image']['size'] > 5 * 1024 * 1024) {
+        die("File too large.");
+    }
 
-$allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $_FILES['house_image']['tmp_name']);
+    $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
 
-if (!in_array($mime, $allowed_types)) {
-    die("Invalid file type.");
-}
+    if (!in_array($mime, $allowed_types)) {
+        die("Invalid file type.");
+    }
+
+    finfo_close($finfo);
 
     $uploadDir = "../uploads/";
     $newImage = time() . "_" . basename($_FILES['house_image']['name']);
     $targetPath = $uploadDir . $newImage;
 
     if (move_uploaded_file($_FILES['house_image']['tmp_name'], $targetPath)) {
-        // delete old image
-        if (file_exists("" . $image_path)) {
-            unlink("" . $image_path);
+        // Compress/resize in-place and then delete old image
+        optimizeImageFile($targetPath, $targetPath, 1200, 70);
+
+        if (file_exists($image_path)) {
+            unlink($image_path);
         }
         $image_path = "../uploads/" . $newImage;
     }
@@ -128,16 +132,38 @@ $stmt->bind_param(
 //gallery images
 $uploadDir = "../uploads/";
 
+// Limit gallery images per house to 5 total
+$maxGallery = 5;
+$existingStmt = $conn->prepare("SELECT COUNT(*) AS total FROM house_images WHERE house_id = ?");
+$existingStmt->bind_param("i", $house_id);
+$existingStmt->execute();
+$existingCount = $existingStmt->get_result()->fetch_assoc()['total'];
+$remainingSlots = max(0, $maxGallery - $existingCount);
+
+if ($remainingSlots === 0 && !empty($_FILES['gallery_images']['name'][0])) {
+    $_SESSION['toast'] = [
+        'type' => 'info',
+        'message' => 'Maximum of 5 gallery images reached for this house. Remove existing images before adding more.'
+    ];
+}
+
 //sanitize and upload each gallery image
-if (!empty($_FILES['gallery_images']['name'][0])) {
+if (!empty($_FILES['gallery_images']['name'][0]) && $remainingSlots > 0) {
 
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
 
+    $uploadedCount = 0;
+
     foreach ($_FILES['gallery_images']['tmp_name'] as $key => $tmp_name) {
-        if ($_FILES['house_image']['size'] > 5 * 1024 * 1024) {
-    die("File too large.");
-}
+        if ($uploadedCount >= $remainingSlots) {
+            break;
+        }
+
+        $fileSize = $_FILES['gallery_images']['size'][$key] ?? 0;
+        if ($fileSize > 5 * 1024 * 1024) {
+            continue; // skip oversized file
+        }
 
         if ($_FILES['gallery_images']['error'][$key] !== 0) {
             continue;
@@ -153,12 +179,15 @@ if (!empty($_FILES['gallery_images']['name'][0])) {
         $targetPath = $uploadDir . $imageName;
 
         if (move_uploaded_file($tmp_name, $targetPath)) {
+            optimizeImageFile($targetPath, $targetPath, 1200, 70);
 
             $image_path = "../uploads/" . $imageName;
 
             $stmt = $conn->prepare("INSERT INTO house_images (house_id, image_path) VALUES (?, ?)");
             $stmt->bind_param("is", $house_id, $image_path);
             $stmt->execute();
+
+            $uploadedCount++;
         }
     }
 
@@ -234,9 +263,11 @@ if ($count >= 8) {
 
 
 
- $_SESSION['toast'] = [
-            'type' => 'success',
-            'message' => 'House updated successfully.'
-        ];
+if (!isset($_SESSION['toast'])) {
+    $_SESSION['toast'] = [
+        'type' => 'success',
+        'message' => 'House updated successfully.'
+    ];
+}
 header("Location: landlord_dashboard.php");
 exit;

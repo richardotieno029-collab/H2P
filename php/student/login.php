@@ -2,6 +2,7 @@
 session_start();
 require_once "../db_connect.php";
 require_once "../includes/risk_engine.php";
+require_once "../includes/phone_utils.php";
 include "../toast.php";
 
 
@@ -48,19 +49,40 @@ if ($admin && password_verify($password, $admin['password'])) {
     exit;
 }
 
-/* 4. Fetch student by email */
-$sql = "SELECT * FROM students WHERE email = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("s", $email);
+/* 4. Determine whether user provided email or phone and fetch user */
+$isEmail = filter_var($email, FILTER_VALIDATE_EMAIL);
+
+if ($isEmail) {
+    $sql = "SELECT * FROM students WHERE email = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $email);
+} else {
+    $phonePattern = '/^(?:07|01)\d{8}$|^(?:2547|2541)\d{8}$/';
+    if (!preg_match($phonePattern, $email)) {
+        $_SESSION['toast'] = [
+            'type' => 'error',
+            'message' => 'Invalid email or phone number.'
+        ];
+        header("Location: login_form.php");
+        exit;
+    }
+
+    $phoneVariants = getPhoneVariants($email);
+    $placeholders = implode(',', array_fill(0, count($phoneVariants), '?'));
+    $sql = "SELECT * FROM students WHERE phone IN ($placeholders)";
+    $stmt = $conn->prepare($sql);
+    $types = str_repeat('s', count($phoneVariants));
+    $stmt->bind_param($types, ...$phoneVariants);
+}
+
 $stmt->execute();
 $result = $stmt->get_result();
-
 
 /* 5. Check user exists */
 if ($result->num_rows !== 1) {
     $_SESSION['toast'] = [
     'type' => 'error',
-    'message' => 'Invalid email or password.'
+    'message' => 'Invalid credentials.'
 ];
     header("Location: login_form.php");
     exit;

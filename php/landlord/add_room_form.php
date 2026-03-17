@@ -30,7 +30,7 @@ $house_id = (int)$_GET['house_id'];
 </div>
 <h2>Add Room</h2>
 
-<form action="add_room.php" method="POST" enctype="multipart/form-data">
+<form action="add_room.php" method="POST" enctype="multipart/form-data" onsubmit="return handleSubmit(this, 'Adding room...')">
 
     <!-- Link room to house -->
      <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
@@ -49,11 +49,11 @@ $house_id = (int)$_GET['house_id'];
 
 
     <label>Room Cover Image</label><br>
-    <input type="file" name="room_image" accept="image/*" required>
+    <input type="file" name="room_image" accept="image/*" data-max-size="5242880" required>
     <br><br>
 
     <label>Upload other Images</label>
-        <input type="file" name="gallery_images[]" multiple required>
+        <input type="file" name="gallery_images[]" accept="image/*" data-max-files="5" data-max-size="5242880" multiple required>
 
     <button type="submit">Add Room</button>
 

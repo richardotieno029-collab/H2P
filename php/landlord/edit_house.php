@@ -67,7 +67,7 @@ $house = $result->fetch_assoc();
 </div>
 <h2>Edit House</h2>
 
-<form action="update_house.php" method="POST" enctype="multipart/form-data">
+<form action="update_house.php" method="POST" enctype="multipart/form-data" onsubmit="return handleSubmit(this, 'Updating listing...')">
 
 <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
     <input type="hidden" name="house_id" value="<?php echo $house['house_id']; ?>">
@@ -100,10 +100,10 @@ $house = $result->fetch_assoc();
     <img src="<?php echo $house['image_path']; ?>" width="150">
 
     <label>Change Image (optional)</label>
-    <input type="file" name="house_image">
+    <input type="file" name="house_image" accept="image/*" data-max-size="5242880">
 
     <label>Add other Images</label>
-        <input type="file" name="gallery_images[]" multiple >
+        <input type="file" name="gallery_images[]" accept="image/*" data-max-files="5" data-max-size="5242880" multiple >
 
 
     <button type="button" class="toggle-btn" onclick="toggleDetails()">

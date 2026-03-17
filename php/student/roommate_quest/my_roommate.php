@@ -4,12 +4,16 @@ require_once "../../db_connect.php";
 
 $student_id = $_SESSION['user_id'];
 
+/* Remove expired matches (older than 1 week) */
+$conn->query("DELETE FROM roommate_matches WHERE created_at < NOW() - INTERVAL 1 WEEK");
+
 /* Check if student has a roommate match */
 
 $stmt = $conn->prepare("
 SELECT *
 FROM roommate_matches
-WHERE host_id = ? OR guest_id = ?
+WHERE (host_id = ? OR guest_id = ?)
+  AND created_at > NOW() - INTERVAL 1 WEEK
 LIMIT 1
 ");
 
@@ -78,17 +82,28 @@ $roommate = $stmt->get_result()->fetch_assoc();
 Match confirmed — you can now contact each other.
 </p>
 
+<?php
+$roommatePhone = preg_replace('/[^0-9+]/', '', $roommate['phone']);
+$roommateWhatsapp = ltrim($roommatePhone, '+');
+?>
+
 <div class="host-header">
 
-<img src="../../uploads/<?= $roommate['profile_image']; ?>" class="host-photo">
+<img src="../../uploads/<?= htmlspecialchars($roommate['profile_image']); ?>" class="host-photo">
 
 <div>
 
 <h3><?= htmlspecialchars($roommate['full_name']); ?></h3>
 
-<p>📧 <?= htmlspecialchars($roommate['email']); ?></p>
-
-<p>📞 <?= htmlspecialchars($roommate['phone']); ?></p>
+<div class="contact-actions" style="margin-top: 12px;">
+    <?php if (!empty($roommatePhone)): ?>
+        <a href="tel:<?= htmlspecialchars($roommatePhone) ?>" class="btn">Call</a>
+        <a href="https://wa.me/<?= htmlspecialchars($roommateWhatsapp) ?>" target="_blank" rel="noopener" class="btn">WhatsApp</a>
+    <?php endif; ?>
+    <?php if (!empty($roommate['email'])): ?>
+        <a href="mailto:<?= htmlspecialchars($roommate['email']) ?>" class="btn">Email</a>
+    <?php endif; ?>
+</div>
 
 </div>
 

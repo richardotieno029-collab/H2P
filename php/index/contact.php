@@ -174,7 +174,7 @@ button:hover {
 <div class="success"><?= $success ?></div>
 <?php endif; ?>
 
-<form method="POST">
+<form method="POST" onsubmit="return handleSubmit(this, 'Sending message...')">
 <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
 
 <input type="text" name="name" placeholder="Your Name" required>

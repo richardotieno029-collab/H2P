@@ -107,6 +107,7 @@ $rooms = $roomStmt->get_result();
 </head>
 <body>
     <?php include "../toast.php"; ?>
+    <?php include "../includes/loader.php"; ?>
     <a href="browse_houses.php" class="back-btn" title="Go back">
     ←
 </a>
@@ -204,7 +205,7 @@ $myBooking = $bookingStmt->get_result()->fetch_assoc();?>
         </button>
 
         <?php elseif (!$myBooking && $room['status'] === 'vacant'): ?>
-            <form method="POST" action="book_room.php">
+            <form method="POST" action="book_room.php" onsubmit="return handleSubmit(this, 'Booking room...')">
                 <input type="hidden" name="room_id" value="<?= $room['id'] ?>">
         <input type="hidden" name="house_id" value="<?= $house_id ?>">
                 <button class="book-btn">

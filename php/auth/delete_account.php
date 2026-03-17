@@ -74,7 +74,7 @@ All your data will be lost.
 <p class="alert"><?= $message ?></p>
 <?php endif; ?>
 
-<form method="POST">
+<form method="POST" onsubmit="return handleSubmit(this, 'Deleting account...')">
     <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
     <input type="password" name="password" placeholder="Confirm your password" required>
     <button class="danger-btn" type="submit">Delete My Account</button>

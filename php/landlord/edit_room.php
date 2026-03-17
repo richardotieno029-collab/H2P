@@ -2,6 +2,7 @@
 require_once "auth_landlord.php";
 require_once "../db_connect.php";
 require_once "../includes/risk_engine.php";
+require_once "../includes/image_utils.php";
 session_start();
 include "../toast.php";
 
@@ -21,8 +22,8 @@ $house_id  = (int) $_POST['house_id'];
 $room_number = $_POST['room_number'];
 $status    = $_POST['status'];
 
-// 1️⃣ Get old image path
-$sql = "SELECT image_path FROM rooms WHERE house_id = ? AND id = ?";
+// 1️⃣ Get old image path and current room status
+$sql = "SELECT image_path, status FROM rooms WHERE house_id = ? AND id = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("ii", $house_id, $room_id);
 $stmt->execute();
@@ -30,6 +31,7 @@ $result = $stmt->get_result();
 $row = $result->fetch_assoc();
 
 $image_path = $row['image_path'];
+$oldStatus = $row['status'];
 
 
 // 2️⃣ If new image uploaded
@@ -39,44 +41,74 @@ if (!empty($_FILES['room_image']['name'])) {
     $newImage = time() . "_" . basename($_FILES['room_image']['name']);
     $targetPath = $uploadDir . $newImage;
 
+    //sanitize image upload
+    if ($_FILES['room_image']['error'] !== 0) {
+        die("Image upload error.");
+    }
+
+    if ($_FILES['room_image']['size'] > 5 * 1024 * 1024) {
+        die("File too large.");
+    }
+
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $_FILES['room_image']['tmp_name']);
+    $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+
+    if (!in_array($mime, $allowed_types)) {
+        die("Invalid file type.");
+    }
+
+    finfo_close($finfo);
+
     if (move_uploaded_file($_FILES['room_image']['tmp_name'], $targetPath)) {
-        //sanitize image upload
-$finfo = finfo_open(FILEINFO_MIME_TYPE);
-if (!isset($_FILES['room_image']) || $_FILES['room_image']['error'] !== 0) {
-    die("No image uploaded.");
-}
-if ($_FILES['room_image']['size'] > 5 * 1024 * 1024) {
-    die("File too large.");
-}
+        // Compress/resize in-place, then delete the old image
+        optimizeImageFile($targetPath, $targetPath, 1200, 70);
 
-$finfo = finfo_open(FILEINFO_MIME_TYPE);
-$mime = finfo_file($finfo, $_FILES['room_image']['tmp_name']);
-
-$allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
-
-if (!in_array($mime, $allowed_types)) {
-    die("Invalid file type.");
-}
-        // delete old image
-        if (file_exists("" . $image_path)) {
-            unlink("" . $image_path);
+        if (file_exists($image_path)) {
+            unlink($image_path);
         }
         $image_path = "../uploads/" . $newImage;
     }
 }
-//gallery
+//gallery images
 $uploadDir = "../uploads/";
 
+// Limit gallery images per room to 5 total
+$maxGallery = 5;
+$existingStmt = $conn->prepare("SELECT COUNT(*) AS total FROM room_images WHERE room_id = ?");
+$existingStmt->bind_param("i", $room_id);
+$existingStmt->execute();
+$existingCount = $existingStmt->get_result()->fetch_assoc()['total'];
+$remainingSlots = max(0, $maxGallery - $existingCount);
+
+if ($remainingSlots === 0 && !empty($_FILES['gallery_images']['name'][0])) {
+    $_SESSION['toast'] = [
+        'type' => 'info',
+        'message' => 'Maximum of 5 gallery images reached for this room. Remove existing images before adding more.'
+    ];
+}
+
 //sanitize and upload each gallery image
-if (!empty($_FILES['gallery_images']['name'][0])) {
+if (!empty($_FILES['gallery_images']['name'][0]) && $remainingSlots > 0) {
 
     $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
     $finfo = finfo_open(FILEINFO_MIME_TYPE);
 
+    $uploadedCount = 0;
+
     foreach ($_FILES['gallery_images']['tmp_name'] as $key => $tmp_name) {
-        if ($_FILES['gallery_images']['size'][$key] > 5 * 1024 * 1024) {
-    die("File too large.");
-}
+        if ($uploadedCount >= $remainingSlots) {
+            break;
+        }
+
+        $fileSize = $_FILES['gallery_images']['size'][$key] ?? 0;
+        if ($fileSize > 5 * 1024 * 1024) {
+            continue; // skip oversized file
+        }
+
+        if (!isset($_FILES['gallery_images']['name'][$key]) || empty($_FILES['gallery_images']['name'][$key])) {
+            continue;
+        }
 
         if ($_FILES['gallery_images']['error'][$key] !== 0) {
             continue;
@@ -92,12 +124,15 @@ if (!empty($_FILES['gallery_images']['name'][0])) {
         $targetPath = $uploadDir . $imageName;
 
         if (move_uploaded_file($tmp_name, $targetPath)) {
+            optimizeImageFile($targetPath, $targetPath, 1200, 70);
 
             $image_path = "../uploads/" . $imageName;
 
             $stmt = $conn->prepare("INSERT INTO room_images (room_id, image_path) VALUES (?, ?)");
             $stmt->bind_param("is", $room_id, $image_path);
             $stmt->execute();
+
+            $uploadedCount++;
         }
     }
 
@@ -122,6 +157,47 @@ $stmt->bind_param(
 );
 
 $stmt->execute();
+
+// Notify students who favorited this house if room just became vacant
+if ($oldStatus !== 'vacant' && $status === 'vacant') {
+    require_once "../includes/mailer.php";
+
+    // Fetch house and room details for email
+    $infoStmt = $conn->prepare(
+        "SELECT h.house_name, r.room_number
+         FROM houses h
+         JOIN rooms r ON h.house_id = r.house_id
+         WHERE h.house_id = ? AND r.id = ?"
+    );
+    $infoStmt->bind_param('ii', $house_id, $room_id);
+    $infoStmt->execute();
+    $roomInfo = $infoStmt->get_result()->fetch_assoc();
+    $infoStmt->close();
+
+    $subject = "Room now vacant: $roomInfo[house_name]";
+    $body = "Hi,<br><br>" .
+        "A room (<strong>$roomInfo[room_number]</strong>) in a house you favorited (<strong>$roomInfo[house_name]</strong>) is now vacant.<br>" .
+        "Log in to book it while it's available.<br><br>" .
+        "Thanks,<br>H2P Team";
+
+    $favStmt = $conn->prepare(
+        "SELECT s.full_name, s.email
+         FROM favourites f
+         JOIN students s ON f.student_internal_id = s.id
+         WHERE f.house_id = ?"
+    );
+    $favStmt->bind_param('i', $house_id);
+    $favStmt->execute();
+    $res = $favStmt->get_result();
+
+    while ($student = $res->fetch_assoc()) {
+        if (filter_var($student['email'], FILTER_VALIDATE_EMAIL)) {
+            sendMailQuiet($student['email'], $student['full_name'], $subject, $body);
+        }
+    }
+
+    $favStmt->close();
+}
 
 //log activity
 $user_type = 'landlord';
@@ -190,9 +266,11 @@ if ($count >= 8) {
 
 
 
-$_SESSION['toast'] = [
-    'type' => 'success',
-    'message' => 'Changes updated successfully.'
-];
+if (!isset($_SESSION['toast'])) {
+    $_SESSION['toast'] = [
+        'type' => 'success',
+        'message' => 'Changes updated successfully.'
+    ];
+}
 header("Location: rooms.php?refresh=1&house_id=" . $house_id);
 exit;

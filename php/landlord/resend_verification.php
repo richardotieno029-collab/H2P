@@ -21,11 +21,11 @@ $result = $stmt->get_result();
 
 if($result->num_rows == 0){
     $_SESSION['toast'] = [
-'type'=>'info',
-'message'=>'Account not found.'
-];
-header("Location: signup_form.php");
-
+        'type'=>'info',
+        'message'=>'Account not found.'
+    ];
+    header("Location: login_form.php");
+    exit;
 }
 
 $user = $result->fetch_assoc();
@@ -34,10 +34,11 @@ $user = $result->fetch_assoc();
 
 if($user['email_verified'] == 1){
         $_SESSION['toast'] = [
-'type'=>'info',
-'message'=>'Email already verified. Please login'
-];
-header("Location: login_form.php");
+            'type'=>'info',
+            'message'=>'Email already verified. Please login'
+        ];
+        header("Location: login_form.php");
+        exit;
 }
 
 /* Rate limit check */
@@ -48,10 +49,11 @@ $last_sent = strtotime($user['verification_sent_at']);
 
 if(time() - $last_sent < 3600){
         $_SESSION['toast'] = [
-'type'=>'info',
-'message'=>'Verification link already sent recently. Recheck your email.'
-];
-header("Location: Login_form.php");
+            'type'=>'info',
+            'message'=>'Verification link already sent recently. Recheck your email.'
+        ];
+        header("Location: login_form.php?unverified=1&email=" . urlencode($email));
+        exit;
 }
 
 }
@@ -96,8 +98,9 @@ This link expires in 1 hour.
 sendMail($email,$user['full_name'],$subject,$body);
 
     $_SESSION['toast'] = [
-'type'=>'success',
-'message'=>'Verification email resent.'
-];
-header("Location: verify_notice.php");
+        'type'=>'success',
+        'message'=>'Verification email resent.'
+    ];
+    header("Location: login_form.php?unverified=1&email=" . urlencode($email));
+    exit;
 ?>

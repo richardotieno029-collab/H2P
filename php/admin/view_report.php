@@ -1,5 +1,6 @@
 <?php
 require_once 'admin_guard.php';
+require_once '../includes/loader.php';
 require_once '../db_connect.php';
 
 $id = (int) $_GET['id'];
@@ -59,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="reply-card">
         <h3><i class="fa-solid fa-reply"></i> Admin Response</h3>
 
-        <form method="POST">
+        <form method="POST" onsubmit="return handleSubmit(this, 'Saving response...')">
             <textarea name="reply" placeholder="Write admin reply..." required></textarea>
             <button type="submit">
                 <i class="fa-solid fa-check"></i> Mark as Resolved

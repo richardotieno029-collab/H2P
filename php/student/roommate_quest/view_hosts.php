@@ -5,6 +5,10 @@ include "../../toast.php";
 
 $student_id = $_SESSION['user_id'];
 
+// Keep roommate listings and requests fresh
+$conn->query("UPDATE roommate_hosts SET status='CLOSED' WHERE status='OPEN' AND created_at < NOW() - INTERVAL 2 WEEK");
+$conn->query("UPDATE roommate_requests SET status='CANCELLED' WHERE status='PENDING' AND created_at < NOW() - INTERVAL 2 DAY");
+
 /* Fetch all open hosts except the current student */
 
 $stmt = $conn->prepare("

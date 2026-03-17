@@ -135,9 +135,9 @@ $result = $stmt->get_result();
             </td>
             <td>
                 <div class="actions">
-                <a href="approve_booking.php?id=<?= $row['booking_id'] ?>" class="book-btn">Approve</a>
+                <a href="approve_booking.php?id=<?= $row['booking_id'] ?>" class="book-btn" onclick="showLoading('Approving booking...')">Approve</a>
                 <a href="reject_booking.php?id=<?= $row['booking_id'] ?>" class="btn btn-danger" 
-                   onclick="return confirm('Are you sure you want to reject this booking?')">Reject</a>
+                   onclick="if (confirm('Are you sure you want to reject this booking?')) { showLoading('Rejecting request...'); return true; } return false;">Reject</a>
                 </div>
             </td>
         </tr>

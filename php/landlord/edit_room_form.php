@@ -49,7 +49,7 @@ if (!$room) {
 </div>
 <h2>Edit Room</h2>
 
-<form action="edit_room.php" method="POST" enctype="multipart/form-data" class="form">
+<form action="edit_room.php" method="POST" enctype="multipart/form-data" class="form" onsubmit="return handleSubmit(this, 'Updating room...')">
     <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
     <input type="hidden" name="id" value="<?= $room['id'] ?>">
     <input type="hidden" name="house_id" value="<?= $room['house_id'] ?>">
@@ -67,10 +67,10 @@ if (!$room) {
     <p>Current Image:</p>
     <img src="<?php echo $room['image_path']; ?>" width="150">
     <label>Change Image (optional)</label>
-    <input type="file" name="image">
+    <input type="file" name="room_image" accept="image/*" data-max-size="5242880">
 
     <label>Add other Images</label>
-        <input type="file" name="gallery_images[]" multiple >
+        <input type="file" name="gallery_images[]" accept="image/*" data-max-files="5" data-max-size="5242880" multiple >
 
 
     <button type="submit" class="btn">Update Room</button>

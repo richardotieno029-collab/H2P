@@ -84,7 +84,7 @@ $result = $stmt->get_result();
         <a href="edit_room_form.php?id=<?= $rooms['id']; ?>">✏ Edit</a>
         <a href="delete_room.php?id=<?= $rooms['id']; ?>" 
            class="delete"
-           onclick="return confirm('Delete this room?')">
+           onclick="if (confirm('Delete this room?')) { showLoading('Deleting listing...'); return true; } return false;">
            Delete
         </a>
     </td>

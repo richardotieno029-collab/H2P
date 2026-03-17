@@ -27,7 +27,7 @@ $email = $_GET['email'] ?? '';
          to access your account.
     </p>
 
-    <form action="resend_verification.php" method="POST">
+    <form action="resend_verification.php" method="POST" onsubmit="return handleSubmit(this, 'Resending verification email...')">
         <input type="hidden" name="email" value="<?php echo htmlspecialchars($email); ?>">
         <button type="submit">Resend Verification Email</button>
     </form>

@@ -2,6 +2,19 @@
 require_once 'admin_guard.php';
 require_once '../db_connect.php';
 
+// Determine if current admin is super admin (admin001)
+$superAdmin = false;
+$adminId = $_SESSION['user_id'] ?? null;
+if ($adminId) {
+    $stmt = $conn->prepare('SELECT name, email FROM admins WHERE admin_id = ?');
+    $stmt->bind_param('i', $adminId);
+    $stmt->execute();
+    $adminRow = $stmt->get_result()->fetch_assoc();
+    if ($adminRow && $adminRow['name'] === 'H2P_ADMIN_1' && strtolower($adminRow['email']) === 'admin@h2p.co.ke') {
+        $superAdmin = true;
+    }
+}
+
 /* Quick stats */
 $totalReports = $conn->query("SELECT COUNT(*) as total FROM reports")->fetch_assoc()['total'];
 $newReports = $conn->query("SELECT COUNT(*) as total FROM reports WHERE status='new'")->fetch_assoc()['total'];
@@ -72,6 +85,16 @@ $totallogs = $conn->query("SELECT COUNT(*) as total FROM activity_logs")->fetch_
 <p>Total Logs</p>
 <a href="logs.php">View logs</a>
 </div>
+
+<?php if ($superAdmin): ?>
+<div class="card">
+    <i class="fa-solid fa-shield-halved"></i>
+    <h3>Admin001</h3>
+    <p>Super Admin Tools</p>
+    <a href="../admin001/index.php">Open</a>
+</div>
+<?php endif; ?>
+
 </div>
 
 </div>

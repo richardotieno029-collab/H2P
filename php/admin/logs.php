@@ -1,6 +1,7 @@
 <?php
 require '../db_connect.php';
 session_start();
+require_once '../includes/loader.php';
 require_once 'admin_guard.php';
 
 $userTypeFilter = $_GET['user_type'] ?? '';
@@ -73,7 +74,7 @@ $result = $stmt->get_result();
 
 <h2>Activity Logs</h2>
 
-<form method="GET" style="margin-bottom:15px;">
+<form method="GET" style="margin-bottom:15px;" onsubmit="return handleSubmit(this, 'Searching logs...')">
 
     <!-- Search by Name -->
     <input 

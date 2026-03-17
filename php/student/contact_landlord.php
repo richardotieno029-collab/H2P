@@ -107,6 +107,8 @@ $_SESSION['toast'] = [
 </head>
 <body>
 
+<?php include "../toast.php"; ?>
+
 <a href="javascript:history.back()" class="back-btn">←</a>
 
 <div class="page-container">
@@ -115,6 +117,12 @@ $_SESSION['toast'] = [
     <p class="page-subtitle">
         Your reservation has been approved. You can now contact the landlord within 12 hours span.
     </p>
+
+    <?php
+    // Normalize phone for use in links
+    $landlordPhone = preg_replace('/[^0-9+]/', '', $data['phone']);
+    $landlordWhatsapp = ltrim($landlordPhone, '+');
+    ?>
 
     <div class="card">
         <h2 class="section-title"><?= htmlspecialchars($data['house_name']) ?></h2>
@@ -129,27 +137,25 @@ $_SESSION['toast'] = [
             <strong>Landlord:</strong> <?= htmlspecialchars($data['full_name']) ?>
         </p>
 
-        <p class="text">
-            <strong>Phone:</strong>
-            <a href="tel:<?= htmlspecialchars($data['phone']) ?>" class="contact-link">
-                <?= htmlspecialchars($data['phone']) ?>
-            </a>
-        </p>
+        <div class="contact-actions" style="margin-top:15px;">
+            <?php if (!empty($landlordPhone)): ?>
+                <a href="tel:<?= htmlspecialchars($landlordPhone) ?>" class="btn">Call Landlord</a>
+                <a href="https://wa.me/<?= htmlspecialchars($landlordWhatsapp) ?>" target="_blank" rel="noopener" class="btn">WhatsApp Landlord</a>
+            <?php endif; ?>
+            <?php if (!empty($data['email'])): ?>
+                <a href="mailto:<?= htmlspecialchars($data['email']) ?>" class="btn">Email Landlord</a>
+            <?php endif; ?>
+        </div>
 
-        <p class="text">
-            <strong>Email:</strong>
-            <a href="mailto:<?= htmlspecialchars($data['email']) ?>" class="contact-link">
-                <?= htmlspecialchars($data['email']) ?>
-            </a>
-        </p>
+        <p>Refrain from sharing this contact with third parties as it violates our privacy policy and can lead to account suspension.</p>
+        <p>Please confirm below that you have secured this room to prevent it from being re-allocated.</p>
 
-        <p > Refrain from sharing personal this contact with third parties as it violates our privacy policy and can lead to account suspension.
-        Please confirm below that you have secured this room to prevent it from being re-allocated.    <form method="POST">
-    <input type="hidden" name="confirm_occupy" value="1">
-    <button type="submit" class="confirm-btn">
-        ✅ I Have Secured This Room
-    </button>
-</form> </p>
+        <form method="POST" onsubmit="return handleSubmit(this, 'Confirming your booking...')">
+            <input type="hidden" name="confirm_occupy" value="1">
+            <button type="submit" class="confirm-btn">
+                ✅ I Have Secured This Room
+            </button>
+        </form>
 
     </div>
 

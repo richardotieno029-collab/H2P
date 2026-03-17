@@ -30,11 +30,11 @@ $unverifiedEmail = htmlspecialchars($_GET['email'] ?? '');
 </div>
 
 <h2>Student Login</h2>
-<form method="POST" action="login.php">
+<form method="POST" action="login.php" onsubmit="return handleSubmit(this, 'Logging in...')">
 
     <input type="hidden" name="token" value="<?= $_SESSION['token'] ?>">
-    <label>Student Email</label>
-    <input type="email" name="email" required value="<?= $unverifiedEmail ?>">
+    <label>Email or Phone</label>
+    <input type="text" name="email" required value="<?= $unverifiedEmail ?>" placeholder="e.g. 0712345678 or 12345@student.embuni.ac.ke">
 
     <label>Password</label>
     <input type="password" name="password" required>
@@ -45,7 +45,7 @@ $unverifiedEmail = htmlspecialchars($_GET['email'] ?? '');
 <?php if ($unverified && $unverifiedEmail): ?>
     <div class="resend-section">
         <p>We sent a verification email to <strong><?= $unverifiedEmail ?></strong>. Didn’t receive it?</p>
-        <form action="../student/resend_verification.php" method="POST">
+        <form action="../student/resend_verification.php" method="POST" onsubmit="return handleSubmit(this, 'Resending verification email...')">
             <input type="hidden" name="email" value="<?= $unverifiedEmail ?>">
             <button type="submit" id="resendBtn" disabled>
                 Resend Verification Email (<span id="countdown">60</span>s)
@@ -60,7 +60,7 @@ $unverifiedEmail = htmlspecialchars($_GET['email'] ?? '');
 
         let resendTime = localStorage.getItem(key);
         if (!resendTime) {
-            resendTime = Date.now() + 60 * 1000;
+            resendTime = Date.now() + 30 * 1000;
             localStorage.setItem(key, resendTime);
         }
 

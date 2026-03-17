@@ -133,7 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <?php include "../toast.php"; ?>
 <div class="auth-container">
     <h2>Reset Password</h2>
-    <form method="POST">
+    <form method="POST" onsubmit="return handleSubmit(this, 'Resetting password...')">
         <input type="password" name="password" required placeholder="New Password">
         <button type="submit">Reset Password</button>
     </form>

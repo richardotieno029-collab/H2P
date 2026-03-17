@@ -96,7 +96,7 @@ while($house = $result->fetch_assoc()):
 </div>
 
 <?php endwhile; ?>
-<a href="recently_viewed.php">View All →</a>
+<a href="recently_viewed.php">See more →</a>
 </div>
 
 </br>
@@ -136,7 +136,7 @@ while($house = $result->fetch_assoc()):
 </div>
 
 <?php endwhile; ?>
-<a href="most_viewed.php">View All →</a>
+<a href="most_viewed.php">See more →</a>
 </div>
 
 </br>
@@ -173,7 +173,7 @@ while($house = $result->fetch_assoc()):
 </div>
 
 <?php endwhile; ?>
-<a href="most_favourited.php">View All →</a>
+<a href="most_favourited.php">See more →</a>
 </div>
 
 </br>
@@ -210,7 +210,7 @@ while($house = $result->fetch_assoc()):
 </div>
 
 <?php endwhile; ?>
-<a href="recently_added.php">View All →</a>
+<a href="recently_added.php">See more →</a>
 </div>
 
 </br>

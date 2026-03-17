@@ -11,38 +11,48 @@ function sendMail($toEmail, $toName, $subject, $body){
 
     $mail = new PHPMailer(true);
 
-    try{
+   try{
 
-        /* SMTP CONFIGURATION */
+$mail->isSMTP();
+$mail->Host = 'smtp.gmail.com';
+$mail->SMTPAuth = true;
 
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';   // change later if hosting email used
-        $mail->SMTPAuth = true;
+$mail->Username = 'richardotieno029@gmail.com';
+$mail->Password = 'gzyc wwan qnwv tcad';
 
-        $mail->Username = 'no-reply@h2p.co.ke'; 
-        $mail->Password = 'EMAIL_PASSWORD';    
+$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+$mail->Port = 587;
 
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port = 587;
+$mail->setFrom('richardotieno029@gmail.com', 'H2P Test');
 
-        /* EMAIL DETAILS */
+$mail->addAddress($toEmail, $toName);
 
-        $mail->setFrom('no-reply@h2p.co.ke', 'H2P System');
+$mail->isHTML(true);
 
-        $mail->addAddress($toEmail, $toName);
+$mail->Subject = $subject;
+$mail->Body = $body;
 
-        $mail->isHTML(true);
+// Disable verbose output (prevents mail debug being shown on pages)
+$mail->SMTPDebug = 0;
+$mail->Debugoutput = 'error_log';
 
-        $mail->Subject = $subject;
-        $mail->Body = $body;
+$mail->send();
 
-        $mail->send();
+return true;
 
-        return true;
+} catch(Exception $e) {
+    // Log the real error so it can be diagnosed
+    error_log('PHPMailer error: ' . $e->getMessage());
+    // Return the message so callers can display a friendly toast when desired.
+    return $e->getMessage();
+}
+}
 
-    }catch(Exception $e){
-
-        return false;
-
-    }
+/**
+ * Send mail without affecting the application's control flow.
+ * Returns true on success, false on failure.
+ */
+function sendMailQuiet($toEmail, $toName, $subject, $body) {
+    $result = sendMail($toEmail, $toName, $subject, $body);
+    return $result === true;
 }

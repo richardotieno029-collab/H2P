@@ -47,7 +47,7 @@ $rooms = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <p><strong>Status:</strong> <?php echo $room['status']; ?></p>
 
                     <a href="edit_house.php?id=<?php echo $room['id']; ?>" class="btn edit">Edit</a>
-                    <a href="delete_house.php?id=<?php echo $room['id']; ?>" class="btn delete">Delete</a>
+                    <a href="delete_house.php?id=<?php echo $room['id']; ?>" class="btn delete" onclick="if (confirm('Delete this house?')) { showLoading('Deleting listing...'); return true; } return false;">Delete</a>
                 </div>
             <?php endforeach; ?>
         </div>

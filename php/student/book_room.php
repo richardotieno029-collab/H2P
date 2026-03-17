@@ -75,6 +75,31 @@ $update = $conn->prepare("UPDATE rooms SET status='pending' WHERE id=?");
 $update->bind_param("i", $room_id);
 $update->execute();
 
+// Notify landlord by email (non-blocking)
+require_once "../includes/mailer.php";
+
+$infoStmt = $conn->prepare(
+    "SELECT l.full_name AS landlord_name, l.email AS landlord_email, h.house_name, r.room_number
+     FROM landlords l
+     JOIN houses h ON l.id = h.landlord_id
+     JOIN rooms r ON r.house_id = h.house_id
+     WHERE l.id = ? AND h.house_id = ? AND r.id = ?"
+);
+$infoStmt->bind_param("iii", $landlord_id, $house_id, $room_id);
+$infoStmt->execute();
+$info = $infoStmt->get_result()->fetch_assoc();
+$infoStmt->close();
+
+if ($info && !empty($info['landlord_email'])) {
+    $subject = "New booking request for $info[house_name]";
+    $body = "Hi $info[landlord_name],<br><br>" .
+        "A student has requested to book room <strong>$info[room_number]</strong> in <strong>$info[house_name]</strong>.<br>" .
+        "Please review and approve or reject the request in your dashboard.<br><br>" .
+        "Thanks,<br>H2P Team";
+
+    sendMailQuiet($info['landlord_email'], $info['landlord_name'], $subject, $body);
+}
+
 //log activity
 $user_type = 'student';
 $user_id   = $_SESSION['user_id'];

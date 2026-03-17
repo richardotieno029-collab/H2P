@@ -23,7 +23,7 @@ session_start();
 
 <p>Check your email for a password reset link.</p>
 
-<form action="resend_reset.php" method="POST">
+<form action="resend_reset.php" method="POST" onsubmit="return handleSubmit(this, 'Resending reset email...')">
 
 <input type="hidden" name="email" value="<?php echo $_SESSION['reset_email']; ?>">
 
@@ -35,7 +35,7 @@ Resend Reset Email (<span id="countdown">60</span>s)
 
 <?php else: ?>
 
-<form action="forgot_password.php" method="POST">
+<form action="forgot_password.php" method="POST" onsubmit="return handleSubmit(this, 'Sending reset link...')">
 
 <input type="email" name="email" required placeholder="Enter your email">
 

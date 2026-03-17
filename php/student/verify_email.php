@@ -13,7 +13,7 @@ $stmt = $conn->prepare("
 SELECT id FROM students
 WHERE verification_token=?
 AND email_verified=0
-AND token_expires_at > NOW()
+AND token_expires > NOW()
 ");
 
 $stmt->bind_param("s",$token);
@@ -33,7 +33,7 @@ $update = $conn->prepare("
 UPDATE students
 SET email_verified = 1,
 verification_token = NULL,
-token_expires_at = NULL
+token_expires = NULL
 WHERE id = ?
 ");
 

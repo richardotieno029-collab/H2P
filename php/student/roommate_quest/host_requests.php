@@ -25,6 +25,9 @@ exit();
 
 $host_id = $host['host_id'];
 
+/* Cleanup stale requests older than 2 days */
+$conn->query("UPDATE roommate_requests SET status='CANCELLED' WHERE status='PENDING' AND created_at < NOW() - INTERVAL 2 DAY");
+
 /* Fetch join requests */
 
 $stmt = $conn->prepare("
