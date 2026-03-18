@@ -40,6 +40,8 @@ FROM houses h
 
 JOIN landlords l ON h.landlord_id = l.id
 
+WHERE h.status = 'active'
+
 LEFT JOIN rooms r ON h.house_id = r.house_id
 LEFT JOIN house_views v 
 ON h.house_id = v.house_id 

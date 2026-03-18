@@ -74,9 +74,11 @@ $result = $stmt->get_result();
 
 
     <td>
-        <span class="status <?= strtolower($rooms['status']); ?>">
-            <?= htmlspecialchars($rooms['status']); ?>
-        </span>
+        <a href="room_details.php?id=<?= $rooms['id']; ?>" class="status-link">
+            <span class="status <?= strtolower($rooms['status']); ?>">
+                <?= htmlspecialchars($rooms['status']); ?>
+            </span>
+        </a>
     </td>
 
     <td class="actions">

@@ -29,6 +29,7 @@ $query = "
 SELECT h.*, COUNT(v.id) AS views
 FROM houses h
 LEFT JOIN house_views v ON h.house_id = v.house_id
+WHERE h.status = 'active'
 GROUP BY h.house_id
 ORDER BY views DESC
 LIMIT 10

@@ -54,5 +54,8 @@ $_SESSION['toast'] = [
     'type' => 'info',
     'message' => 'Booking rejected and room status updated to vacant.'
 ];
-header("Location: manage_booking.php");
+
+$redirect = $_GET['return'] ?? 'manage_booking.php';
+$redirect = filter_var($redirect, FILTER_SANITIZE_URL);
+header("Location: $redirect");
 exit;

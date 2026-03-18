@@ -14,7 +14,7 @@ $conn->query("UPDATE roommate_requests SET status='CANCELLED' WHERE status='PEND
 $conn->query("UPDATE roommate_hosts SET status='CLOSED' WHERE status='OPEN' AND created_at < NOW() - INTERVAL 2 WEEK");
 
 // Remove matches older than 1 week (my roommate access expires)
-$conn->query("DELETE FROM roommate_matches WHERE created_at < NOW() - INTERVAL 1 WEEK");
+$conn->query("DELETE FROM roommate_matches WHERE matched_at < NOW() - INTERVAL 1 WEEK");
 
 /* Fetch student basic info */
 

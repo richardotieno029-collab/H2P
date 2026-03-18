@@ -13,6 +13,7 @@ $query = "
         SUM(r.status = 'vacant') AS vacant_rooms
     FROM houses h
     LEFT JOIN rooms r ON h.house_id = r.house_id
+    WHERE h.status = 'active'
     GROUP BY h.house_id
     ORDER BY h.house_name ASC
 ";

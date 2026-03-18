@@ -32,6 +32,7 @@ SELECT h.*
 FROM houses h
 JOIN house_views v ON h.house_id = v.house_id
 WHERE v.student_id=?
+  AND h.status = 'active'
 ORDER BY v.viewed_at DESC
 LIMIT 10
 ");

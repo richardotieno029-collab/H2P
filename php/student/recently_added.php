@@ -28,6 +28,7 @@ require_once "../db_connect.php";
 $query = "
 SELECT h.*
 FROM houses h
+WHERE h.status = 'active'
 ORDER BY h.created_at DESC
 LIMIT 10
 ";

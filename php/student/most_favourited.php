@@ -29,6 +29,7 @@ $query = "
 SELECT h.*, COUNT(f.fav_id) AS fav_count
 FROM houses h
 LEFT JOIN favourites f ON h.house_id = f.house_id
+WHERE h.status = 'active'
 GROUP BY h.house_id
 ORDER BY fav_count DESC
 LIMIT 10

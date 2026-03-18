@@ -44,7 +44,7 @@ $insert->execute();
    2️⃣ Fetch house name
 ========================= */
 $houseStmt = $conn->prepare(
-    "SELECT house_name FROM houses WHERE house_id = ?"
+    "SELECT house_name FROM houses WHERE house_id = ? AND status = 'active'"
 );
 $houseStmt->bind_param("i", $house_id);
 $houseStmt->execute();

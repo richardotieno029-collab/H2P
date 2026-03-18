@@ -55,11 +55,15 @@ $insert = $conn->prepare("
 $insert->bind_param("ii", $student_internal_id, $room_id);
 $insert->execute();
 // Get landlord id from house
-$sql = "SELECT landlord_id FROM houses WHERE house_id = ?";
+$sql = "SELECT landlord_id FROM houses WHERE house_id = ? AND status = 'active'";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $house_id);
 $stmt->execute();
 $house = $stmt->get_result()->fetch_assoc();
+
+if (!$house) {
+    die("House not available.");
+}
 
 $landlord_id = $house['landlord_id'];
 

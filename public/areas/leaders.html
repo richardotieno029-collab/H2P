@@ -20,6 +20,7 @@ SELECT
 FROM houses h
 JOIN landlords l ON h.landlord_id = l.landlord_id
 LEFT JOIN rooms r ON h.house_id = r.house_id
+WHERE h.status = 'active'
 GROUP BY h.house_id
 ";
 

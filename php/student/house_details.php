@@ -34,7 +34,7 @@ $insert->execute();
 }
 
 // Fetch house info
-$stmt = $conn->prepare("SELECT * FROM houses WHERE house_id = ?");
+$stmt = $conn->prepare("SELECT * FROM houses WHERE house_id = ? AND status = 'active'");
 $stmt->bind_param("i", $id);
 $stmt->execute();
 $result = $stmt->get_result();

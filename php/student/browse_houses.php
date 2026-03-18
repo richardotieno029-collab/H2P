@@ -36,6 +36,7 @@ LEFT JOIN house_views v ON h.house_id = v.house_id
 LEFT JOIN favourites f ON h.house_id = f.house_id
 LEFT JOIN rooms r ON h.house_id = r.house_id
 WHERE 1=1
+  AND h.status = 'active'
 ";
 $types = "";
 

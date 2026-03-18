@@ -4,6 +4,7 @@ require_once "../db_connect.php";
 $query = "SELECT houses.*, full_name AS landlord_name 
           FROM houses 
           JOIN landlords ON houses.landlord_id = landlords.landlord_id
+          WHERE houses.status = 'active'
           ORDER BY houses.house_id DESC";
 
 $result = $conn->query($query);

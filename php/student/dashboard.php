@@ -72,6 +72,7 @@ SELECT h.*
 FROM houses h
 JOIN house_views v ON h.house_id = v.house_id
 WHERE v.student_id=?
+  AND h.status = 'active'
 ORDER BY v.viewed_at DESC
 LIMIT 3
 ");
@@ -110,6 +111,7 @@ $query = "
 SELECT h.*, COUNT(v.id) AS views
 FROM houses h
 LEFT JOIN house_views v ON h.house_id = v.house_id
+WHERE h.status = 'active'
 GROUP BY h.house_id
 ORDER BY views DESC
 LIMIT 3
@@ -149,6 +151,7 @@ $query = "
 SELECT h.*, COUNT(f.fav_id) AS fav_count
 FROM houses h
 LEFT JOIN favourites f ON h.house_id = f.house_id
+WHERE h.status = 'active'
 GROUP BY h.house_id
 ORDER BY fav_count DESC
 LIMIT 3
@@ -187,6 +190,7 @@ while($house = $result->fetch_assoc()):
 $query = "
     SELECT h.house_id, h.*
     FROM houses h
+    WHERE h.status = 'active'
     ORDER BY h.created_at DESC
     LIMIT 3
 ";
@@ -214,6 +218,7 @@ while($house = $result->fetch_assoc()):
 </div>
 
 </br>
+
 
 
 </div>

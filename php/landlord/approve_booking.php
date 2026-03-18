@@ -88,5 +88,7 @@ $_SESSION['toast'] = [
     'message' => 'Booking approved successfully.'
 ];
 
-header("Location: manage_booking.php");
+$redirect = $_GET['return'] ?? 'manage_booking.php';
+$redirect = filter_var($redirect, FILTER_SANITIZE_URL);
+header("Location: $redirect");
 exit;
