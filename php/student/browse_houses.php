@@ -14,12 +14,31 @@ $stmt->execute();
 ---------------------------*/
 $sql = "
 SELECT 
-   h.*,
+    h.*,
     l.full_name AS landlord_name,
-    COUNT(r.id) AS total_rooms,
-    COUNT(DISTINCT v.id) AS views,
-   COUNT(DISTINCT f.fav_id) AS favourites,
-    SUM(r.status = 'vacant') AS available_rooms,
+
+    /* TOTAL ROOMS */
+    (SELECT COUNT(*) 
+     FROM rooms r 
+     WHERE r.house_id = h.house_id) AS total_rooms,
+
+    /* AVAILABLE ROOMS */
+    (SELECT COUNT(*) 
+     FROM rooms r 
+     WHERE r.house_id = h.house_id 
+     AND r.status = 'vacant') AS available_rooms,
+
+    /* VIEWS */
+    (SELECT COUNT(*) 
+     FROM house_views v 
+     WHERE v.house_id = h.house_id) AS views,
+
+    /* FAVOURITES */
+    (SELECT COUNT(*) 
+     FROM favourites f 
+     WHERE f.house_id = h.house_id) AS favourites,
+
+    /* PENDING BOOKINGS */
     CASE 
         WHEN EXISTS (
             SELECT 1
@@ -30,13 +49,11 @@ SELECT
               AND b.status = 'pending'
         ) THEN 1 ELSE 0
     END AS has_pending
+
 FROM houses h
 JOIN landlords l ON h.landlord_id = l.id
-LEFT JOIN house_views v ON h.house_id = v.house_id
-LEFT JOIN favourites f ON h.house_id = f.house_id
-LEFT JOIN rooms r ON h.house_id = r.house_id
-WHERE 1=1
-  AND h.status = 'active'
+
+WHERE h.status = 'active'
 ";
 $types = "";
 
@@ -95,10 +112,13 @@ if (!empty($_GET['price_range'])) {
 }
 
 // Only available houses
-$sql .= " GROUP BY h.house_id";
-
 if (!empty($_GET['vacant'])) {
-    $sql .= " HAVING available_rooms > 0";
+    $sql .= " AND (
+        SELECT COUNT(*) 
+        FROM rooms r 
+        WHERE r.house_id = h.house_id 
+        AND r.status = 'vacant'
+    ) > 0";
 }
 
 $sql .= " ORDER BY has_pending DESC, h.created_at DESC";

@@ -17,14 +17,36 @@ SELECT
     h.*,
     l.full_name AS landlord_name,
 
-    COUNT(DISTINCT r.id) AS total_rooms,
-    SUM(r.status = 'vacant') AS available_rooms,
+    /* ROOMS */
+    (SELECT COUNT(*) FROM rooms r WHERE r.house_id = h.house_id) AS total_rooms,
 
-    COUNT(DISTINCT v.id) AS views,
-    COUNT(DISTINCT f.fav_id) AS favourites,
+    (SELECT COUNT(*) 
+     FROM rooms r 
+     WHERE r.house_id = h.house_id 
+     AND r.status = 'vacant') AS available_rooms,
 
-    (COUNT(DISTINCT v.id) * 2 + COUNT(DISTINCT f.fav_id)) AS trending_score,
+    /* VIEWS */
+    (SELECT COUNT(*) 
+     FROM house_views v 
+     WHERE v.house_id = h.house_id 
+     AND v.viewed_at >= NOW() - INTERVAL 7 DAY) AS views,
 
+    /* FAVOURITES */
+    (SELECT COUNT(*) 
+     FROM favourites f 
+     WHERE f.house_id = h.house_id) AS favourites,
+
+    /* TRENDING SCORE */
+    (
+        (SELECT COUNT(*) FROM house_views v 
+         WHERE v.house_id = h.house_id 
+         AND v.viewed_at >= NOW() - INTERVAL 7 DAY) * 2
+        +
+        (SELECT COUNT(*) FROM favourites f 
+         WHERE f.house_id = h.house_id)
+    ) AS trending_score,
+
+    /* PENDING */
     CASE 
         WHEN EXISTS (
             SELECT 1
@@ -37,20 +59,9 @@ SELECT
     END AS has_pending
 
 FROM houses h
-
 JOIN landlords l ON h.landlord_id = l.id
 
 WHERE h.status = 'active'
-
-LEFT JOIN rooms r ON h.house_id = r.house_id
-LEFT JOIN house_views v 
-ON h.house_id = v.house_id 
-AND v.viewed_at >= NOW() - INTERVAL 7 DAY
-
-LEFT JOIN favourites f 
-ON h.house_id = f.house_id
-
-GROUP BY h.house_id
 
 HAVING trending_score > 2
 

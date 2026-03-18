@@ -3,7 +3,6 @@ require_once "auth_landlord.php";
 include "../db_connect.php";
 require_once "../includes/risk_engine.php";
 require_once "../includes/image_utils.php";
-session_start();
 include "../toast.php";
 
 

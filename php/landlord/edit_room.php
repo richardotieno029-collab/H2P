@@ -3,7 +3,6 @@ require_once "auth_landlord.php";
 require_once "../db_connect.php";
 require_once "../includes/risk_engine.php";
 require_once "../includes/image_utils.php";
-session_start();
 include "../toast.php";
 
 $landlord_id = $_SESSION['user_id'];
