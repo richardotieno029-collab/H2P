@@ -1,7 +1,7 @@
 <?php
 session_start();
 $_SESSION['token'] = bin2hex(random_bytes(32)); // CSRF token generation
-require_once "../db_connect.php";
+require_once "../includes/config/db_connect.php";
 
 
 $unverified = isset($_GET['unverified']) && $_GET['unverified'] == '1';

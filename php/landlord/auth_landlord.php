@@ -1,9 +1,9 @@
 <?php
-require_once "../db_connect.php";
+require_once "../includes/config/db_connect.php";
 require_once "../includes/risk_engine.php";
 include "../toast.php";
 require_once "../auth/check_suspension.php";
-require_once "../session.php";
+require_once "../includes/config/session.php";
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord') {
     $_SESSION['toast'] = [
     'type' => 'error',

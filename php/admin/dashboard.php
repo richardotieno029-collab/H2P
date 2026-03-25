@@ -1,6 +1,5 @@
 <?php
 require_once 'admin_guard.php';
-require_once '../db_connect.php';
 
 // Determine if current admin is super admin (admin001)
 $superAdmin = false;

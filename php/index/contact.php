@@ -1,6 +1,6 @@
 <?php
 require_once '../session.php';
-require_once '../db_connect.php';
+require_once "../includes/config/db_connect.php";
 include "../toast.php";
 
 
@@ -200,16 +200,14 @@ button:hover {
         <i class="fa-brands fa-tiktok"></i> TikTok
     </a>
 
-    <a href="https://facebook.com/Htwop Kenya" target="_blank" class="social facebook">
+    <a href="https://facebook.com/H2P" target="_blank" class="social facebook">
         <i class="fa-brands fa-facebook"></i> Facebook
     </a>
 
     <a href="mailto:support@h2p.co.ke" class="social email">
         <i class="fa-solid fa-envelope"></i> Email
     </a>
-    <a href="https://wa.me/254712345678" class="floating-whatsapp" target="_blank">
-    <i class="fa-brands fa-whatsapp"></i>
-</a>
+
 </div>
 
 </div>

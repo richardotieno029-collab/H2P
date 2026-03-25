@@ -1,6 +1,5 @@
 <?php
 require_once 'auth_landlord.php';
-require_once '../db.php';
 include "../toast.php";
 
 $landlord_id = $_SESSION['user_id'];

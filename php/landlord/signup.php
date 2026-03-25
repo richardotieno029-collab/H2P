@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "../db_connect.php";
+require_once "../includes/config/db_connect.php";
 require_once "../includes/risk_engine.php";
 require_once "../includes/phone_utils.php";
 require_once "../includes/image_utils.php";
@@ -123,7 +123,7 @@ if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_
         die("Invalid file type.");
     }
 
-    $uploadDir = "../uploads/profile/";
+    $uploadDir = "../uploads/profiles/";
 
     if (!is_dir($uploadDir)) {
         mkdir($uploadDir,0777,true);

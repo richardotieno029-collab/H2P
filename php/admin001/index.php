@@ -1,6 +1,6 @@
 <?php
 require_once 'admin001_guard.php';
-require_once '../db_connect.php';
+require_once '../includes/config/db_connect.php';
 
 // Quick stats for super admin
 $totalLandlords = $conn->query("SELECT COUNT(*) as total FROM landlords")->fetch_assoc()['total'];

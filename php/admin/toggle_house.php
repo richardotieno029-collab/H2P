@@ -1,6 +1,5 @@
 <?php
 require_once 'admin_guard.php';
-require_once '../db_connect.php';
 $landlord_id= (int) $_GET['landlord_id'];
 $house_id = (int) $_GET['house_id'];
 $action = $_GET['action'];

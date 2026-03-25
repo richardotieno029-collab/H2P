@@ -1,5 +1,5 @@
 <?php
-require '../db_connect.php';
+require_once "../includes/config/db_connect.php";
 session_start();
 require_once '../includes/loader.php';
 require_once 'admin_guard.php';

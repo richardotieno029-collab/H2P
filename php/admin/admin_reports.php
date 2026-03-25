@@ -1,6 +1,5 @@
 <?php
 require_once 'admin_guard.php';
-require_once '../db_connect.php';
 
 $result = $conn->query("SELECT * FROM reports ORDER BY created_at DESC");
 ?>

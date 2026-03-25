@@ -1,6 +1,6 @@
 <?php
 require_once 'admin001_guard.php';
-require_once '../db_connect.php';
+require_once '../includes/config/db_connect.php';
 
 // Password confirmation is required for any action.
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

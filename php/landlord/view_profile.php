@@ -1,6 +1,5 @@
 <?php
 require_once "auth_landlord.php";
-require_once "../db_connect.php";
 
 $id = $_SESSION['user_id'];
 

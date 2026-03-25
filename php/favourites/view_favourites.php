@@ -1,6 +1,6 @@
 <?php
-require '../session.php';
-require '../db_connect.php';
+require '../includes/config/session.php';
+require '../includes/config/db_connect.php';
 
 if (!isset($_SESSION['user_id'])) {
      $_SESSION['toast'] = [

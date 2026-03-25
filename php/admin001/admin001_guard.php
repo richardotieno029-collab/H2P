@@ -1,6 +1,6 @@
 <?php
-require_once __DIR__ . '/../session.php';
-require_once __DIR__ . '/../db_connect.php';
+require_once __DIR__ . '/../includes/config/session.php';
+require_once __DIR__ . '/../includes/config/db_connect.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
     $_SESSION['toast'] = [

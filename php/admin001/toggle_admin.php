@@ -1,6 +1,6 @@
 <?php
 require_once 'admin001_guard.php';
-require_once '../db_connect.php';
+require_once '../includes/config/db_connect.php';
 require_once '../toast.php';
 
 $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;

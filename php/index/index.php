@@ -21,7 +21,7 @@ if (isset($_SESSION['user_id'], $_SESSION['user_role'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>H2P | Find or List Houses</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body class="landing-page">
     <header class="landing-header">

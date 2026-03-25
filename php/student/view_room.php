@@ -1,6 +1,5 @@
 <?php
 require_once "auth_student.php";
-require_once "../db_connect.php";
 
 /* =========================
    1️⃣ Validate house_id
@@ -218,6 +217,21 @@ $myBooking = $bookingStmt->get_result()->fetch_assoc();?>
     </div>
 </div>
 <script>
+//auto refresh every 10 seconds when user is idle on the page
+let autoRefresh = true;
+
+// pause when user interacts
+document.addEventListener('scroll', () => {
+    autoRefresh = false;
+    setTimeout(() => autoRefresh = true, 10000); // resume after 10s
+});
+
+setInterval(() => {
+    if(autoRefresh){
+        loadHouses();
+    }
+}, 30000);
+
 // Countdown timer for pending bookings
 document.querySelectorAll('.countdown').forEach(badge => {
     let seconds = parseInt(badge.dataset.seconds);
@@ -233,7 +247,7 @@ document.querySelectorAll('.countdown').forEach(badge => {
         let m = Math.floor((seconds % 3600) / 60);
         let s = seconds % 60;
 
-        badge.innerText = `⏳ ${h}h ${m}m ${s}s left`;
+        badge.innerText = `⏳ ${h}h ${m}m ${s}s till expiry`;
 
         if (seconds < 3600) {
             badge.classList.add("badge-urgent");
@@ -242,6 +256,12 @@ document.querySelectorAll('.countdown').forEach(badge => {
         seconds--;
     }, 1000);
 });
+</script>
+
+<script src="../includes/assets/js/auto_refresh.js"></script>
+
+<script>
+startAutoRefresh(10); // refresh after 10 seconds of inactivity
 </script>
 
 

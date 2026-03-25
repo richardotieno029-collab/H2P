@@ -2,7 +2,6 @@
 session_start();
 include '../toast.php';
 require_once "admin_guard.php";
-require '../db_connect.php';
 
 // Fetch unresolved flags
 $stmt = $conn->query("

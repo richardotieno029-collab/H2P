@@ -1,7 +1,6 @@
 <?php
 session_start();
 require_once "auth_student.php";
-require_once "../db_connect.php";
 require_once "../includes/risk_engine.php";
 include "../toast.php";
 

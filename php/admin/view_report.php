@@ -1,7 +1,6 @@
 <?php
 require_once 'admin_guard.php';
 require_once '../includes/loader.php';
-require_once '../db_connect.php';
 
 $id = (int) $_GET['id'];
 
@@ -21,6 +20,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $update = $conn->prepare("UPDATE reports SET admin_reply=?, status='resolved' WHERE id=?");
     $update->bind_param("si", $reply, $id);
     $update->execute();
+
+    // Notify reporter by email
+require_once "../includes/mailer.php";
+
+/* Fetch report details */
+
+$stmt = $conn->prepare("
+SELECT email, admin_reply
+FROM reports
+WHERE id = ?
+");
+
+$stmt->bind_param("i", $id);
+$stmt->execute();
+
+$report = $stmt->get_result()->fetch_assoc();
+$stmt->close();
+
+
+if ($report && !empty($report['email'])) {
+
+    $subject = "Your Report Has Been Resolved - H2P";
+
+    $body = "Hello,<br><br>" .
+
+        "Your report has been reviewed and resolved by our team.<br><br>" .
+
+        "<strong>Admin Response:</strong><br>" .
+        nl2br(htmlspecialchars($report['admin_reply'])) . "<br><br>" .
+
+        "If you need further assistance, feel free to reach out.<br><br>" .
+
+        "Best regards,<br>" .
+        "H2P Team";
+
+    sendMailQuiet(
+        $report['email'],
+        "User",
+        $subject,
+        $body
+    );
+}
 
     header("Location: admin_reports.php");
     exit;

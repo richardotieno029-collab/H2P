@@ -1,6 +1,6 @@
 <?php
 require_once 'admin001_guard.php';
-require_once '../db_connect.php';
+require_once '../includes/config/db_connect.php';
 
 $type = $_GET['type'] ?? 'student';
 $table = $type === 'landlord' ? 'landlords' : 'students';
@@ -16,6 +16,7 @@ $result = $conn->query("SELECT * FROM $table ORDER BY id DESC");
     <link rel="stylesheet" href="../admin/admin_styles.css">
 </head>
 <body>
+    <?php include '../toast.php'; ?>
 <a href="index.php" class="back-btn" title="Go back">← Back to Admin001</a>
 
 <div class="admin-wrapper">

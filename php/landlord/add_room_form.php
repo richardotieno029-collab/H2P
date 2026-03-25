@@ -1,6 +1,5 @@
 <?php
 require_once "auth_landlord.php";
-include "../db_connect.php";
 
 /* Validate house_id */
 if (!isset($_GET['house_id'])) {

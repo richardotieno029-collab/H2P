@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "../db_connect.php";
+require_once "../includes/config/db_connect.php";
 require_once "../includes/risk_engine.php";
 require_once "../includes/phone_utils.php";
 include "../toast.php";

@@ -1,6 +1,5 @@
 <?php
 require_once "admin_guard.php";
-require '../db_connect.php';
 
 $house_id = intval($_GET['house_id']);
 

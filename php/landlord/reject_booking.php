@@ -1,6 +1,5 @@
 <?php
 require_once "auth_landlord.php";
-require_once "../db_connect.php";
 include "../toast.php";
 
 // 2️⃣ Validate booking id

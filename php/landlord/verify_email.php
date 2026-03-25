@@ -1,5 +1,5 @@
 <?php
-require_once "../db_connect.php";
+require_once "../includes/config/db_connect.php";
 
 if (!isset($_GET['token'])) {
     die("Invalid verification link.");

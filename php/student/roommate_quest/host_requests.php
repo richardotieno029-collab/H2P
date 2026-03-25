@@ -1,7 +1,6 @@
 <?php
 session_start();
 require_once "auth_student.php";
-require_once "../../db_connect.php";
 include '../../toast.php';
 
 $student_id = $_SESSION['user_id'];
@@ -190,6 +189,10 @@ Reject
 <?php endif; ?>
 
 </div>
+<script src="../assets/js/auto_refresh.js"></script>
 
+<script>
+startAutoRefresh(10); // refresh after 10 seconds of inactivity
+</script>
 </body>
 </html>

@@ -1,6 +1,5 @@
 <?php
-require_once 'admin001_guard.php';
-
+require_once '../includes/config/db_connect.php';
 $redirect = $_GET['return'] ?? 'index.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

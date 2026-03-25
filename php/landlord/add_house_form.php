@@ -12,6 +12,8 @@ $areaOptions = [
     'Leaders',
     'Perez',
     'Town',
+    'Iveche',
+    'Koimongu',
     'Other',
 ];
 ?>
@@ -60,8 +62,11 @@ $areaOptions = [
             <option>Hostel</option>
         </select>
 
-        <label>Price (KES)</label>
+        <label>Rent per month</label>
         <input type="number" name="price" required>
+
+            <label>Refundable deposit</label>
+    <input type="number" name="deposit" required>
 
         <label>Upload cover Image</label>
         <input type="file" name="house_image" accept="image/*" data-max-size="5242880" required>

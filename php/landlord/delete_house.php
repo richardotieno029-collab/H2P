@@ -1,6 +1,5 @@
 <?php
 require_once "auth_landlord.php";
-require_once "../db_connect.php";
 require_once "../includes/risk_engine.php";
 session_start();
 include "../toast.php";

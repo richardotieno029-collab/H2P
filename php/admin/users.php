@@ -1,6 +1,5 @@
 <?php
 require_once 'admin_guard.php';
-require_once '../db_connect.php';
 
 $type = $_GET['type'] ?? 'student';
 

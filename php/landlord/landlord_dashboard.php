@@ -1,6 +1,5 @@
 <?php
 require_once "auth_landlord.php";
-require_once "../db_connect.php";
 
 $sql = "SELECT COUNT(*) AS total FROM notifications 
         WHERE user_id = ? AND is_read = 0";
@@ -27,7 +26,9 @@ $count = $stmt->get_result()->fetch_assoc()['total'];
 
    <div class="top-bar">
 <button id="menu-toggle" class="menu-btn">
-<i class="fa fa-bars"></i>
+<i class="fa fa-bars"><?php if ($count > 0): ?>
+        <span class="notify-dot"></span>
+    <?php endif; ?></i>
 </button>
 
 </div>
@@ -39,9 +40,6 @@ $count = $stmt->get_result()->fetch_assoc()['total'];
 
        <a href="manage_booking.php" class="btn-notify">
     📋 Manage Bookings
-    <?php if ($count > 0): ?>
-        <span class="notify-dot"></span>
-    <?php endif; ?>
 </a>
         <a href="add_house_form.php">➕ Add House</a>
         <a href="../index/about.php">About</a>
@@ -90,6 +88,7 @@ $result = $stmt->get_result();
                 <p><strong>Area:</strong> <?php echo $house['area']; ?></p>
                 <p><strong>Type:</strong> <?php echo $house['room_type']; ?></p>
                 <p><strong>Price:</strong> KES <?php echo $house['price']; ?></p>
+                <p><strong>Deposit:</strong> KES <?php echo $house['deposit']; ?></p>
                 <p><strong>Views:</strong> <?php echo $house['views']; ?></p>
                 <p><strong>Favourites:</strong> <?php echo $house['favourites']; ?></p>
 

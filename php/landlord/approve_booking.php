@@ -1,6 +1,5 @@
 <?php
 require_once "auth_landlord.php";
-require "../db_connect.php";
 include "../toast.php";
 
 /* =========================
@@ -66,6 +65,52 @@ $notify = $conn->prepare("
 ");
 $notify->bind_param("is", $student_id, $message);
 $notify->execute();
+// Notify student by email (non-blocking)
+require_once "../includes/mailer.php";
+
+$infoStmt = $conn->prepare("
+SELECT 
+    s.full_name AS student_name,
+    s.email AS student_email,
+    h.house_name,
+    r.room_number
+
+FROM bookings b
+
+JOIN students s ON b.student_internal_id = s.id
+JOIN rooms r ON b.room_id = r.id
+JOIN houses h ON r.house_id = h.house_id
+
+WHERE b.id = ?
+");
+
+$infoStmt->bind_param("i", $booking_id);
+$infoStmt->execute();
+$info = $infoStmt->get_result()->fetch_assoc();
+$infoStmt->close();
+
+
+if ($info && !empty($info['student_email'])) {
+
+    $subject = "Booking Approved - {$info['house_name']}";
+
+    $body = "Hello {$info['student_name']},<br><br>" .
+
+        "Your booking request for <strong>Room {$info['room_number']}</strong> " .
+        "in <strong>{$info['house_name']}</strong> has been <strong style='color:green;'>approved</strong>.<br><br>" .
+
+        "Please log in to your account to contact the landlord and confirm that you have secured the room.<br><br>" .
+
+        "Best regards,<br>" .
+        "H2P Team";
+
+    sendMailQuiet(
+        $info['student_email'],
+        $info['student_name'],
+        $subject,
+        $body
+    );
+}
 
 //log activity
 $user_type = 'landlord';

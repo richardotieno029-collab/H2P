@@ -1,6 +1,5 @@
 <?php
 require_once "auth_student.php";
-require_once "../db_connect.php";
 
 $student_internal_id = $_SESSION['user_id'];
 

@@ -1,6 +1,5 @@
 <?php
 require_once "auth_student.php";
-require_once "../db_connect.php";
 
 // Fetch unread notifications count
 $notifStmt = $conn->prepare("
@@ -50,12 +49,12 @@ $notif = $notifStmt->get_result()->fetch_assoc();
 
         <a href="roommate_quest/roommate_quest.php" class="dash-card">
             <h3>🆕 Room mate Quest</h3>
-            <p>Coming Soon...</p>
+            <p>Find the perfect roommate</p>
         </a>
 
         <a href="trending.php" class="dash-card">
             <h3>🔥 Trending Houses</h3>
-            <p>View currently trending houses</p>
+            <p>View weekly trending houses</p>
         </a>
 
     </div>
@@ -222,5 +221,10 @@ while($house = $result->fetch_assoc()):
 
 
 </div>
+<script src="../assets/js/auto_refresh.js"></script>
+
+<script>
+startAutoRefresh(10); // refresh after 10 seconds of inactivity
+</script>
 </body>
 </html>

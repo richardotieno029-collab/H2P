@@ -1,7 +1,6 @@
 <?php
 session_start();
 require_once "admin_guard.php";
-require '../db_connect.php';
 
 if (!isset($_GET['id'])) {
     die("Invalid request.");

@@ -1,6 +1,5 @@
 <?php
 require_once "auth_landlord.php";
-require_once "../db_connect.php";
 require_once "../includes/image_utils.php";
 
 /* 1. Ensure form was submitted */

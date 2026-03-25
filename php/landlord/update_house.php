@@ -1,6 +1,5 @@
 <?php
 require_once "auth_landlord.php";
-require_once "../db_connect.php";
 require_once "../includes/risk_engine.php";
 require_once "../includes/image_utils.php";
 include "../toast.php";
@@ -21,6 +20,7 @@ $house_name = $_POST['house_name'];
 $area = $_POST['area'];
 $room_type = $_POST['room_type'];
 $price = $_POST['price'];
+$deposit = $_POST['deposit'];
 $description = $_POST['description'];
 // UTILITIES (Checkbox Handling)
 $electricity_available = isset($_POST['electricity_available']) ? 1 : 0;
@@ -103,7 +103,8 @@ $update = "UPDATE houses SET
     house_name = ?, 
     area = ?, 
     room_type = ?, 
-    price = ?, 
+    price = ?,
+    deposit =?, 
     description = ?, 
     image_path = ?,
  electricity_available = ?, electricity_covered = ?, token_meter = ?,
@@ -114,11 +115,12 @@ $update = "UPDATE houses SET
 
 $stmt = $conn->prepare($update);
 $stmt->bind_param(
-    "sssissiiiiiiiiiiii",
+    "sssiissiiiiiiiiiiii",
     $house_name,
     $area,
     $room_type,
     $price,
+    $deposit,
     $description,
     $image_path,
     $electricity_available, $electricity_covered, $token_meter,

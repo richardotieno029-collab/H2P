@@ -1,6 +1,5 @@
 <?php
 require_once "auth_landlord.php";
-require_once "../db_connect.php";
 
 $areaOptions = [
     'Bagik',
@@ -12,6 +11,8 @@ $areaOptions = [
     'Njukiri',
     'Leaders',
     'Perez',
+    'Iveche',
+    'Koimongu',
     'Town',
     'Other',
 ];
@@ -90,11 +91,15 @@ $house = $result->fetch_assoc();
         <option>Single</option>
         <option>Bedsitter</option>
         <option>One Bedroom</option>
+        <option>Two Bedroom</option>
         <option>Hostel</option>
         </select>
 
-    <label>Price</label>
+    <label>Rent per Month</label>
     <input type="number" name="price" value="<?php echo $house['price']; ?>" required>
+
+    <label>Refundable deposit</label>
+    <input type="number" name="deposit" value="<?php echo $house['deposit']; ?>" required>
 
     <p>Cover Image:</p>
     <img src="<?php echo $house['image_path']; ?>" width="150">

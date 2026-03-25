@@ -1,6 +1,5 @@
 <?php
 require_once "auth_student.php";
-require_once "../db_connect.php";
 
 /* Mark notifications as read */
 $clear = "UPDATE notifications SET is_read = 1 WHERE user_id = ?";
@@ -281,6 +280,10 @@ btn.classList.remove('active');
 });
 
 </script>
+<script src="../assets/js/auto_refresh.js"></script>
 
+<script>
+startAutoRefresh(10); // refresh after 10 seconds of inactivity
+</script>
 </body>
 </html>
