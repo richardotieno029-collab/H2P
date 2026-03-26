@@ -27,8 +27,8 @@ if (isset($_SESSION['user_id'], $_SESSION['user_role'])) {
 <body class="landing-page">
     <header class="landing-header">
         <nav>
-            <a href="about.php">About</a>
-            <a href="contact.php">Contact</a>
+            <a href="about.php">👤 About</a>
+            <a href="contact.php">☎ Contact</a>
         </nav>
     </header>
 
