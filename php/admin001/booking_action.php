@@ -1,6 +1,6 @@
 <?php
 require_once 'admin001_guard.php';
-require_once '../toast.php';
+require_once '../includes/toast.php';
 require_once '../includes/config/db_connect.php';
 
 $bookingId = null;

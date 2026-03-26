@@ -1,7 +1,6 @@
 <?php
 session_start();
 $_SESSION['token'] = bin2hex(random_bytes(32)); // CSRF token generation
-include "../toast.php";
 ?>
 
 <!DOCTYPE html>
@@ -10,11 +9,11 @@ include "../toast.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Signup</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body>
 
-<?php include "../toast.php"; ?>
+<?php include "../includes/toast.php"; ?>
 
 <div class="auth-page">
       <div class="auth-container"> 

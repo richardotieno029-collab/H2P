@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "../toast.php";
+include "../includes/toast.php";
 require_once "../includes/config/db_connect.php";
 
 if (!isset($_GET['token'])) {

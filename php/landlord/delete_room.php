@@ -2,7 +2,7 @@
 require_once 'auth_landlord.php';
 require_once "../includes/risk_engine.php";
 session_start();
-include "../toast.php";
+include "../includes/toast.php";
 
 $room_id = intval($_GET['id']);
 

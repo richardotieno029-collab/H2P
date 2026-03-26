@@ -1,8 +1,8 @@
 <?php
 session_start();
-include "../toast.php";
-require_once '../session.php';
-require_once '../db_connect.php';
+include "../includes/toast.php";
+require_once '../includes/config/session.php';
+require_once '../includes/config/db_connect.php';
 include "../toast.php";
 
 $user_id = $_SESSION['user_id'];
@@ -57,7 +57,7 @@ $_SESSION['token'] = bin2hex(random_bytes(32));
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delete Account</title>
-    <link rel="stylesheet" href="../auth_styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body class="auth-page">  
     <?php include "../toast.php"; ?>
@@ -81,7 +81,7 @@ All your data will be lost.
 </form>
 
  <a href="javascript:history.back()" class="back-btn" title="Go back">
-    ← cancel
+cancel
 </a>
 </div>
 </body>

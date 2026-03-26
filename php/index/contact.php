@@ -1,7 +1,7 @@
 <?php
-require_once '../session.php';
+require_once '../includes/config/session.php';
 require_once "../includes/config/db_connect.php";
-include "../toast.php";
+include "../includes/toast.php";
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

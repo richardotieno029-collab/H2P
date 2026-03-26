@@ -4,7 +4,7 @@ require_once "../includes/config/db_connect.php";
 require_once "../includes/risk_engine.php";
 require_once "../includes/phone_utils.php";
 require_once "../includes/image_utils.php";
-include "../toast.php";
+include "../includes/toast.php";
 
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {
     header("Location: signup_form.php");

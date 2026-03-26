@@ -18,7 +18,7 @@ $student = $stmt->get_result()->fetch_assoc();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
     
 </head>
 <body>

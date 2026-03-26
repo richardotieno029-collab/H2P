@@ -1,6 +1,7 @@
 <?php
 require_once 'admin001_guard.php';
 require_once '../includes/config/db_connect.php';
+include '../includes/toast.php';
 
 $sql = "
 SELECT h.*, l.full_name AS landlord_name

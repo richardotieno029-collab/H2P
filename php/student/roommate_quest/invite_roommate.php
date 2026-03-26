@@ -1,7 +1,7 @@
 <?php
 require_once "auth_student.php";
 require_once "../../includes/risk_engine.php";
-include "../../toast.php";
+include "../../includes/toast.php";
 
 $student_id = $_SESSION['user_id'];
 
@@ -160,7 +160,7 @@ exit();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Invite Roommate</title>
 
-<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../includes/assets/css/styles.css">
 <link rel="stylesheet" href="roommate.css">
 
 </head>

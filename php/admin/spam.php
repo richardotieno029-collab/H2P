@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../toast.php';
+include '../includes/toast.php';
 require_once "admin_guard.php";
 
 // Fetch unresolved flags
@@ -80,6 +80,13 @@ $result = $stmt;
     </td>
 </tr>
 <?php endwhile; ?>
+
+<button id="scrollTopBtn" class="scrollTopBtn" title="Go to top">↑</button>
+<script src="../includes/assets/js/scroll_top.js"></script>
+<script>
+initScrollTop();
+</script>
+
 
     </tbody>
 </table>

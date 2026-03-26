@@ -1,6 +1,6 @@
 <?php
 require_once "auth_landlord.php";
-include "../toast.php";
+include "../includes/toast.php";
 
 // 2️⃣ Validate booking id
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {

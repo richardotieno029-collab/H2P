@@ -23,7 +23,7 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="../admin/admin_styles.css">
 </head>
 <body>
-<?php include '../toast.php'; ?>
+<?php include '../includes/toast.php'; ?>
 <a href="index.php" class="back-btn" title="Go back">← Back to Admin001</a>
 
 <div class="admin-wrapper">

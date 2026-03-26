@@ -1,18 +1,7 @@
 <?php
 require_once "auth_landlord.php";
 require_once "../includes/risk_engine.php";
-session_start();
-include "../toast.php";
-
-
-if (!isset($_GET['id'])) {
-     $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'Identity Error!.'
-];
-    header("Location: landlord_dashboard.php");
-    exit;
-}
+include "../includes/toast.php";
 
 $house_id = intval($_GET['id']);
 $landlord_id = $_SESSION['user_id'];

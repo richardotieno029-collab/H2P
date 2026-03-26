@@ -1,6 +1,6 @@
 <?php
 require_once 'auth_landlord.php';
-include "../toast.php";
+include "../includes/toast.php";
 
 if (!isset($_GET['id'])) {
     die("Room not specified");
@@ -32,10 +32,10 @@ if (!$room) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Room</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body>
-    <?php include "../toast.php"; ?>
+    <?php include "../includes/toast.php"; ?>
 
 <div class="form-wrapper">
     <a href="javascript:history.back()" class="back-btn" title="Go back">

@@ -1,5 +1,7 @@
 <?php
 require_once 'admin_guard.php';
+include '../includes/toast.php';
+
 $landlord_id= (int) $_GET['landlord_id'];
 $house_id = (int) $_GET['house_id'];
 $action = $_GET['action'];

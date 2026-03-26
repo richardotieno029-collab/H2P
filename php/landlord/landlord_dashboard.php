@@ -17,10 +17,10 @@ $count = $stmt->get_result()->fetch_assoc()['total'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landlord Dashboard | H2P</title>
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-   <link rel="stylesheet" href="../styles.css">
+   <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body>
-    <?php include "../toast.php"; ?>
+    <?php include "../includes/toast.php"; ?>
 
 <?php include "dashboard_header.php"; ?>
 

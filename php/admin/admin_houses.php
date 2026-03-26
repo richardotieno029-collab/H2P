@@ -1,5 +1,6 @@
 <?php
 require_once "admin_guard.php";
+include '../includes/toast.php';
 
 if (!isset($_GET['landlord_id'])) {
     die("Invalid request.");

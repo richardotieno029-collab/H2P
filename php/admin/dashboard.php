@@ -1,6 +1,6 @@
 <?php
 require_once 'admin_guard.php';
-
+include '../includes/toast.php';
 // Determine if current admin is super admin (admin001)
 $superAdmin = false;
 $adminId = $_SESSION['user_id'] ?? null;
@@ -97,6 +97,13 @@ $totallogs = $conn->query("SELECT COUNT(*) as total FROM activity_logs")->fetch_
 </div>
 
 </div>
+
+<button id="scrollTopBtn" class="scrollTopBtn" title="Go to top">↑</button>
+<script src="../includes/assets/js/scroll_top.js"></script>
+<script>
+initScrollTop();
+</script>
+
 
 </body>
 </html>

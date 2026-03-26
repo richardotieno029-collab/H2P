@@ -32,7 +32,7 @@ if (empty($password)) {
     <link rel="stylesheet" href="../admin/admin_styles.css">
 </head>
 <body>
-<?php include '../toast.php'; ?>
+<?php include '../includes/toast.php'; ?>
 
 <div class="admin-wrapper">
     <h2>Confirm Action</h2>

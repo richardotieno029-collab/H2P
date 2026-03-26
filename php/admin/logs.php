@@ -3,7 +3,7 @@ require_once "../includes/config/db_connect.php";
 session_start();
 require_once '../includes/loader.php';
 require_once 'admin_guard.php';
-
+include '../includes/toast.php';
 $userTypeFilter = $_GET['user_type'] ?? '';
 $searchName     = $_GET['search'] ?? '';
 
@@ -130,8 +130,17 @@ $result = $stmt->get_result();
             <td><?= $row['created_at'] ?></td>
         </tr>
     <?php endwhile; ?>
+
+<button id="scrollTopBtn" class="scrollTopBtn" title="Go to top">↑</button>
+<script src="../includes/assets/js/scroll_top.js"></script>
+<script>
+initScrollTop();
+</script>
+
+
     </tbody>
 </table>
+
 
 </body>
 </html>

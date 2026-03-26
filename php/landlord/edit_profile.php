@@ -1,6 +1,7 @@
 <?php
 require_once "auth_landlord.php";
 require_once "../includes/image_utils.php";
+include "../includes/toast.php";
 
 /* 1. Ensure form was submitted */
 if ($_SERVER["REQUEST_METHOD"] !== "POST") {

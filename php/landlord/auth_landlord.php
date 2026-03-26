@@ -1,7 +1,7 @@
 <?php
 require_once "../includes/config/db_connect.php";
 require_once "../includes/risk_engine.php";
-include "../toast.php";
+include "../includes/toast.php";
 require_once "../auth/check_suspension.php";
 require_once "../includes/config/session.php";
 if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'landlord') {

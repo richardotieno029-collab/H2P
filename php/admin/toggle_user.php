@@ -1,5 +1,6 @@
 <?php
 require_once 'admin_guard.php';
+include '../includes/toast.php';
 
 $type = $_GET['type'];
 $id = (int) $_GET['id'];

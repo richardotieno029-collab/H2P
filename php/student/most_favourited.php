@@ -8,15 +8,15 @@ require_once "auth_student.php";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard | H2P</title>
-    <link rel="stylesheet" href="../styles.css">
-    <script src="../scripts.js"></script>
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
+   
 
 </head>
 <a href="dashboard.php" class="back-btn" title="Go back">
     ←
 </a>
 
-<?php include "../toast.php"; ?>
+<?php include "../includes/toast.php"; ?>
 <body>
 <div class="dashboard-container">
     <!-- MOST VIEWED -->

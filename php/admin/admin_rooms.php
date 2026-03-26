@@ -1,6 +1,6 @@
 <?php
 require_once "admin_guard.php";
-
+include '../includes/toast.php';
 $house_id = intval($_GET['house_id']);
 
 $stmt = $conn->prepare("SELECT * FROM rooms WHERE house_id=?");

@@ -8,14 +8,17 @@ $_SESSION['token'] = bin2hex(random_bytes(32)); // CSRF token generation
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landlord Signup</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body>
 
-<?php include "../toast.php"; ?>
+<?php include "../includes/toast.php"; ?>
 
 <div class="auth-page">
     <div class="auth-container">
+            <a href="javascript:history.back()" class="back-btn" title="Go back">
+    ←
+</a>
         <div class="logo-container">
     <img src="../../images/logo.jpeg" alt="H2P Logo" class="logo-img">
     <h1 class="logo-text">WELCOME TO H2P</h1>

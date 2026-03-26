@@ -1,5 +1,5 @@
 <?php
-require_once "../db_connect.php";
+require_once "../includes/config/db_connect.php";
 
 if (!isset($_GET['house_id']) || !is_numeric($_GET['house_id'])) {
     die("Invalid house selected.");
@@ -32,12 +32,12 @@ $rooms = $roomStmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rooms in <?= htmlspecialchars($house['house_name']) ?></title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body>
 
 <header class="guest-header">
-    <a href="browse_houses.php" class="back-btn">← Back</a>
+    <a href="browse_houses.php" class="back-btn">← </a>
     <a href="../student/login_form.php" class="btn">Login to Book</a>
 </header>
 
@@ -68,6 +68,13 @@ $rooms = $roomStmt->get_result();
 <?php endwhile; ?>
 
 </div>
+
+<button id="scrollTopBtn" class="scrollTopBtn" title="Go to top">↑</button>
+<script src="../includes/assets/js/scroll_top.js"></script>
+<script>
+initScrollTop();
+</script>
+
 
 </body>
 </html>

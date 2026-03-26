@@ -2,6 +2,7 @@
 require_once 'admin001_guard.php';
 require_once '../includes/config/db_connect.php';
 require_once '../includes/loader.php';
+include '../includes/toast.php';
 
 $userTypeFilter = $_GET['user_type'] ?? '';
 $searchName     = $_GET['search'] ?? '';

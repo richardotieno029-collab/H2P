@@ -62,7 +62,7 @@ $result = $stmt->get_result();
 <head>
     <meta charset="UTF-8">
     <title>Manage Bookings</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .countdown {
@@ -89,7 +89,7 @@ $result = $stmt->get_result();
     </style>
 </head>
 <body>
-    <?php include "../toast.php"; ?>
+    <?php include "../includes/toast.php"; ?>
     <a href="landlord_dashboard.php" class="back-btn" title="Go back">
     ←
 </a>

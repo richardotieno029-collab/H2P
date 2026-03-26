@@ -1,5 +1,5 @@
 <?php
-require_once "../db_connect.php";
+require_once "../includes/config/db_connect.php";
 
 $query = "
     SELECT 
@@ -25,7 +25,7 @@ $result = $conn->query($query);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse Houses</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body>
     <a href="../index/index.php" class="back-btn" title="Go back">←</a>
@@ -67,8 +67,13 @@ $result = $conn->query($query);
 
 <?php endwhile;?>
 
-
 </div>
+
+<button id="scrollTopBtn" class="scrollTopBtn" title="Go to top">↑</button>
+<script src="../includes/assets/js/scroll_top.js"></script>
+<script>
+initScrollTop();
+</script>
 
 </body>
 </html>

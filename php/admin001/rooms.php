@@ -1,6 +1,7 @@
 <?php
 require_once 'admin001_guard.php';
 require_once '../includes/config/db_connect.php';
+include '../includes/toast.php';
 
 $houseId = isset($_GET['house_id']) ? intval($_GET['house_id']) : null;
 

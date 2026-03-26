@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once "admin_guard.php";
-
+include '../includes/toast.php';
 if (!isset($_GET['id'])) {
     die("Invalid request.");
 }

@@ -2,7 +2,7 @@
 session_start();
 require_once "auth_student.php";
 require_once "../includes/risk_engine.php";
-include "../toast.php";
+include "../includes/toast.php";
 
 if (!isset($_POST['room_id'], $_POST['house_id'])) {
     die("Invalid request.");

@@ -1,6 +1,6 @@
 <?php
 require_once "auth_student.php";
-include "../../toast.php";
+include "../../includes/toast.php";
 
 
 $student_id = $_SESSION['user_id'];
@@ -66,7 +66,7 @@ $hasMatch = $matchCheck->get_result()->num_rows > 0;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roommate Quest</title>
 
-<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../includes/assets/css/styles.css">
 <link rel="stylesheet" href="roommate.css">
 
 </head>

@@ -24,10 +24,10 @@ $areaOptions = [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add House | H2P</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body>
-<?php include "../toast.php"; ?>
+<?php include "../includes/toast.php"; ?>
 <div class="form-wrapper">
     <a href="javascript:history.back()" class="back-btn" title="Go back">
     ←

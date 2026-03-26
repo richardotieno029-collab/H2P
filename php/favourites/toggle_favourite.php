@@ -1,6 +1,5 @@
 <?php
 require_once "../student/auth_student.php";
-require_once "../db_connect.php";
 
 $student_id = $_SESSION['user_id'];
 $house_id = intval($_POST['house_id']);

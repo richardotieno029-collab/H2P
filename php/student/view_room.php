@@ -102,10 +102,10 @@ $rooms = $roomStmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rooms in <?= htmlspecialchars($house_name) ?></title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body>
-    <?php include "../toast.php"; ?>
+    <?php include "../includes/toast.php"; ?>
     <?php include "../includes/loader.php"; ?>
     <a href="browse_houses.php" class="back-btn" title="Go back">
     ←
@@ -216,6 +216,9 @@ $myBooking = $bookingStmt->get_result()->fetch_assoc();?>
 
     </div>
 </div>
+
+<button id="scrollTopBtn" class="scrollTopBtn" title="Go to top">↑</button>
+
 <script>
 //auto refresh every 10 seconds when user is idle on the page
 let autoRefresh = true;
@@ -273,6 +276,12 @@ startAutoRefresh(10); // refresh after 10 seconds of inactivity
 <?php else: ?>
     <p>No rooms have been added for this house yet.</p>
 <?php endif; ?>
+
+<script src="../includes/assets/js/scroll_top.js"></script>
+<script>
+initScrollTop();
+</script>
+
 
 </body>
 </html>

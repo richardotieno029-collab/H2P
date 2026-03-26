@@ -1,5 +1,5 @@
 <?php
-include "../toast.php";
+include "../includes/toast.php";
 $user = null;
 $profilePic = "../uploads/profiles/default.png";
 $name = "Account";
@@ -30,7 +30,7 @@ if (isset($_SESSION['user_id'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 
 

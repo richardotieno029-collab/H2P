@@ -1,7 +1,6 @@
 <?php
 session_start();
 $_SESSION['token'] = bin2hex(random_bytes(32)); // CSRF token generation
-include "../toast.php";
 
 $unverified = isset($_GET['unverified']) && $_GET['unverified'] == '1';
 $unverifiedEmail = htmlspecialchars($_GET['email'] ?? '');
@@ -12,11 +11,11 @@ $unverifiedEmail = htmlspecialchars($_GET['email'] ?? '');
 <head>
     <title>Student Login</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body>
 
-<?php include "../toast.php"; ?>
+<?php include "../includes/toast.php"; ?>
 <div class="auth-page">
       <div class="auth-container"> 
         

@@ -105,13 +105,13 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trending Houses</title>
 
-<link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="../includes/assets/css/styles.css">
 
 </head>
 
 <body>
 
-<?php include "../toast.php"; ?>
+<?php include "../includes/toast.php"; ?>
 
 <a href="dashboard.php" class="back-btn" title="Go back">
 ←
@@ -239,6 +239,8 @@ data-house-id="<?= $house['house_id'] ?>">
 
 </div>
 
+<button id="scrollTopBtn" class="scrollTopBtn" title="Go to top">↑</button>
+
 <script>
 
 document.querySelectorAll('.fav-btn').forEach(button => {
@@ -280,10 +282,16 @@ btn.classList.remove('active');
 });
 
 </script>
-<script src="../assets/js/auto_refresh.js"></script>
+<script src="../includes/assets/js/auto_refresh.js"></script>
 
 <script>
 startAutoRefresh(10); // refresh after 10 seconds of inactivity
 </script>
+
+<script src="../includes/assets/js/scroll_top.js"></script>
+<script>
+initScrollTop();
+</script>
+
 </body>
 </html>

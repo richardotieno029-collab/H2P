@@ -1,6 +1,6 @@
 <?php
 require_once 'admin_guard.php';
-
+include '../includes/toast.php';
 $result = $conn->query("SELECT * FROM reports ORDER BY created_at DESC");
 ?>
 <!DOCTYPE html>

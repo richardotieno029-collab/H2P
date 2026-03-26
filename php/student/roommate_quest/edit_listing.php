@@ -1,7 +1,7 @@
 <?php
 session_start();
 require_once "auth_student.php";
-include "../../toast.php";
+include "../../includes/toast.php";
 
 $student_id = $_SESSION['user_id'];
 
@@ -89,7 +89,7 @@ exit();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Listing</title>
 
-<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="../../includes/assets/css/styles.css">
 <link rel="stylesheet" href="roommate.css">
 
 </head>
@@ -121,14 +121,15 @@ value="<?= htmlspecialchars($host['name']) ?>" required>
 <input type="number" name="age"
 value="<?= $host['age'] ?>" required>
 
-
 <label>Year of Study</label>
 <select name="year_of_study">
 
-<option value="1" <?= $host['year_of_study']=="1"?"selected":"" ?>>1</option>
-<option value="2" <?= $host['year_of_study']=="2"?"selected":"" ?>>2</option>
-<option value="3" <?= $host['year_of_study']=="3"?"selected":"" ?>>3</option>
-<option value="4" <?= $host['year_of_study']=="4"?"selected":"" ?>>4</option>
+<option value="Year 1" <?= $host['year_of_study']=="Year 1"?"selected":"" ?>>Year 1</option>
+<option value="Year 2" <?= $host['year_of_study']=="Year 2"?"selected":"" ?>>Year 2</option>
+<option value="Year 3" <?= $host['year_of_study']=="Year 3"?"selected":"" ?>>Year 3</option>
+<option value="Year 4" <?= $host['year_of_study']=="Year 4"?"selected":"" ?>>Year 4</option>
+<option value="Graduated" <?= $host['year_of_study']=="Graduated"?"selected":"" ?>>Graduated</option>
+<option value="Other" <?= $host['year_of_study']=="Other"?"selected":"" ?>>Other</option>
 
 </select>
 

@@ -1,7 +1,7 @@
 <?php
 session_start();
-include "../toast.php";
-require '../db_connect.php';
+include "../includes/toast.php";
+require '../includes/config/db_connect.php';
 require_once "../includes/risk_engine.php";
 
 
@@ -127,7 +127,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reset Password</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body class="auth-page">
 <?php include "../toast.php"; ?>

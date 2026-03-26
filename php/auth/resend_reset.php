@@ -1,6 +1,6 @@
 <?php
 session_start();
-require "../db_connect.php";
+require "../includes/config/db_connect.php";
 require "../includes/mailer.php";
 
 $email = $_POST['email'];

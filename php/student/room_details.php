@@ -21,11 +21,11 @@ $images = $stmt2->get_result();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
     <title>House Details</title>
 </head>
 <body>
-<?php include "../toast.php"; ?>
+<?php include "../includes/toast.php"; ?>
 <div class="slider">
 
     <div class="slides">

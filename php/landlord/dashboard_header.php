@@ -27,7 +27,7 @@ $name = $_SESSION['user_name']
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="../styles.css">
+   <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 
 

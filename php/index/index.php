@@ -1,5 +1,6 @@
 <?php
 session_start();
+include '../includes/toast.php';
 
 if (isset($_SESSION['user_id'], $_SESSION['user_role'])) {
     if ($_SESSION['user_role'] === 'student') {
@@ -46,7 +47,7 @@ if (isset($_SESSION['user_id'], $_SESSION['user_role'])) {
         <!-- Student -->
         <div class="role-card">
             <h3>🎓 Student</h3>
-            <p>Browse houses, view rooms, and save favourites.</p>
+            <p>See full house details, bookings and find roommates.</p>
             <a href="../student/login_form.php" class="student-btn">
                 Continue as Student
             </a>
@@ -64,7 +65,7 @@ if (isset($_SESSION['user_id'], $_SESSION['user_role'])) {
         <!-- Guest -->
         <div class="role-card">
             <h3>👀 Guest</h3>
-            <p>View houses and rooms without creating an account.</p>
+            <p>Have a quick overview of houses' and rooms' details.</p>
             <a href="../guest/browse_houses.php" class="guest-btn">
                 Continue as Guest
             </a>

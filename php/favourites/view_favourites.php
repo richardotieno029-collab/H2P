@@ -1,15 +1,5 @@
 <?php
-require '../includes/config/session.php';
-require '../includes/config/db_connect.php';
-
-if (!isset($_SESSION['user_id'])) {
-     $_SESSION['toast'] = [
-            'type' => 'error',
-            'message' => 'You are not authorised to access this page.'
-        ];
-    header("Location: ../index/index.php");
-    exit;
-}
+require_once "../student/auth_student.php";
 
 $student_internal_id = $_SESSION['user_id'];
 
@@ -33,10 +23,10 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Favourites</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body>
-    <?php include "../toast.php"; ?>
+    <?php include "../includes/toast.php"; ?>
     <a href="javascript:history.back()" class="back-btn" title="Go back">
     ←
 </a>

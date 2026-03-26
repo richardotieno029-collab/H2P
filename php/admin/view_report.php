@@ -1,6 +1,7 @@
 <?php
 require_once 'admin_guard.php';
 require_once '../includes/loader.php';
+include '../includes/toast.php';
 
 $id = (int) $_GET['id'];
 
@@ -110,6 +111,13 @@ if ($report && !empty($report['email'])) {
     </div>
 
 </div>
+
+<button id="scrollTopBtn" class="scrollTopBtn" title="Go to top">↑</button>
+<script src="../includes/assets/js/scroll_top.js"></script>
+<script>
+initScrollTop();
+</script>
+
 
 </body>
 </html> 

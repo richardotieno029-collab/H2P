@@ -22,7 +22,7 @@ $result = $stmt->get_result();
     <title>Manage Rooms</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body>
     
@@ -32,7 +32,7 @@ $result = $stmt->get_result();
 </button>
 
 </div>
-    <?php include "../toast.php"; ?>
+    <?php include "../includes/toast.php"; ?>
 <div class="dash-wrapper">
 
     <aside id="sidebar" class="sidebar">

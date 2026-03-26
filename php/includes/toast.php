@@ -27,7 +27,7 @@ if (!function_exists('toast')) {
 // This is safe to include multiple times across pages.
 if (!defined('H2P_LOADER_INCLUDED')) {
     define('H2P_LOADER_INCLUDED', true);
-    include __DIR__ . '/includes/loader.php';
+    include __DIR__ . '/loader.php';
 }
 
 if (isset($_SESSION['toast'])):

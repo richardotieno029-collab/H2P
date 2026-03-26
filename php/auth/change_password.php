@@ -1,8 +1,8 @@
 <?php
 session_start();
-include "../toast.php";
-require_once '../session.php';
-require_once '../db_connect.php';
+include "../includes/toast.php";
+require_once '../includes/config/session.php';
+require_once '../includes/config/db_connect.php';
 
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['user_role'])) {
     die("Unauthorized access.");
@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Change Password</title>
-    <link rel="stylesheet" href="../auth_styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 
 <body class="auth-page">
@@ -136,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </form>
 
 <a href="javascript:history.back()" class="back-btn">
-    ← Back
+ cancel
 </a>
 
 </div>

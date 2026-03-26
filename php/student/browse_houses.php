@@ -123,10 +123,10 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Browse Houses</title>
-    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body>
-<?php include "../toast.php"; ?>
+<?php include "../includes/toast.php"; ?>
 <a href="dashboard.php" class="back-btn" title="Go back">
     ←
 </a>
@@ -190,6 +190,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     </div>
 </div>
 
+<button id="scrollTopBtn" class="scrollTopBtn" title="Go to top">↑</button>
+
 <script>
 
 const form = document.querySelector('.filters');
@@ -220,21 +222,15 @@ function loadHouses(){
 
         attachFavEvents(); // Re-attach listeners after loading new content
     });
-
-    // Scroll to top of results
-    window.scrollTo({
-        top: container.offsetTop - 20,
-        behavior: 'smooth'
-    });
 }
 
-//auto refresh every 30 seconds when user is idle on the page
+//auto refresh every 60 seconds when user is idle on the page
 let autoRefresh = true;
 
 // pause when user interacts
 document.addEventListener('scroll', () => {
     autoRefresh = false;
-    setTimeout(() => autoRefresh = true, 30000); // resume after 30s
+    setTimeout(() => autoRefresh = true, 60000); // resume after 30s
 });
 
 setInterval(() => {
@@ -279,6 +275,11 @@ btn.classList.remove('active');
 
 }
 
+</script>
+
+<script src="../includes/assets/js/scroll_top.js"></script>
+<script>
+initScrollTop();
 </script>
 
 </body>
