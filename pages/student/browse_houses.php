@@ -101,7 +101,11 @@ if (!empty($_GET['vacant'])) {
     ) > 0";
 }
 
-$sql .= " ORDER BY has_pending DESC, h.created_at DESC";
+$sql .= " ORDER BY has_pending DESC, 
+    (RAND() * 0.6) + 
+    (views * 0.2) + 
+    (favourites * 0.2)
+DESC";
 
 
 $stmt = $conn->prepare($sql);
@@ -192,90 +196,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
 
 <button id="scrollTopBtn" class="scrollTopBtn" title="Go to top">↑</button>
 
-<script>
-
-const form = document.querySelector('.filters');
-const container = document.getElementById('housesContainer');
-
-/* LOAD INITIAL DATA */
-window.addEventListener('DOMContentLoaded', loadHouses);
-
-/* AUTO LOAD ON FILTER CHANGE */
-form.addEventListener('change', loadHouses);
-
-function loadHouses(){
-
-    const formData = new FormData(form);
-    const params = new URLSearchParams(formData).toString();
-
-    container.innerHTML = `
-<div class="loading">
-    <div class="spinner"></div>
-    <p>Loading houses...</p>
-</div>
-`;
-
-    fetch("fetch_houses.php?" + params)
-    .then(res => res.text())
-    .then(data => {
-        container.innerHTML = data;
-
-        attachFavEvents(); // Re-attach listeners after loading new content
-    });
-}
-
-//auto refresh every 60 seconds when user is idle on the page
-let autoRefresh = true;
-
-// pause when user interacts
-document.addEventListener('scroll', () => {
-    autoRefresh = false;
-    setTimeout(() => autoRefresh = true, 60000); // resume after 30s
-});
-
-setInterval(() => {
-    if(autoRefresh){
-        loadHouses();
-    }
-}, 30000);
-
-
-        /* RE-ATTACH FAVOURITE BUTTON LISTENERS */
-        function attachFavEvents(){
-
-document.querySelectorAll('.fav-btn').forEach(button => {
-
-button.addEventListener('click', function(e){
-
-e.preventDefault();
-e.stopPropagation();
-
-const houseId = this.dataset.houseId;
-const btn = this;
-
-fetch('../favourites/toggle_favourite.php', {
-method: 'POST',
-headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-body: 'house_id=' + houseId
-})
-.then(res => res.json())
-.then(data => {
-
-if(data.status === 'added'){
-btn.classList.add('active');
-}else{
-btn.classList.remove('active');
-}
-
-});
-
-});
-
-});
-
-}
-
-</script>
+<script src="../includes/assets/js/fetch_houses.js"></script>
 
 <script src="../includes/assets/js/scroll_top.js"></script>
 <script>

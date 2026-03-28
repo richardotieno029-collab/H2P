@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body class="auth-page">
-<?php include "../toast.php"; ?>
+<?php include "../includes/toast.php"; ?>
 
 <div class="auth-container">
 

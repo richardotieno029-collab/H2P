@@ -107,7 +107,7 @@ $rooms = $roomStmt->get_result();
 <body>
     <?php include "../includes/toast.php"; ?>
     <?php include "../includes/loader.php"; ?>
-    <a href="browse_houses.php" class="back-btn" title="Go back">
+    <a href="javascript:history.back()" class="back-btn" title="Go back">
     ←
 </a>
 

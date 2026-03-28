@@ -1372,19 +1372,7 @@ tr:hover {
     display: flex;
     gap: 10px;
 }
-.btn-notify {
-    position: relative;
-}
 
-.notify-dot {
-    position: absolute;
-    top: -5px;
-    right: -8px;
-    width: 10px;
-    height: 10px;
-    background: red;
-    border-radius: 50%;
-}
 .toast {
     position: fixed;
     top: 20px;
@@ -1730,4 +1718,25 @@ border-radius:6px;
 
 .scrollTopBtn:hover {
     transform: scale(1.1);
+}
+
+.icon-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.notify-dot {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    min-width: 16px;
+    height: 16px;
+    background: red;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

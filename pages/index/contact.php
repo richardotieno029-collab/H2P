@@ -200,7 +200,7 @@ button:hover {
         <i class="fa-brands fa-tiktok"></i> TikTok
     </a>
 
-    <a href="https://facebook.com/H2P" target="_blank" class="social facebook">
+    <a href="https://www.facebook.com/share/1DxSu41eDA/" target="_blank" class="social facebook">
         <i class="fa-brands fa-facebook"></i> Facebook
     </a>
 
@@ -212,5 +212,8 @@ button:hover {
 
 </div>
 
+<footer>
+  <p>&copy; 2026 H2P. All Rights Reserved.</p>
+</footer>
 </body>
 </html>

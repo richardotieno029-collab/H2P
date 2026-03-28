@@ -1,10 +1,11 @@
 <?php
 require_once "auth_landlord.php";
 
+$user_id = $_SESSION['user_id'];
+
 $sql = "SELECT COUNT(*) AS total FROM notifications 
         WHERE user_id = ? AND is_read = 0";
 $stmt = $conn->prepare($sql);
-$user_id = $_SESSION['user_id'];
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $count = $stmt->get_result()->fetch_assoc()['total'];
@@ -26,10 +27,18 @@ $count = $stmt->get_result()->fetch_assoc()['total'];
 
    <div class="top-bar">
 <button id="menu-toggle" class="menu-btn">
-<i class="fa fa-bars"><?php if ($count > 0): ?>
-        <span class="notify-dot"></span>
-    <?php endif; ?></i>
+
+    <span class="icon-wrapper">
+        <i class="fa fa-bars"></i>
+    <?php if ($count > 0): ?>
+    <span class="notify-dot">
+        <?= $count > 9 ? '9+' : $count ?>
+    </span>
+<?php endif; ?>
+    </span>
+
 </button>
+    <h1>Dashboard</h1>
 
 </div>
 <div class="dash-wrapper">
@@ -132,6 +141,22 @@ document.addEventListener("click", function (e) {
 
 });
 
+</script>
+
+<script>
+    setInterval(() => {
+    fetch('fetch_notifications_count.php')
+    .then(res => res.text())
+    .then(count => {
+        const dot = document.querySelector('.notify-dot');
+
+        if(count > 0){
+            if(!dot){
+                location.reload(); // simple fallback
+            }
+        }
+    });
+}, 15000);
 </script>
 
 </body>

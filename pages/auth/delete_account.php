@@ -3,7 +3,6 @@ session_start();
 include "../includes/toast.php";
 require_once '../includes/config/session.php';
 require_once '../includes/config/db_connect.php';
-include "../toast.php";
 
 $user_id = $_SESSION['user_id'];
 $role = $_SESSION['user_role'];
@@ -60,7 +59,7 @@ $_SESSION['token'] = bin2hex(random_bytes(32));
     <link rel="stylesheet" href="../includes/assets/css/styles.css">
 </head>
 <body class="auth-page">  
-    <?php include "../toast.php"; ?>
+    <?php include "../includes/toast.php"; ?>
     <div class="auth-container danger">
 
 <h2>☠️ Delete Account</h2>

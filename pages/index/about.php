@@ -41,5 +41,9 @@
     </div>
 
 </div>
+
+<footer>
+  <p>&copy; 2026 H2P. All Rights Reserved.</p>
+</footer>
 </body>
 </html>

@@ -79,5 +79,8 @@ if (isset($_SESSION['user_id'], $_SESSION['user_role'])) {
         </section>
     </main>
 
+    <footer>
+  <p>&copy; 2026 H2P. All Rights Reserved.</p>
+</footer>
 </body>
 </html>
