@@ -51,8 +51,8 @@ $count = $stmt->get_result()->fetch_assoc()['total'];
     📋 Manage Bookings
 </a>
         <a href="add_house_form.php">➕ Add House</a>
-        <a href="../index/about.php">About</a>
-        <a href="../index/contact.php">Contact and Support</a>
+        <a href="../about.php">About</a>
+        <a href="../contact.php">Contact and Support</a>
         <a href="#">⚙ Settings</a>
     </aside>
 

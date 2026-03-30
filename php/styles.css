@@ -257,6 +257,10 @@ nav a:hover {
         margin: 10px 0;
         padding: 30px 15px;
     }
+    
+    .houses-container {
+        justify-content: center;
+    }
 
     .house-card {
         width: 95%;
@@ -765,10 +769,6 @@ tr:hover {
     gap: 20px;
     align-items: stretch;
     background: #04f08e;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 1300px;
-    padding: 20px;
 }
 
 .house-card {

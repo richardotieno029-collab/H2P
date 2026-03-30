@@ -58,8 +58,8 @@ if (isset($_SESSION['user_id'])) {
             <a href="logout.php" class="danger" onclick="return confirm('You will be logged out.')
             ">Logout</a>
             <a href="../auth/delete_account.php" class="danger">Delete Account</a>
-            <a href="../index/about.php">About</a>
-        <a href="../index/contact.php">Contact and Support</a>
+            <a href="../about.php">About</a>
+        <a href="../contact.php">Contact and Support</a>
         </div>
     </div>
     <script>

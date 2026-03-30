@@ -33,7 +33,7 @@ $name = $_SESSION['user_name']
 
 <body>
 <header class="dashboard-header">
-    <a href="../index/about.php" class="logo-link">
+    <a href="../about.php" class="logo-link">
         <div class="logo-container">
             <img src="../images/logo.jpeg" alt="H2P Logo" class="logo-img">
         </div>

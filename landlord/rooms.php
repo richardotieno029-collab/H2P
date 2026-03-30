@@ -41,8 +41,8 @@ $result = $stmt->get_result();
     ➕ Add Room
 </a>
 <a href="landlord_dashboard.php">Back to Dashboard</a>
-<a href="../index/about.php">About</a>
-        <a href="../index/contact.php">Contact and Support</a>
+<a href="../about.php">About</a>
+        <a href="../contact.php">Contact and Support</a>
 </aside>
 
 <main class="dash-content">

@@ -3,6 +3,10 @@ if (session_status()===PHP_SESSION_NONE){
     session_start();
 }
 
+if (!ob_get_level()) {
+    ob_start();
+}
+
 // Helper for setting toast messages in a consistent format (type + message).
 // Used by admin001 and other pages that call set_toast().
 if (!function_exists('set_toast')) {
