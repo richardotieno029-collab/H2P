@@ -93,6 +93,28 @@ if ($action === 'suspend' || $action === 'activate') {
     }
 
     $_SESSION['toast'] = ['type' => 'success', 'message' => ucfirst($type) . " $status."];
+} elseif ($action === 'verify') {
+    $userStmt = $conn->prepare("SELECT full_name, email FROM $table WHERE id = ?");
+    $userStmt->bind_param('i', $id);
+    $userStmt->execute();
+    $user = $userStmt->get_result()->fetch_assoc();
+    $userStmt->close();
+
+    $update = $conn->prepare("UPDATE $table SET email_verified = 1 WHERE id = ?");
+    $update->bind_param('i', $id);
+    $update->execute();
+
+    if (!empty($user['email'])) {
+        require_once '../includes/mailer.php';
+        $subject = "Your H2P account has been verified";
+        $body = "Hi {$user['full_name']},<br><br>" .
+            "Your email has been verified by the admin. You can now log in to your account.<br><br>" .
+            "Thanks,<br>H2P Team";
+
+        sendMailQuiet($user['email'], $user['full_name'], $subject, $body);
+    }
+
+    $_SESSION['toast'] = ['type' => 'success', 'message' => ucfirst($type) . " email verified."];
 } elseif ($action === 'delete') {
     $delete = $conn->prepare("DELETE FROM $table WHERE id = ?");
     $delete->bind_param('i', $id);

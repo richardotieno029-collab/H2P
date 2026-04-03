@@ -111,8 +111,7 @@ if ($checkPhone->num_rows > 0) {
 /* HASH PASSWORD */
 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-/* GENERATE EMAIL TOKEN */
-$token = bin2hex(random_bytes(32));
+/* Landlord accounts are approved by admin only; no self email verification. */
 
 /* PROFILE IMAGE */
 $profileImagePath = null;
@@ -153,19 +152,17 @@ if (isset($_FILES['profile_pic']) && $_FILES['profile_pic']['error'] === UPLOAD_
 /* INSERT LANDLORD */
 $stmt = $conn->prepare("
 INSERT INTO landlords
-(full_name,email,phone,password,profile_image,verification_token,ip_address,user_agent,
-email_verified,token_expires,status)
-VALUES (?,?,?,?,?,?,?,?,0,DATE_ADD(NOW(), INTERVAL 1 HOUR),'active')
+(full_name,email,phone,password,profile_image,ip_address,user_agent,email_verified,status)
+VALUES (?,?,?,?,?,?,?,1,'pending')
 ");
 
 $stmt->bind_param(
-"ssssssss",
+"sssssss",
 $full_name,
 $email,
 $normalizedPhone,
 $hashedPassword,
 $profileImagePath,
-$token,
 $ip,
 $user_agent
 );
@@ -186,32 +183,31 @@ VALUES ('landlord',?,?,?)
 $log->bind_param("iss",$landlord_id,$action,$ip);
 $log->execute();
 
-
-
-/* Email verification */
 require_once "../includes/mailer.php";
-$verificationLink = "http://" . $_SERVER['HTTP_HOST'] . "/H2P/php/landlord/verify_email.php?token=" . $token;
-$subject = "Verify Your H2P Account";
-$body = "Hi $full_name,<br><br>Please click the link below to verify your email:<br>
-<a href='$verificationLink'>Verify Account</a><br><br>This link will expire in 1 hour.<br><br>Ignore this email if you didn't sign up.<br><br>
-Best,<br>H2P Team";
 
-$mailResult = sendMail($email, $full_name, $subject, $body);
-if ($mailResult !== true) {
-    $_SESSION['toast'] = [
-        'type' => 'error',
-        'message' => 'Signup succeeded but verification email failed: ' . $mailResult
-    ];
-    header("Location: signup_form.php");
-    exit;
-}
+$landlordSubject = "Your H2P account has been created";
+$landlordBody = "Hi $full_name,<br><br>" .
+    "Your landlord account was successfully created. It is now pending admin approval, and you will be notified once it is approved.<br><br>" .
+    "Thanks,<br>H2P Team";
+
+$adminSubject = "New landlord account needs approval";
+$adminBody = "Hi Richard,<br><br>" .
+    "A new landlord account has been registered:<br>" .
+    "Name: $full_name<br>" .
+    "Email: $email<br>" .
+    "Phone: $normalizedPhone<br><br>" .
+    "Please review and approve it in the admin panel.<br><br>" .
+    "Thanks,<br>H2P System";
+
+sendMailQuiet($email, $full_name, $landlordSubject, $landlordBody);
+sendMailQuiet('richardotieno029@gmail.com', 'Richard Otieno', $adminSubject, $adminBody);
 
 $_SESSION['toast'] = [
-'type'=>'success',
-'message'=>'Account created. Check your email to verify before login.'
+    'type'=>'success',
+    'message'=>'Account created. Please wait for admin approval.'
 ];
 
-header("Location: verify_notice.php?email=".$email);
+header("Location: login_form.php");
 
 } else {
 

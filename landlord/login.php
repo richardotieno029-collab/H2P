@@ -116,7 +116,7 @@ $stmt = $conn->prepare("
     FROM landlords 
     WHERE ip_address=? 
     AND user_agent=? 
-    AND created_at > NOW() - INTERVAL 1 HOUR
+    AND created_at > UTC_TIMESTAMP() - INTERVAL 1 HOUR
 ");
 $stmt->bind_param("ss", $ip, $user_agent);
 $stmt->execute();
@@ -129,7 +129,7 @@ if ($count >= 2) {
         WHERE user_type='landlord'
         AND user_id=?
         AND reason='Multiple failed login attempts from same IP'
-        AND created_at > NOW() - INTERVAL 10 MINUTE
+        AND created_at > UTC_TIMESTAMP() - INTERVAL 10 MINUTE
     ");
     $existing->bind_param("i", $user_id);
     $existing->execute();
@@ -155,16 +155,6 @@ if ($count >= 2) {
     exit;
 }
 
-//EMAIL NOT VERIFIED
-if ($row['email_verified'] == 0) {
-    $_SESSION['toast'] = [
-        'type' => 'error',
-        'message' => 'Please verify your email before logging in.'
-    ];
-    $redirect = "login_form.php?unverified=1&email=" . urlencode($row['email']);
-    header("Location: $redirect");
-    exit;
-}
        // risk score recalculation
     $user_type = 'landlord';
     $user_id   = $row['id'];
@@ -179,12 +169,16 @@ WHERE id=? AND risk_score < 50
 
 $stmt->bind_param("i",$row['id']);
 $stmt->execute();
-//check for suspension
+//check account status
 if ($row['status'] !== 'active') {
+    $message = 'Your account has been suspended. Please contact support.';
+    if ($row['status'] === 'pending') {
+        $message = 'Your account is pending admin approval. Please wait for approval.';
+    }
     $_SESSION['toast'] = [
-    'type' => 'error',
-    'message' => 'Your account has been suspended. Please contact support.'
-];
+        'type' => 'error',
+        'message' => $message
+    ];
     header("Location: login_form.php");
     exit;
 }

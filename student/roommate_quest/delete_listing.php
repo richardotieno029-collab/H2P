@@ -48,7 +48,7 @@ $check = $conn->prepare("
     WHERE user_type='student'
       AND user_id=?
       AND action IN ('CREATE_ROOMMATE_LISTING','DELETE_ROOMMATE_LISTING')
-      AND created_at > NOW() - INTERVAL 2 MINUTE
+      AND created_at > UTC_TIMESTAMP() - INTERVAL 2 MINUTE
 ");
 $check->bind_param("i", $user_id);
 $check->execute();
@@ -62,7 +62,7 @@ if ($count >= 3) {
         WHERE user_type='student'
           AND user_id=?
           AND reason='Suspicious rapid listing activity'
-          AND created_at > NOW() - INTERVAL 10 MINUTE
+          AND created_at > UTC_TIMESTAMP() - INTERVAL 10 MINUTE
     ");
     $existing->bind_param("i", $user_id);
     $existing->execute();

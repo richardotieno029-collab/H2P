@@ -21,7 +21,7 @@ $stmt = $conn->prepare("
     WHERE room_id = ?
       AND student_internal_id = ?
       AND status = 'approved'
-      AND approved_expires_at > NOW()
+      AND approved_expires_at > UTC_TIMESTAMP()
     FOR UPDATE
 ");
 $stmt->bind_param("is", $room_id, $student_internal_id);
@@ -71,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['confirm_occupy'])) {
         SET status = 'occupied'
         WHERE id = ?
           AND status = 'approved'
-          AND approved_expires_at > NOW()
+          AND approved_expires_at > UTC_TIMESTAMP()
     ");
 
     $updateBooking->bind_param("i", $booking['id']);

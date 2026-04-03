@@ -7,13 +7,13 @@ $student_id = $_SESSION['user_id'];
 
 /* Auto-cleanup old roommate data */
 // Cancel pending requests older than 2 days
-$conn->query("UPDATE roommate_requests SET status='CANCELLED' WHERE status='PENDING' AND created_at < NOW() - INTERVAL 2 DAY");
+$conn->query("UPDATE roommate_requests SET status='CANCELLED' WHERE status='PENDING' AND created_at < UTC_TIMESTAMP() - INTERVAL 2 DAY");
 
 // Close listings older than 2 weeks
-$conn->query("UPDATE roommate_hosts SET status='CLOSED' WHERE status='OPEN' AND created_at < NOW() - INTERVAL 2 WEEK");
+$conn->query("UPDATE roommate_hosts SET status='CLOSED' WHERE status='OPEN' AND created_at < UTC_TIMESTAMP() - INTERVAL 2 WEEK");
 
 // Remove matches older than 1 week (my roommate access expires)
-$conn->query("DELETE FROM roommate_matches WHERE matched_at < NOW() - INTERVAL 1 WEEK");
+$conn->query("DELETE FROM roommate_matches WHERE matched_at < UTC_TIMESTAMP() - INTERVAL 1 WEEK");
 
 /* Fetch student basic info */
 

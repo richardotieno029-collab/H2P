@@ -29,7 +29,7 @@ $stmt = $conn->prepare("
 SELECT COUNT(*) as total
 FROM password_resets
 WHERE email=? 
-AND created_at > NOW() - INTERVAL 1 HOUR
+AND created_at > UTC_TIMESTAMP() - INTERVAL 1 HOUR
 ");
 
 $stmt->bind_param("s",$email);
@@ -63,7 +63,7 @@ $token = bin2hex(random_bytes(32));
 $stmt = $conn->prepare("
 INSERT INTO password_resets
 (email, ip_address, token, expires_at)
-VALUES (?, ?, ?, DATE_ADD(NOW(),INTERVAL 15 MINUTE))
+VALUES (?, ?, ?, DATE_ADD(UTC_TIMESTAMP(),INTERVAL 15 MINUTE))
 ");
 
 $stmt->bind_param("sss",$email,$ip,$token);

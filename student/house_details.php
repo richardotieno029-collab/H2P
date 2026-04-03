@@ -12,7 +12,7 @@ $house_id = intval($_GET['id']);
 $check = $conn->prepare("
 SELECT id FROM house_views
 WHERE student_id=? AND house_id=?
-AND viewed_at >= NOW() - INTERVAL 12 HOUR 
+AND viewed_at >= UTC_TIMESTAMP() - INTERVAL 12 HOUR 
 ");
 
 $check->bind_param("ii", $student_id, $house_id);
@@ -24,7 +24,7 @@ if($res->num_rows == 0){
 $insert = $conn->prepare("
 INSERT INTO house_views
 (house_id, student_id, viewed_date, viewed_at)
-VALUES (?, ?, CURDATE(), NOW())
+VALUES (?, ?, CURDATE(), UTC_TIMESTAMP())
 ");
 
 $insert->bind_param("ii", $house_id, $student_id);

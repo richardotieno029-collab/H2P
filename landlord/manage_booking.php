@@ -11,7 +11,7 @@ $conn->query("
         r.status = 'vacant'
     WHERE 
         b.status = 'approved'
-        AND b.approved_expires_at < NOW()
+        AND b.approved_expires_at < UTC_TIMESTAMP()
 ");
 
 /* expiration of booking */
@@ -21,7 +21,7 @@ JOIN rooms r ON b.room_id = r.id
 JOIN (
     SELECT MIN(id) AS id
     FROM bookings
-    WHERE status = 'pending' AND expires_at < NOW()
+    WHERE status = 'pending' AND expires_at < UTC_TIMESTAMP()
     GROUP BY room_id
 ) x ON b.id = x.id
 SET 
@@ -41,7 +41,7 @@ SELECT
     b.status AS booking_status,
     s.full_name AS student_name,
     r.room_number,r.image_path,r.status AS room_status,
-     TIMESTAMPDIFF(SECOND, NOW(), b.expires_at) AS seconds_left,
+     TIMESTAMPDIFF(SECOND, UTC_TIMESTAMP(), b.expires_at) AS seconds_left,
     h.house_name
 FROM bookings b
 JOIN rooms r ON b.room_id = r.id

@@ -35,6 +35,7 @@ $result = $conn->query("SELECT * FROM $table ORDER BY id DESC");
                 <th>Email</th>
                 <th>Risk Score</th>
                 <th>Status</th>
+                <th>Email Verified</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -46,7 +47,17 @@ $result = $conn->query("SELECT * FROM $table ORDER BY id DESC");
                     <td><?= htmlspecialchars($row['email']) ?></td>
                     <td><?= htmlspecialchars($row['risk_score']) ?></td>
                     <td><span class="status <?= htmlspecialchars($row['status']) ?>"><?= htmlspecialchars($row['status']) ?></span></td>
+                    <td><?= $row['email_verified'] == 1 ? 'Yes' : 'No' ?></td>
                     <td>
+                        <?php if ($row['email_verified'] == 0): ?>
+                            <form method="POST" action="user_action.php" style="display:inline;">
+                                <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
+                                <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                <input type="hidden" name="action" value="verify">
+                                <button type="submit" class="btn btn-success">Verify</button>
+                            </form>
+                        <?php endif; ?>
+
                         <form method="POST" action="user_action.php" style="display:inline;">
                             <input type="hidden" name="type" value="<?= htmlspecialchars($type) ?>">
                             <input type="hidden" name="id" value="<?= $row['id'] ?>">

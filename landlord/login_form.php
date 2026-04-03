@@ -117,54 +117,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     </form>
 
-    <?php if ($unverified && $unverifiedEmail): ?>
-        <div class="resend-section">
-            <p>
-                Email <strong><?= $unverifiedEmail ?></strong> is not verified yet.
-                You can resend the verification link below.
-            </p>
-            <form method="POST" action="resend_verification.php" onsubmit="return handleSubmit(this, 'Resending verification email...')">
-                <input type="hidden" name="email" value="<?= $unverifiedEmail ?>">
-                <button type="submit" id="resendBtn" disabled>
-                    Resend Verification Email (<span id="countdown">60</span>s)
-                </button>
-            </form>
-        </div>
-
-        <script>
-            const resendBtn = document.getElementById('resendBtn');
-            const countdown = document.getElementById('countdown');
-            const key = 'resendCooldown_landlord_<?= rawurlencode($unverifiedEmail) ?>';
-
-            let resendTime = localStorage.getItem(key);
-            if (!resendTime) {
-                resendTime = Date.now() + 60 * 1000;
-                localStorage.setItem(key, resendTime);
-            }
-
-            function updateTimer() {
-                const remaining = Math.floor((resendTime - Date.now()) / 1000);
-
-                if (remaining <= 0) {
-                    resendBtn.disabled = false;
-                    resendBtn.textContent = 'Resend Verification Email';
-                    localStorage.removeItem(key);
-                    return;
-                }
-
-                countdown.textContent = remaining;
-            }
-
-            updateTimer();
-
-            const timer = setInterval(() => {
-                updateTimer();
-                if (!localStorage.getItem(key)) {
-                    clearInterval(timer);
-                }
-            }, 1000);
-        </script>
-    <?php endif; ?>
 
          <a href="../auth/forgot_password_form.php">Forgot Password</a></br>
             Don't have an account?

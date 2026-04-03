@@ -4,7 +4,7 @@ require_once "auth_student.php";
 $student_id = $_SESSION['user_id'];
 
 /* Remove expired matches (older than 1 week) */
-$conn->query("DELETE FROM roommate_matches WHERE created_at < NOW() - INTERVAL 1 WEEK");
+$conn->query("DELETE FROM roommate_matches WHERE matched_at < UTC_TIMESTAMP() - INTERVAL 1 WEEK");
 
 /* Check if student has a roommate match */
 
@@ -12,7 +12,7 @@ $stmt = $conn->prepare("
 SELECT *
 FROM roommate_matches
 WHERE (host_id = ? OR guest_id = ?)
-  AND created_at > NOW() - INTERVAL 1 WEEK
+  AND matched_at > UTC_TIMESTAMP() - INTERVAL 1 WEEK
 LIMIT 1
 ");
 

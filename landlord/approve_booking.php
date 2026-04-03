@@ -37,7 +37,7 @@ $room_id    = $booking['room_id'];
 $approve = $conn->prepare("
     UPDATE bookings 
     SET status = 'approved',
-        approved_expires_at = DATE_ADD(NOW(), INTERVAL 12 HOUR)
+        approved_expires_at = DATE_ADD(UTC_TIMESTAMP(), INTERVAL 12 HOUR)
     WHERE id = ?
 ");
 $approve->bind_param("i", $booking_id);

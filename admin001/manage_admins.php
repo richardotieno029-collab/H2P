@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $hash = password_hash($password, PASSWORD_DEFAULT);
-    $stmt = $conn->prepare('INSERT INTO admins (name, email, password, status, created_at) VALUES (?, ?, ?, ?, NOW())');
+    $stmt = $conn->prepare('INSERT INTO admins (name, email, password, status, created_at) VALUES (?, ?, ?, ?, UTC_TIMESTAMP())');
     $status = 'active';
     $stmt->bind_param('ssss', $name, $email, $hash, $status);
     $stmt->execute();

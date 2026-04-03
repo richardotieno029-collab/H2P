@@ -90,7 +90,7 @@ $stmt = $conn->prepare("
     SELECT COUNT(*) as total 
     FROM houses 
     WHERE landlord_id=? 
-    AND created_at > NOW() - INTERVAL 10 MINUTE
+    AND created_at > UTC_TIMESTAMP() - INTERVAL 10 MINUTE
 ");
 $stmt->bind_param("i", $landlord_id);
 $stmt->execute();

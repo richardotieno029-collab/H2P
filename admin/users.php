@@ -34,6 +34,7 @@ Managing <?= ucfirst($type) ?>s
 <th>Email</th>
 <th>Risk Score</th>
 <th>Status</th>
+<th>Email Verified</th>
 <th>Action</th>
 <th>Houses</th>
 </tr>
@@ -50,22 +51,30 @@ Managing <?= ucfirst($type) ?>s
 <td><?= htmlspecialchars($row['risk_score']) ?></td>
 
 <td>
-<span class="status <?= $row['status'] ?>">
-<?= $row['status'] ?>
+<span class="status <?= htmlspecialchars($row['status']) ?>">
+<?= htmlspecialchars($row['status']) ?>
 </span>
 </td>
 
 <td>
+<?= $row['email_verified'] == 1 ? 'Yes' : 'No' ?>
+</td>
+
+<td>
+<?php if ($row['email_verified'] == 0): ?>
+    <a href="toggle_user.php?type=<?= $type ?>&id=<?= $row['id'] ?>&action=verify" class="success">
+        Verify
+    </a>
+<?php endif; ?>
 
 <?php if ($row['status'] === 'active'): ?>
-<a href="toggle_user.php?type=<?= $type ?>&id=<?= $row['id'] ?>&action=suspend" class="danger" onclick="return confirm
-('Are you sure you want to suspend this user?');">
-Suspend
-</a>
+    <a href="toggle_user.php?type=<?= $type ?>&id=<?= $row['id'] ?>&action=suspend" class="danger" onclick="return confirm('Are you sure you want to suspend this user?');">
+        Suspend
+    </a>
 <?php else: ?>
-<a href="toggle_user.php?type=<?= $type ?>&id=<?= $row['id'] ?>&action=activate" class="success">
-Activate
-</a>
+    <a href="toggle_user.php?type=<?= $type ?>&id=<?= $row['id'] ?>&action=activate" class="success">
+        Activate
+    </a>
 <?php endif; ?>
 </td>
 <td>

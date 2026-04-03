@@ -16,7 +16,7 @@ FROM roommate_hosts h
 JOIN students s ON h.student_id = s.id
 WHERE h.host_id = ?
   AND h.status = 'OPEN'
-  AND h.created_at > NOW() - INTERVAL 2 WEEK
+  AND h.created_at > UTC_TIMESTAMP() - INTERVAL 2 WEEK
 ");
 
 $stmt->bind_param("i",$host_id);
@@ -44,7 +44,7 @@ $dislikes = $_POST['dislikes'];
 
 
 /* Cleanup stale requests older than 2 days */
-$conn->query("UPDATE roommate_requests SET status='CANCELLED' WHERE status='PENDING' AND created_at < NOW() - INTERVAL 2 DAY");
+$conn->query("UPDATE roommate_requests SET status='CANCELLED' WHERE status='PENDING' AND created_at < UTC_TIMESTAMP() - INTERVAL 2 DAY");
 
 /* check if already requested */
 
@@ -109,7 +109,7 @@ $stmt->execute();
             WHERE user_type='student'
               AND user_id=?
               AND action IN ('SEND_ROOMMATE_REQUEST','CANCEL_ROOMMATE_REQUEST')
-              AND created_at > NOW() - INTERVAL 2 MINUTE
+              AND created_at > UTC_TIMESTAMP() - INTERVAL 2 MINUTE
         ");
         $check->bind_param("i", $user_id);
         $check->execute();
@@ -123,7 +123,7 @@ $stmt->execute();
                 WHERE user_type='student'
                   AND user_id=?
                   AND reason='Suspicious rapid roommate request activity'
-                  AND created_at > NOW() - INTERVAL 10 MINUTE
+                  AND created_at > UTC_TIMESTAMP() - INTERVAL 10 MINUTE
             ");
             $existing->bind_param("i", $user_id);
             $existing->execute();

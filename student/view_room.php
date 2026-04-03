@@ -20,7 +20,7 @@ $student_id = $_SESSION['user_id'];
 $check = $conn->prepare("
 SELECT id FROM house_views
 WHERE student_id=? AND house_id=?
-AND viewed_at >= NOW() - INTERVAL 12 HOUR 
+AND viewed_at >= UTC_TIMESTAMP() - INTERVAL 12 HOUR 
 ");
 
 $check->bind_param("ii", $student_id, $house_id);
@@ -32,7 +32,7 @@ if($res->num_rows == 0){
 $insert = $conn->prepare("
 INSERT INTO house_views
 (house_id, student_id, viewed_date, viewed_at)
-VALUES (?, ?, CURDATE(), NOW())
+VALUES (?, ?, CURDATE(), UTC_TIMESTAMP())
 ");
 
 $insert->bind_param("ii", $house_id, $student_id);
@@ -74,7 +74,7 @@ $conn->query("
         r.status = 'vacant'
     WHERE 
         b.status = 'approved'
-        AND b.approved_expires_at < NOW()
+        AND b.approved_expires_at < UTC_TIMESTAMP()
 ");
 /* expiration of booking */
 $conn->query("
@@ -83,7 +83,7 @@ JOIN rooms r ON b.room_id = r.id
 JOIN (
     SELECT MIN(id) AS id
     FROM bookings
-    WHERE status = 'pending' AND expires_at < NOW()
+    WHERE status = 'pending' AND expires_at < UTC_TIMESTAMP()
     GROUP BY room_id
 ) x ON b.id = x.id
 SET 
@@ -123,7 +123,7 @@ $rooms = $roomStmt->get_result();
 $bookingStmt = $conn->prepare("
     SELECT 
         status,id,
-        TIMESTAMPDIFF(SECOND, NOW(), expires_at) AS seconds_left
+        TIMESTAMPDIFF(SECOND, UTC_TIMESTAMP(), expires_at) AS seconds_left
     FROM bookings
     WHERE room_id = ? AND student_internal_id = ? AND STATUS IN ('pending', 'approved')
     ORDER BY created_at DESC

@@ -44,7 +44,7 @@ $_SESSION['token'] = bin2hex(random_bytes(32));
             'type' => 'info',
             'message' => 'Account deleted successfully.'
         ];
-        header("Location: index.php");
+        header("Location: ../index.php");
         exit;
     }
 }

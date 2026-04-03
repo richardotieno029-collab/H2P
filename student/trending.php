@@ -28,7 +28,7 @@ SELECT
     (SELECT COUNT(*) 
      FROM house_views v 
      WHERE v.house_id = h.house_id 
-     AND v.viewed_at >= NOW() - INTERVAL 7 DAY) AS views,
+     AND v.viewed_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY) AS views,
 
     /* FAVOURITES */
     (SELECT COUNT(*) 
@@ -39,7 +39,7 @@ SELECT
     (
         (SELECT COUNT(*) FROM house_views v 
          WHERE v.house_id = h.house_id 
-         AND v.viewed_at >= NOW() - INTERVAL 7 DAY) * 2
+         AND v.viewed_at >= UTC_TIMESTAMP() - INTERVAL 7 DAY) * 2
         +
         (SELECT COUNT(*) FROM favourites f 
          WHERE f.house_id = h.house_id)

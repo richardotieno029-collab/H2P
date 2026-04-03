@@ -162,7 +162,7 @@ exit;
 /* 3️⃣ Update profile */
 $update = $conn->prepare("
     UPDATE landlords 
-    SET full_name = ?, email = ?, phone = ?, profile_updated_at=NOW(), profile_image = ?
+    SET full_name = ?, email = ?, phone = ?, profile_updated_at=UTC_TIMESTAMP(), profile_image = ?
     WHERE id = ?
 ");
 $update->bind_param(

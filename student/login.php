@@ -115,7 +115,7 @@ $stmt = $conn->prepare("
     FROM students 
     WHERE ip_address=? 
     AND user_agent=? 
-    AND created_at > NOW() - INTERVAL 1 HOUR
+    AND created_at > UTC_TIMESTAMP() - INTERVAL 1 HOUR
 ");
 $stmt->bind_param("ss", $ip, $user_agent);
 $stmt->execute();
@@ -128,7 +128,7 @@ if ($count >= 2) {
         WHERE user_type='student'
         AND user_id=?
         AND reason='Multiple failed login attempts from same IP'
-        AND created_at > NOW() - INTERVAL 10 MINUTE
+        AND created_at > UTC_TIMESTAMP() - INTERVAL 10 MINUTE
     ");
     $existing->bind_param("i", $user_id);
     $existing->execute();

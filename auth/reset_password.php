@@ -13,7 +13,7 @@ $token = $_GET['token'];
 
 $stmt = $conn->prepare("SELECT * FROM password_resets 
                         WHERE token=? 
-                        AND expires_at > NOW() 
+                        AND expires_at > UTC_TIMESTAMP() 
                         AND used=0");
 $stmt->bind_param("s", $token);
 $stmt->execute();
@@ -80,7 +80,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         SELECT COUNT(*) as total 
         FROM password_resets 
         WHERE email=? 
-        AND created_at > NOW() - INTERVAL 1 HOUR
+        AND created_at > UTC_TIMESTAMP() - INTERVAL 1 HOUR
     ");
     $stmt->bind_param("s", $email);
     $stmt->execute();
@@ -97,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         WHERE user_type=?
         AND user_id=?
         AND reason='Multiple password resets from same email'
-        AND created_at > NOW() - INTERVAL 10 MINUTE
+        AND created_at > UTC_TIMESTAMP() - INTERVAL 10 MINUTE
     ");
     $existing->bind_param("si", $user_type, $user_id);
     $existing->execute();

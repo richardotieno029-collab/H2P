@@ -13,7 +13,7 @@ $stmt = $conn->prepare("
 SELECT id FROM students
 WHERE verification_token=?
 AND email_verified=0
-AND token_expires > NOW()
+AND token_expires > UTC_TIMESTAMP()
 ");
 
 $stmt->bind_param("s",$token);

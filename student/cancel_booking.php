@@ -76,7 +76,7 @@ $check = $conn->prepare("
     WHERE user_type='student'
     AND user_id=?
     AND action IN ('BOOK_ROOM','CANCEL_BOOKING')
-    AND created_at > NOW() - INTERVAL 2 MINUTE
+    AND created_at > UTC_TIMESTAMP() - INTERVAL 2 MINUTE
 ");
 $check->bind_param("i", $user_id);
 $check->execute();
@@ -94,7 +94,7 @@ if ($count >= 3) {
         WHERE user_type='student'
         AND user_id=?
         AND reason='Suspicious rapid booking activity'
-        AND created_at > NOW() - INTERVAL 10 MINUTE
+        AND created_at > UTC_TIMESTAMP() - INTERVAL 10 MINUTE
     ");
     $existing->bind_param("i", $user_id);
     $existing->execute();

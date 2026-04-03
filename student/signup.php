@@ -165,7 +165,7 @@ $stmt = $conn->prepare("
 INSERT INTO students
 (full_name,email,phone,password,profile_image,verification_token,ip_address,user_agent,
 email_verified,token_expires,status, verification_sent_at)
-VALUES (?,?,?,?,?,?,?,?,0,DATE_ADD(NOW(), INTERVAL 1 HOUR),'active', NOW())
+VALUES (?,?,?,?,?,?,?,?,0,DATE_ADD(UTC_TIMESTAMP(), INTERVAL 1 HOUR),'active', UTC_TIMESTAMP())
 ");
 
 $stmt->bind_param(

@@ -65,8 +65,8 @@ $token = bin2hex(random_bytes(32));
 $stmt = $conn->prepare("
 UPDATE landlords
 SET verification_token=?,
-token_expires_at=DATE_ADD(NOW(),INTERVAL 1 HOUR),
-verification_sent_at=NOW()
+token_expires_at=DATE_ADD(UTC_TIMESTAMP(),INTERVAL 1 HOUR),
+verification_sent_at=UTC_TIMESTAMP()
 WHERE id=?
 ");
 
