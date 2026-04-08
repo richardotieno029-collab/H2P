@@ -15,7 +15,7 @@ $conn->query("
         r.status = 'vacant'
     WHERE 
         b.status = 'approved'
-        AND b.approved_expires_at < NOW()
+        AND b.approved_expires_at < UTC_TIMESTAMP()
 ");
 
 if (!$conn) {

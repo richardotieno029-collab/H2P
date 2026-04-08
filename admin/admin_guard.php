@@ -6,7 +6,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin'){
     'type' => 'error',
     'message' => 'For that you need to be logged in as an admin.'
 ];
-    header("Location: index.php");
+    header("Location: ../student/login_form.php");
     exit;
 
 }

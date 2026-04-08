@@ -236,7 +236,7 @@ $check = $conn->prepare("
         'UPDATE_ROOM',
         'DELETE_ROOM'
     )
-    AND created_at > NOW() - INTERVAL 10 MINUTE
+    AND created_at > UTC_TIMESTAMP() - INTERVAL 10 MINUTE
 ");
 $check->bind_param("i", $user_id);
 $check->execute();
@@ -255,7 +255,7 @@ if ($count >= 8) {
         WHERE user_type='landlord'
         AND user_id=?
         AND reason='Suspicious rapid landlord activity'
-        AND created_at > NOW() - INTERVAL 10 MINUTE
+        AND created_at > UTC_TIMESTAMP() - INTERVAL 10 MINUTE
     ");
     $existing->bind_param("i", $user_id);
     $existing->execute();

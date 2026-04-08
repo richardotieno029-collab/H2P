@@ -7,7 +7,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
         'type' => 'error',
         'message' => 'You must be logged in as an admin to access this area.'
     ];
-    header('Location: ../auth/login_form.php');
+    header('Location: ../student/login_form.php');
     exit;
 }
 
@@ -38,7 +38,7 @@ if (isset($admin['status']) && $admin['status'] === 'suspended') {
         'type' => 'error',
         'message' => 'Your admin account is suspended.'
     ];
-header('Location: index.php');
+header('Location: ../student/login_form.php');
     exit;
 }
 

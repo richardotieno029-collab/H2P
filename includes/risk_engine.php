@@ -31,7 +31,7 @@ function addRisk($conn, $user_type, $user_id, $points) {
     // 4️⃣ Update risk + timestamp
     $update = $conn->prepare("
         UPDATE $table
-        SET risk_score=?, last_risk_update=NOW()
+        SET risk_score=?, last_risk_update=UTC_TIMESTAMP()
         WHERE id=?
     ");
     $update->bind_param("ii", $newScore, $user_id);
